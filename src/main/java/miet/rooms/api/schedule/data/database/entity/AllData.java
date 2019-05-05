@@ -2,8 +2,6 @@ package miet.rooms.api.schedule.data.database.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(schema = "schedule", name = "all_data")
@@ -16,6 +14,7 @@ public class AllData {
     private Group group;
     private String weekType;
     private Room room;
+    private EngageType engageType;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.all_data_data_id_seq")
@@ -74,5 +73,15 @@ public class AllData {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "engage_type_id")
+    public EngageType getEngageType() {
+        return engageType;
+    }
+
+    public void setEngageType(EngageType engageType) {
+        this.engageType = engageType;
     }
 }

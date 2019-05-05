@@ -1,9 +1,6 @@
 package miet.rooms.api.schedule.initializer.controller;
 
-import miet.rooms.api.schedule.data.database.dao.AllDataDao;
-import miet.rooms.api.schedule.data.database.dao.GroupDao;
-import miet.rooms.api.schedule.data.database.dao.PairDao;
-import miet.rooms.api.schedule.data.database.dao.RoomDao;
+import miet.rooms.api.schedule.data.database.dao.*;
 import miet.rooms.api.schedule.data.database.entity.*;
 import miet.rooms.api.schedule.data.initdata.Datum;
 import miet.rooms.api.schedule.data.initdata.TimetableData;
@@ -35,17 +32,27 @@ public class InitializationController {
     @Autowired
     private RoomDao roomDao;
 
-    @PostMapping(value = "schedule")
+    @Autowired
+    private EngageTypeDao engageTypeDao;
+
+    @PostMapping(value = "/")
+    public List<TimetableData> initialize(
+            @RequestParam(value = "weekAmount") Long weekAmount,
+            @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate) throws IOException {
+//        initializeRooms();
+//        initializeGroups();
+        return initializeSchedule(weekAmount, startDate);
+    }
+
+    @PostMapping(value = "/schedule")
     public @ResponseBody
-    List<TimetableData> initialize(
+    List<TimetableData> initializeSchedule(
             @RequestParam(value = "weekAmount") Long weekAmount,
             @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate
     ) throws IOException {
         List<TimetableData> schedule = getScheduleFromServer();
         List<Datum> datumList = schedule.stream().flatMap(ttd -> ttd.getData().stream()).collect(Collectors.toList());
         int maxCycleWeekNumber = (int) datumList.stream().mapToLong(Datum::getWeekNumber).max().orElse(0) + 1;
-        initializeGroups();
-
         initializeFirstCycle(datumList, startDate, maxCycleWeekNumber);
 
         for (int weekNum = maxCycleWeekNumber; weekNum < weekAmount; weekNum += maxCycleWeekNumber) {
@@ -101,16 +108,24 @@ public class InitializationController {
         Room room = roomDao.findAllByName(datum.getRoom().getName());
         allData.setRoom(room);
 
-        Group group = new Group();
-        group.setName(datum.getGroup().getName());
+        Group group = groupDao.findAllByName(datum.getGroup().getName());
+        if(group == null) {
+            group = new Group();
+            group.setName(datum.getGroup().getName());
+            groupDao.save(group);
+        }
         allData.setGroup(group);
 
         allData.setWeekType(String.valueOf(weekType)); //TODO:temp. Need table for weeks
 
+        long commonEngageTypeId = 0;
+        EngageType engageType = engageTypeDao.findAllByEngageTypeId(commonEngageTypeId);
+        allData.setEngageType(engageType);
+
         allDataDao.save(allData);
     }
 
-    @PostMapping(value = "rooms")
+    @PostMapping(value = "/rooms")
     public void initializeRooms() {
         List<Room> rooms = scheduleGetter.getRooms().stream()
                 .map(str -> {
@@ -122,6 +137,7 @@ public class InitializationController {
         roomDao.saveAll(rooms);
     }
 
+    @PostMapping(value = "/groups")
     private void initializeGroups() {
         List<Group> groups = scheduleGetter.getGroups().stream().map(str -> {
             Group group = new Group();

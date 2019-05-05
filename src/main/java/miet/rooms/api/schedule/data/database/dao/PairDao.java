@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PairDao extends JpaRepository<Pair, Long> {
     Pair findAllByName(@Param("name") String name);
+
+    Pair findAllById(@Param("id") Long id);
 }
