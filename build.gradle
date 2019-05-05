@@ -1,0 +1,85 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'java'
+    id "org.hidetake.ssh" version "2.10.1"
+}
+
+remotes {
+    webServer {
+        host = '62.109.25.2'
+        port = 22
+        knownHosts = allowAnyHosts
+    }
+}
+
+task deploy {
+    doLast {
+        ssh.run {
+            def server = remotes.webServer
+            server.user = 'java'
+            server.password = 'V7k5Y3c0'
+
+            session(server) {
+                put from: 'C:/Projects/MIET/MIET.ROOMS/build/libs/api-0.0.1-SNAPSHOT.jar', into: '/var/www/java/data'
+                execute 'sudo service tomcat restart'
+            }
+        }
+        ssh.settings {
+            knownHosts = allowAnyHosts
+        }
+    }
+}
+
+task deployAll() {
+    doFirst {
+        println 'Start deploy'
+    }
+    doLast {
+        ssh.run {
+            def server = remotes.webServer
+            server.user = 'java'
+            server.password = 'V7k5Y3c0'
+
+            session(server) {
+                println 'Deploy api...'
+                put from: 'C:/Projects/MIET/MIET.ROOMS/build/libs/api-0.0.1-SNAPSHOT.jar', into: '/var/www/java/data'
+                println 'SUCCESS'
+                execute 'java -jar /var/www/java/data/api-0.0.1-SNAPSHOT.jar & > /dev/null'
+            }
+        }
+    }
+}
+
+apply plugin: 'io.spring.dependency-management'
+//apply plugin: 'war'
+apply plugin: 'application'
+mainClassName = 'miet.rooms.api.Application'
+
+group = 'miet.rooms'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
+    compile 'org.springframework.boot:spring-boot-starter-tomcat'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.3.RELEASE'
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+    compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
+    compile group: 'org.modelmapper', name: 'modelmapper', version: '1.1.0'
+    compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.4.2.Final'
+
+}
