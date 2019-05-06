@@ -41,7 +41,7 @@ public class CycleEvent {
         this.groupId = groupId;
     }
 
-    @Column(name = "seq_name", nullable = false)
+    @Column(name = "seq_num", nullable = false)
     public Long getSeqName() {
         return seqName;
     }
