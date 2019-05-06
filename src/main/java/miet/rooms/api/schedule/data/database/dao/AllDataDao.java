@@ -12,4 +12,6 @@ import java.util.List;
 @Repository
 public interface AllDataDao extends JpaRepository<AllData, Long> {
     List<Group> findGroupByDateAndAndPair_IdAndRoom_Id(@Param("date")LocalDate localDate, @Param("pair_id") Long pairId, @Param("room_id") Long roomId);
+
+    AllData findAllById(@Param("id") Long id);
 }

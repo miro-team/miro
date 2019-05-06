@@ -118,10 +118,6 @@ public class InitializationController {
 
         allData.setWeekType(String.valueOf(weekType)); //TODO:temp. Need table for weeks
 
-        long commonEngageTypeId = 0;
-        EngageType engageType = engageTypeDao.findAllByEngageTypeId(commonEngageTypeId);
-        allData.setEngageType(engageType);
-
         allDataDao.save(allData);
     }
 

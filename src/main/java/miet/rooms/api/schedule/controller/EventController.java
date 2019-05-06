@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,15 +34,17 @@ public class EventController {
     @Autowired
     private CycleEventDao cycleEventDao;
 
+    @Autowired
+    private EngageDao engageDao;
+
     @PostMapping(value = "/simple")
     public @ResponseBody
     AllData addSimpleEvent(@RequestBody Event event) {
         AllData allData = new AllData();
         if (checkRoomFree(event)) {
-            LocalDate date = DateTimeHelper.asLocalDate(event.getDate());
-            allData = fillData(event, date);
+            saveAllData(event);
 
-            allDataDao.save(allData);
+            saveEngage(event);
         }
         return allData;
     }
@@ -52,16 +55,68 @@ public class EventController {
         List<AllData> datas = new ArrayList<>();
         int cycleLength = cycleEventDao.findAll().size();
         //TODO: improve cycle. We don't always need 5 cycles
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             if (checkRoomFree(event)) {
                 LocalDate date = DateTimeHelper.asLocalDate(event.getDate()).plusWeeks(i * cycleLength);
                 AllData allData = fillData(event, date);
-
                 datas.add(allData);
                 allDataDao.save(allData);
+
+                saveEngage(event);
             }
         }
         return datas;
+    }
+
+    @PostMapping(value = "/transfer")
+    public @ResponseBody
+    AllData addTransferEvent(@RequestBody Event event) {
+        AllData allData = new AllData();
+        if (checkRoomFree(event)) {
+            saveAllData(event);
+
+            saveEngage(event);
+        }
+        return allData;
+    }
+
+    private void saveEngage(@RequestBody Event event) {
+        Engage engage = fillEngage(event);
+        engageDao.save(engage);
+    }
+
+    private void saveAllData(@RequestBody Event event) {
+        AllData allData;
+        LocalDate date = DateTimeHelper.asLocalDate(event.getDate());
+        allData = fillData(event, date);
+        allDataDao.save(allData);
+    }
+
+    private Engage fillEngage(Event event) {
+        Engage engage = new Engage();
+
+        Group group = groupDao.findAllByName(event.getEngagedBy());
+        if (group == null) {
+            group = new Group();
+            group.setName(event.getEngagedBy());
+            groupDao.save(group);
+        }
+        engage.setEngagedBy(group);
+
+        EngageType engageType = engageTypeDao.findAllByEngageTypeId(event.getEngageTypeId());
+        engage.setEngagedType(engageType);
+
+        if (event.getFromAllDataId() != null) {
+            AllData allData = allDataDao.findAllById(event.getFromAllDataId());
+            engage.setTransferredFrom(allData);
+        }
+
+        engage.setInsertDate(LocalDateTime.now());
+
+        String teacherName = event.getTeacherName() != null ? event.getTeacherName() : "";
+        engage.setTeacherName(teacherName);
+
+        return engage;
     }
 
     private AllData fillData(@RequestBody Event event, LocalDate date) {
@@ -83,9 +138,6 @@ public class EventController {
         allData.setGroup(group);
 
         allData.setWeekType(String.valueOf(event.getWeekType()));
-
-        EngageType engageType = engageTypeDao.findAllByEngageTypeId(event.getEngageTypeId());
-        allData.setEngageType(engageType);
 
         return allData;
     }

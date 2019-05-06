@@ -18,4 +18,6 @@ public class Event {
     private Long weekType;
     private Long roomId;
     private Long engageTypeId;
+    private String teacherName;
+    private Long fromAllDataId;
 }

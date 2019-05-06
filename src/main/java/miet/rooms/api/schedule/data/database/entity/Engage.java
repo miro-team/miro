@@ -1,7 +1,7 @@
 package miet.rooms.api.schedule.data.database.entity;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(schema = "schedule", name = "engages")
@@ -10,9 +10,10 @@ public class Engage {
 
     private Long id;
     private Group engagedBy;
-    private Long engagedType;
-    private AllData transferedFrom;
+    private EngageType engagedType;
+    private AllData transferredFrom;
     private String teacherName;
+    private LocalDateTime insertDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.engages_engage_id_seq")
@@ -26,7 +27,7 @@ public class Engage {
     }
 
     @ManyToOne
-    @JoinColumn(name = "engagedBy")
+    @JoinColumn(name = "engaged_by_id")
     public Group getEngagedBy() {
         return engagedBy;
     }
@@ -35,23 +36,24 @@ public class Engage {
         this.engagedBy = engagedBy;
     }
 
-    @Column(name = "engage_type", nullable = false)
-    public Long getEngagedType() {
+    @ManyToOne
+    @JoinColumn(name = "engage_type_id", referencedColumnName = "engage_type_id")
+    public EngageType getEngagedType() {
         return engagedType;
     }
 
-    public void setEngagedType(Long engagedType) {
+    public void setEngagedType(EngageType engagedType) {
         this.engagedType = engagedType;
     }
 
-    @OneToOne
-    @JoinColumn(name = "transfered_from_room_id")
-    public AllData getTransferedFrom() {
-        return transferedFrom;
+    @ManyToOne
+    @JoinColumn(name = "transferred_from_all_data_id")
+    public AllData getTransferredFrom() {
+        return transferredFrom;
     }
 
-    public void setTransferedFrom(AllData transferedFrom) {
-        this.transferedFrom = transferedFrom;
+    public void setTransferredFrom(AllData transferredFrom) {
+        this.transferredFrom = transferredFrom;
     }
 
     @Column(name = "teacher_name", nullable = false)
@@ -61,5 +63,14 @@ public class Engage {
 
     public void setTeacherName(String teacherName) {
         this.teacherName = teacherName;
+    }
+
+    @Column(name = "insert_date", nullable = false)
+    public LocalDateTime getInsertDate() {
+        return insertDate;
+    }
+
+    public void setInsertDate(LocalDateTime insertDate) {
+        this.insertDate = insertDate;
     }
 }

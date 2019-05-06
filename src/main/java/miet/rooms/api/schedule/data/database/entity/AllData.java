@@ -14,7 +14,6 @@ public class AllData {
     private Group group;
     private String weekType;
     private Room room;
-    private EngageType engageType;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.all_data_data_id_seq")
@@ -47,7 +46,7 @@ public class AllData {
     }
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "engaged_id")
+    @JoinColumn(name = "engaged_by_id")
     public Group getGroup() {
         return group;
     }
@@ -73,15 +72,5 @@ public class AllData {
 
     public void setRoom(Room room) {
         this.room = room;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "engage_type_id")
-    public EngageType getEngageType() {
-        return engageType;
-    }
-
-    public void setEngageType(EngageType engageType) {
-        this.engageType = engageType;
     }
 }
