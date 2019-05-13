@@ -51,7 +51,7 @@ public class InitializationController {
         List<Room> rooms = scheduleGetter.getRooms().stream()
                 .map(str -> {
                     Room room = new Room();
-                    room.setName(str);
+                    room.setName(str.trim());
                     return room;
                     //TODO: add scheme here by parsing or smth like this, I don't know
                 }).collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class InitializationController {
     public void initializeGroups() {
         List<Group> groups = scheduleGetter.getGroups().stream().map(str -> {
             Group group = new Group();
-            group.setName(str);
+            group.setName(str.trim());
             return group;
         }).collect(Collectors.toList());
         groupDao.saveAll(groups);

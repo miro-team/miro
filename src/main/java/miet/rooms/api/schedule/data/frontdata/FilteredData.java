@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 public class FilteredData {
     private String engagedBy;
-    private String roomNum;
+    private String roomId;
     private String date;
-    private String pairName;
+    private String pairId;
     private Integer weekType;
     private Integer weekNum;
 }

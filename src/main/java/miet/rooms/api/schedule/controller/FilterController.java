@@ -64,12 +64,12 @@ public class FilterController {
 
             Pair pair  = pairDao.findAllById(rs.getLong("pair_id"));
             if(pair != null) {
-                filteredData.setPairName(pair.getName());
+                filteredData.setPairId(pair.getName());
             }
 
             Room room = roomDao.findAllById(rs.getLong("room_id"));
             if(room != null) {
-                filteredData.setRoomNum(room.getName());
+                filteredData.setRoomId(room.getName());
             }
 
             filteredData.setWeekNum(rs.getInt("week_num"));
