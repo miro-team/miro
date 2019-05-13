@@ -1,11 +1,12 @@
 package miet.rooms.api.schedule.data.database.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(schema = "schedule", name = "engage_type")
 @SequenceGenerator(schema = "schedule", name = "engage_type", sequenceName = "schedule.engage_types_engage_type_id_seq", allocationSize = 1)
-public class EngageType {
+public class EngageType implements Serializable {
 
     private Long id;
     private Long engageTypeId;
