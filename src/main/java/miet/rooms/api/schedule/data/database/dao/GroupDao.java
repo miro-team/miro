@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GroupDao extends JpaRepository<Group, Long> {
     Group findAllByName(@Param("name") String name);
+
+    Group findAllById(@Param("id") Long id);
 }

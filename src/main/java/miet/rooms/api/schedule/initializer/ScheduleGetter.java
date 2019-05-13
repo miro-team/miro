@@ -1,6 +1,7 @@
 package miet.rooms.api.schedule.initializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import miet.rooms.api.schedule.data.initdata.TimetableData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,13 @@ public class ScheduleGetter {
     private final String GROUP_URL = "https://miet.ru/schedule/groups/data?group=";
 
 
+    @Getter
     private List<TimetableData> timetableList = new ArrayList<>();
+
+    @Getter
     private List<String> groups = new ArrayList<>();
+
+    @Getter
     private List<String> rooms = new ArrayList<>();
 
     @Autowired
@@ -45,27 +51,25 @@ public class ScheduleGetter {
         return timetableList;
     }
 
-    private void collectGroups(String response) throws IOException {
-        int i = 0;
-            String groupStr = "ПИН-31";
-//            if(!groupStr.equals("ПИН-31")) return;
-            groups.add(groupStr);
-            log.info("Found " + groupStr);
-            addTimetableEntry(groupStr);
-//            if(i++ > 5) return;
-    }
-
 //    private void collectGroups(String response) throws IOException {
 //        int i = 0;
 //        for (String group : response.split(",")) {
 //            String groupStr = group.trim().replace("\"", "");
-////            if(!groupStr.equals("ПИН-31")) return;
 //            groups.add(groupStr);
 //            log.info("Found " + groupStr);
 //            addTimetableEntry(groupStr);
-////            if(i++ > 5) return;
 //        }
 //    }
+
+    private void collectGroups(String response) throws IOException {
+        int i = 0;
+//        for (String group : response.split(",")) {
+            String groupStr = "ПИН-31 (МП-34)";
+            groups.add(groupStr);
+            log.info("Found " + groupStr);
+            addTimetableEntry(groupStr);
+//        }
+    }
 
     public List<String> getRooms() {
         return timetableList.stream()
@@ -76,6 +80,7 @@ public class ScheduleGetter {
     }
 
     private void addTimetableEntry( String groupStr) throws IOException {
+        log.info("Adding " + groupStr);
         timetableList.add(getTimetableData(groupStr));
     }
 
@@ -95,10 +100,4 @@ public class ScheduleGetter {
                 .replaceAll("\\[", "")
                 .replaceAll("]", "") : "";
     }
-
-    public List<String> getGroups() {
-        return groups;
-    }
-
-
 }

@@ -14,6 +14,7 @@ public class AllData {
     private Group group;
     private String weekType;
     private Room room;
+    private Long weekNum;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.all_data_data_id_seq")
@@ -72,5 +73,14 @@ public class AllData {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    @Column(name = "week_num", nullable = false)
+    public Long getWeekNum() {
+        return weekNum;
+    }
+
+    public void setWeekNum(Long weekNum) {
+        this.weekNum = weekNum;
     }
 }

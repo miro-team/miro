@@ -81,5 +81,6 @@ dependencies {
     compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
     compile group: 'org.modelmapper', name: 'modelmapper', version: '1.1.0'
     compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.4.2.Final'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '2.1.4.RELEASE'
 
 }
