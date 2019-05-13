@@ -199,6 +199,9 @@ public class EventController {
 
         allData.setWeekType(String.valueOf(event.getWeekType()));
 
+        EngageType engageType = engageTypeDao.findAllByEngageTypeId(event.getEngageTypeId());
+        allData.setEngageType(engageType);
+
         return allData;
     }
 

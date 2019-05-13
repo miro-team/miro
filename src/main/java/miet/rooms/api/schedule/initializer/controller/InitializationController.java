@@ -34,6 +34,9 @@ public class InitializationController {
     @Autowired
     private RoomDao roomDao;
 
+    @Autowired
+    private EngageTypeDao engageTypeDao;
+
     private List<TimetableData> schedule;
 
     @PostMapping(value = "/all")
@@ -73,7 +76,7 @@ public class InitializationController {
     List<TimetableData> initializeSchedule(
             @RequestParam(value = "weekAmount") Long weekAmount,
             @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate
-    ) throws IOException {
+    ) {
         List<Datum> datumList = schedule.stream().flatMap(ttd -> ttd.getData().stream()).collect(Collectors.toList());
         int maxCycleWeekNumber = (int) datumList.stream().mapToLong(Datum::getWeekNumber).max().orElse(0) + 1;
         initializeFirstCycle(datumList, startDate, maxCycleWeekNumber);
@@ -130,10 +133,10 @@ public class InitializationController {
         Pair pair = getPair(datum);
         allData.setPair(pair);
 
-        Room room = roomDao.findAllByName(datum.getRoom().getName());
+        Room room = roomDao.findAllByName(datum.getRoom().getName().trim());
         allData.setRoom(room);
 
-        Group group = groupDao.findAllByName(datum.getGroup().getName());
+        Group group = groupDao.findAllByName(datum.getGroup().getName().trim());
         if (group == null) {
             group = new Group();
             group.setName(datum.getGroup().getName());
@@ -144,6 +147,9 @@ public class InitializationController {
         allData.setWeekType(String.valueOf(weekType)); //TODO:temp. Need table for weeks
 
         allData.setWeekNum(weekNum);
+
+        EngageType engageType = engageTypeDao.findAllByDescription("Common");
+        allData.setEngageType(engageType);
 
         allDataDao.save(allData);
     }

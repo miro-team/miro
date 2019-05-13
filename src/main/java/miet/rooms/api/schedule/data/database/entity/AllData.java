@@ -15,6 +15,7 @@ public class AllData {
     private String weekType;
     private Room room;
     private Long weekNum;
+    private EngageType engageType;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.all_data_data_id_seq")
@@ -82,5 +83,15 @@ public class AllData {
 
     public void setWeekNum(Long weekNum) {
         this.weekNum = weekNum;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "engage_type_id", referencedColumnName = "engage_type_id")
+    public EngageType getEngageType() {
+        return engageType;
+    }
+
+    public void setEngageType(EngageType engageType) {
+        this.engageType = engageType;
     }
 }
