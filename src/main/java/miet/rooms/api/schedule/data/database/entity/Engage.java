@@ -14,6 +14,7 @@ public class Engage {
     private AllData transferredFrom;
     private String teacherName;
     private LocalDateTime insertDate;
+    private AllData allData;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.engages_engage_id_seq")
@@ -72,5 +73,15 @@ public class Engage {
 
     public void setInsertDate(LocalDateTime insertDate) {
         this.insertDate = insertDate;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "all_data_id")
+    public AllData getAllData() {
+        return allData;
+    }
+
+    public void setAllData(AllData allData) {
+        this.allData = allData;
     }
 }

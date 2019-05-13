@@ -45,7 +45,7 @@ public class AllData {
         this.pair = pair;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "engaged_by_id")
     public Group getGroup() {
         return group;

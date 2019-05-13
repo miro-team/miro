@@ -17,6 +17,7 @@ public class DateTimeHelper {
     public static final LocalDateTime MAX_DATE_TIME = LocalDateTime.of(2999, 12, 31, 23, 59, 59, 999999999);
     private static final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final DateTimeFormatter formatterDateTime = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter formatterId = DateTimeFormatter.ofPattern("ddMMyyyyHHmmss");
 
     private static final String DEFAULT_ZONE = "Europe/Moscow";
     private static Pattern ddMMyyyy = Pattern.compile("[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}");
@@ -48,6 +49,10 @@ public class DateTimeHelper {
 
     public static String dateTimeToString(LocalDateTime date) {
         return date.format(formatterDateTime);
+    }
+
+    public static String dateToId(LocalDateTime date) {
+        return date.format(formatterId);
     }
 
     public static LocalDate asLocalDate(String val) {

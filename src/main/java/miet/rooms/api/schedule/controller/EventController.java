@@ -3,17 +3,18 @@ package miet.rooms.api.schedule.controller;
 import miet.rooms.api.schedule.data.database.dao.*;
 import miet.rooms.api.schedule.data.database.entity.*;
 import miet.rooms.api.schedule.data.frontdata.Event;
+import miet.rooms.api.schedule.data.frontdata.TransferEvent;
 import miet.rooms.api.util.DateTimeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/add-event")
+@RequestMapping("/event")
 public class EventController {
 
     @Autowired
@@ -37,47 +38,102 @@ public class EventController {
     @Autowired
     private EngageDao engageDao;
 
+    @Autowired
+    private CycleDao cycleDao;
+
+    @Autowired
+    private TransferDao transferDao;
+
     @PostMapping(value = "/simple")
-    public @ResponseBody
-    AllData addSimpleEvent(@RequestBody Event event) {
-        AllData allData = new AllData();
+    public void addSimpleEvent(@RequestBody Event event) {
         if (checkRoomFree(event)) {
             saveAllData(event);
 
             saveEngage(event);
         }
-        return allData;
+    }
+
+    @DeleteMapping(value = "/simple")
+    @Transactional
+    public void deleteSimpleEvent(@RequestParam(name = "all_data_id") Long allDataId) {
+        engageDao.deleteByAllData_Id(allDataId);
+        allDataDao.deleteById(allDataId);
     }
 
     @PostMapping(value = "/cycle")
-    public @ResponseBody
-    List<AllData> addCycleEvent(@RequestBody Event event) {
-        List<AllData> datas = new ArrayList<>();
+    public void addCycleEvent(@RequestBody Event event) {
         int cycleLength = cycleEventDao.findAll().size();
         //TODO: improve cycle. We don't always need 5 cycles
+        long seqNum = 0;
+        String cycleId = DateTimeHelper.dateToId(LocalDateTime.now());
         for (int i = 0; i < 5; i++) {
             if (checkRoomFree(event)) {
                 LocalDate date = DateTimeHelper.asLocalDate(event.getDate()).plusWeeks(i * cycleLength);
                 AllData allData = fillData(event, date);
-                datas.add(allData);
                 allDataDao.save(allData);
 
-                saveEngage(event);
+                Cycle cycle = new Cycle();
+                cycle.setAllData(allData);
+                cycle.setSeqNum(seqNum++);
+                cycle.setCycleId(cycleId);
+                cycleDao.save(cycle);
             }
         }
-        return datas;
+    }
+
+    @DeleteMapping(value = "/cycle")
+    @Transactional
+    public void deleteCycleEvent(@RequestParam(name = "all_data_id") Long allDataId) {
+        Cycle cycle = cycleDao.findAllByAllData_Id(allDataId);
+        List<AllData> datas = cycleDao.findAllDataByCycleId(cycle.getCycleId());
+        cycleDao.deleteByCycleId(cycle.getCycleId());
+        allDataDao.deleteAll(datas);
     }
 
     @PostMapping(value = "/transfer")
-    public @ResponseBody
-    AllData addTransferEvent(@RequestBody Event event) {
-        AllData allData = new AllData();
+    public void addTransferEvent(@RequestBody TransferEvent event) {
+        //TODO: защита если уже перенесен
+        AllData fromAllData = allDataDao.findAllById(event.getFromAllDataId());
         if (checkRoomFree(event)) {
-            saveAllData(event);
+            AllData toAllData;
+            toAllData = fillData(event);
+            allDataDao.save(toAllData);
 
-            saveEngage(event);
+            Transfer transfer = new Transfer();
+            transfer.setFromAllData(fromAllData);
+            transfer.setToAllData(toAllData);
+
+            String cycleId = transferDao.findCycleIdByFromAllData_Id(event.getFromAllDataId());
+            if(cycleId == null) {
+                cycleId = DateTimeHelper.dateToId(LocalDateTime.now());
+            }
+            transfer.setCycleId(cycleId);
+
+            Long seqNum = transferDao.findSeqNumByFromAllData_IdAndCycleId(fromAllData.getId(), cycleId);
+            if(seqNum == null) {
+                seqNum = -1L;
+            }
+            transfer.setSeqNum(++seqNum);
         }
-        return allData;
+    }
+
+    @DeleteMapping(value = "/transfer/all")
+    @Transactional
+    public void deleteTransferAllEvent(@RequestParam(name = "from_all_data_id") Long fromAllDataId) {
+        Transfer transfer = transferDao.findAllByFromAllData_Id(fromAllDataId);
+        List<AllData> datas = transferDao.findAllDataByCycleId(transfer.getCycleId());
+        transferDao.deleteByCycleId(transfer.getCycleId());
+        allDataDao.deleteAll(datas);
+    }
+
+    @DeleteMapping(value = "/transfer/from-current")
+    @Transactional
+    public void deleteTransferFromCurrentEvent(@RequestParam(name = "from_all_data_id") Long fromAllDataId) {
+        Transfer transfer = transferDao.findAllByFromAllData_Id(fromAllDataId);
+        Long seqNum = transferDao.findSeqNumByFromAllData_IdAndCycleId(fromAllDataId, transfer.getCycleId());
+        List<AllData> datas = transferDao.findAllDataByCycleIdAndSeqNum(transfer.getCycleId(), seqNum);
+        transferDao.deleteByFromAllData(datas);
+        allDataDao.deleteAll(datas);
     }
 
     private void saveEngage(@RequestBody Event event) {
@@ -111,6 +167,10 @@ public class EventController {
             engage.setTransferredFrom(allData);
         }
 
+        LocalDate date = DateTimeHelper.asLocalDate(event.getDate());
+        AllData originData = allDataDao.findAllByDateAndAndPair_IdAndRoom_Id(date, event.getPairId(), event.getRoomId());
+        engage.setAllData(originData);
+
         engage.setInsertDate(LocalDateTime.now());
 
         String teacherName = event.getTeacherName() != null ? event.getTeacherName() : "";
@@ -142,10 +202,33 @@ public class EventController {
         return allData;
     }
 
+    private AllData fillData(@RequestBody TransferEvent event) {
+        AllData allData = new AllData();
+        AllData fromAllData = allDataDao.findAllById(event.getFromAllDataId());
+        allData.setDate(fromAllData.getDate());
+
+        allData.setPair(fromAllData.getPair());
+
+        Room room = roomDao.findAllById(event.getRoomId());
+        allData.setRoom(room);
+
+        allData.setGroup(fromAllData.getGroup());
+
+        allData.setWeekType(fromAllData.getWeekType());
+
+        return allData;
+    }
 
     private boolean checkRoomFree(Event event) {
         LocalDate date = DateTimeHelper.asLocalDate(event.getDate());
-        List<Group> groups = allDataDao.findGroupByDateAndAndPair_IdAndRoom_Id(date, event.getPairId(), event.getRoomId());
-        return groups.isEmpty();
+        Room room = allDataDao.findRoomByDateAndAndPair_IdAndRoom_Id(date, event.getPairId(), event.getRoomId());
+        return room == null;
+    }
+
+    private boolean checkRoomFree(TransferEvent event) {
+        AllData fromAllData = allDataDao.findAllById(event.getFromAllDataId());
+        LocalDate date = fromAllData.getDate();
+        Room room = allDataDao.findRoomByDateAndAndPair_IdAndRoom_Id(date, fromAllData.getPair().getId(), event.getRoomId());
+        return room == null;
     }
 }
