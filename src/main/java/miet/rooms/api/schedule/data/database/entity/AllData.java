@@ -12,10 +12,11 @@ public class AllData {
     private LocalDate date;
     private Pair pair;
     private Group group;
-    private String weekType;
+    private Long weekType;
     private Room room;
     private Long weekNum;
     private EngageType engageType;
+    private Long weekDay;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.all_data_data_id_seq")
@@ -58,11 +59,11 @@ public class AllData {
     }
 
     @Column(name = "week_type", nullable = false)
-    public String getWeekType() {
+    public Long getWeekType() {
         return weekType;
     }
 
-    public void setWeekType(String weekType) {
+    public void setWeekType(Long weekType) {
         this.weekType = weekType;
     }
 
@@ -93,5 +94,14 @@ public class AllData {
 
     public void setEngageType(EngageType engageType) {
         this.engageType = engageType;
+    }
+
+    @Column(name = "week_day", nullable = false)
+    public Long getWeekDay() {
+        return weekDay;
+    }
+
+    public void setWeekDay(Long weekDay) {
+        this.weekDay = weekDay;
     }
 }

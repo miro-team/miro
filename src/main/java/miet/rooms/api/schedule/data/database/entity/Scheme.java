@@ -10,8 +10,8 @@ public class Scheme {
     private Long id;
     private String name;
     private String fileName;
-    private Integer floor;
-    private String building;
+    private Long floor;
+    private Long building;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "locations.schemes_scheme_id_seq")
@@ -43,20 +43,20 @@ public class Scheme {
     }
 
     @Column(name = "floor", nullable = false)
-    public Integer getFloor() {
+    public Long getFloor() {
         return floor;
     }
 
-    public void setFloor(Integer floor) {
+    public void setFloor(Long floor) {
         this.floor = floor;
     }
 
     @Column(name = "building", nullable = false)
-    public String getBuilding() {
+    public Long getBuilding() {
         return building;
     }
 
-    public void setBuilding(String building) {
+    public void setBuilding(Long building) {
         this.building = building;
     }
 }

@@ -8,6 +8,7 @@ import miet.rooms.api.schedule.data.initdata.TimetableData;
 import miet.rooms.api.schedule.initializer.ScheduleGetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -35,7 +36,16 @@ public class InitializationController {
     private RoomDao roomDao;
 
     @Autowired
+    private RoomTypeDao roomTypeDao;
+
+    @Autowired
+    SchemeDao schemeDao;
+
+    @Autowired
     private EngageTypeDao engageTypeDao;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private List<TimetableData> schedule;
 
@@ -43,6 +53,9 @@ public class InitializationController {
     public List<TimetableData> initializeAll(
             @RequestParam(value = "weekAmount") Long weekAmount,
             @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate) throws IOException {
+        jdbcTemplate.execute("truncate table schedule.all_data cascade ;" +
+                "truncate table locations.rooms cascade;" +
+                "truncate table data.edu_groups cascade ;");
         retrieveDataFromServer();
         initializeRooms();
         initializeGroups();
@@ -55,8 +68,23 @@ public class InitializationController {
                 .map(str -> {
                     Room room = new Room();
                     room.setName(str.trim());
+                    room.setCapacity(40L);
+                    room.setRoomType(roomTypeDao.findAllById(5L));
+
+                    Scheme scheme = null;
+                    if (!str.equals("УВЦ")) {
+                        Long floor = Long.parseLong(String.valueOf(str.trim().charAt(1)));
+                        Long building = Long.parseLong(String.valueOf(str.trim().charAt(0)));
+                        try {
+                            scheme = schemeDao.findAllByFloorAndBuilding(floor, building);
+                        } catch (Exception ex) {
+                            System.out.println(ex);
+                        }
+                    } else {
+                        scheme = schemeDao.findAllById(9L);
+                    }
+                    room.setScheme(scheme);
                     return room;
-                    //TODO: add scheme here by parsing or smth like this, I don't know
                 }).collect(Collectors.toList());
         roomDao.saveAll(rooms);
     }
@@ -126,7 +154,7 @@ public class InitializationController {
         log.info("Added week number 1");
     }
 
-    private void saveAllData(int weekType, Datum datum, LocalDate realDay, Long weekNum) {
+    private void saveAllData(long weekType, Datum datum, LocalDate realDay, Long weekNum) {
         AllData allData = new AllData();
         allData.setDate(realDay);
 
@@ -144,12 +172,14 @@ public class InitializationController {
         }
         allData.setGroup(group);
 
-        allData.setWeekType(String.valueOf(weekType)); //TODO:temp. Need table for weeks
+        allData.setWeekType(weekType); //TODO:temp. Need table for weeks
 
         allData.setWeekNum(weekNum);
 
         EngageType engageType = engageTypeDao.findAllByDescription("Common");
         allData.setEngageType(engageType);
+
+        allData.setWeekDay((long) realDay.getDayOfWeek().getValue());
 
         allDataDao.save(allData);
     }

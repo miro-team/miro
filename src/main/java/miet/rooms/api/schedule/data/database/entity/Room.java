@@ -1,6 +1,8 @@
 package miet.rooms.api.schedule.data.database.entity;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(schema = "locations", name = "rooms")
@@ -9,10 +11,11 @@ public class Room {
 
     private Long id;
     private String name;
-    private Integer capacity;
+    private Long capacity;
     private String type;
     private Scheme scheme;
     private Integer schemeMapping;
+    private RoomType roomType;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "locations.rooms_room_id_seq")
@@ -35,11 +38,11 @@ public class Room {
     }
 
     @Column(name = "capacity", nullable = false)
-    public Integer getCapacity() {
+    public Long getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(Integer capacity) {
+    public void setCapacity(Long capacity) {
         this.capacity = capacity;
     }
 
@@ -52,7 +55,7 @@ public class Room {
         this.type = type;
     }
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "scheme_id")
     public Scheme getScheme() {
         return scheme;
@@ -69,5 +72,15 @@ public class Room {
 
     public void setSchemeMapping(Integer schemeMapping) {
         this.schemeMapping = schemeMapping;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "room_type_id")
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
     }
 }

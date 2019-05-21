@@ -31,7 +31,6 @@ public class ScheduleGetter {
     @Getter
     private List<String> groups = new ArrayList<>();
 
-    @Getter
     private List<String> rooms = new ArrayList<>();
 
     @Autowired

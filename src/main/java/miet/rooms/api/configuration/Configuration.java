@@ -11,25 +11,17 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.sql.DataSource;
 import java.util.Arrays;
 
 @org.springframework.context.annotation.Configuration
 public class Configuration {
-
-//    @Value("${spring.datasource.url}")
-//    private String url;
-//
-//    @Value("${spring.datasource.username}")
-//    private String username;
-//
-//    @Value("${spring.datasource.password}")
-//    private String password;
-//
-//    @Value("${spring.datasource.driver-class-name}")
-//    private String driver;
 
     @Bean
     public ModelMapper modelMapper() {
@@ -52,14 +44,6 @@ public class Configuration {
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
-
-//    @Bean
-//    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-//        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-//        factoryBean.setPackagesToScan("miet.rooms.api.schedule.data.database.dao");
-//        factoryBean.setPersistenceProvider();
-//        return factoryBean;
-//    }
 
     @Bean
     @Primary
