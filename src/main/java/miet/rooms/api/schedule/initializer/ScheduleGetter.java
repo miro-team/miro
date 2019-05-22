@@ -50,24 +50,13 @@ public class ScheduleGetter {
         return timetableList;
     }
 
-//    private void collectGroups(String response) throws IOException {
-//        int i = 0;
-//        for (String group : response.split(",")) {
-//            String groupStr = group.trim().replace("\"", "");
-//            groups.add(groupStr);
-//            log.info("Found " + groupStr);
-//            addTimetableEntry(groupStr);
-//        }
-//    }
-
     private void collectGroups(String response) throws IOException {
-        int i = 0;
-//        for (String group : response.split(",")) {
-            String groupStr = "ПИН-31 (МП-34)";
+        for (String group : response.split(",")) {
+            String groupStr = group.trim().replace("\"", "");
             groups.add(groupStr);
             log.info("Found " + groupStr);
             addTimetableEntry(groupStr);
-//        }
+        }
     }
 
     public List<String> getRooms() {

@@ -73,15 +73,15 @@ public class InitializationController {
 
                     Scheme scheme = null;
                     if (!str.equals("УВЦ")) {
-                        Long floor = Long.parseLong(String.valueOf(str.trim().charAt(1)));
-                        Long building = Long.parseLong(String.valueOf(str.trim().charAt(0)));
                         try {
+                            Long floor = Long.parseLong(String.valueOf(str.trim().charAt(1)));
+                            Long building = Long.parseLong(String.valueOf(str.trim().charAt(0)));
                             scheme = schemeDao.findAllByFloorAndBuilding(floor, building);
                         } catch (Exception ex) {
-                            System.out.println(ex);
+                            log.error(ex.getMessage());
                         }
                     } else {
-                        scheme = schemeDao.findAllById(9L);
+                        scheme = schemeDao.findAllByFloorAndBuilding(3L, 3L);
                     }
                     room.setScheme(scheme);
                     return room;
