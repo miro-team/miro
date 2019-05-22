@@ -97,8 +97,9 @@ public class FilterController {
                 filteredData.setRoomId(room.getId());
             }
 
-            filteredData.setWeekNum(rs.getInt("week_num"));
-            filteredData.setWeekType(rs.getInt("week_type"));
+            filteredData.setWeekNum(rs.getLong("week_num"));
+            filteredData.setWeekType(rs.getLong("week_type"));
+            filteredData.setWeekDay(rs.getLong("week_day"));
 
             if (room != null) {
                 filteredData.setCapacity(Long.valueOf(room.getCapacity()));

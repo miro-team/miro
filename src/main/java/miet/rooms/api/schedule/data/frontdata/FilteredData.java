@@ -7,13 +7,14 @@ import lombok.Setter;
 @Getter
 public class FilteredData {
     private Long engagedById;
-    private Long roomId;
     private String date;
+    private Long weekDay;
+    private Long weekType;
+    private Long weekNum;
     private Long pairId;
-    private Integer weekType;
-    private Integer weekNum;
-    private Long floor;
-    private Long building;
-    private Long capacity;
+    private Long roomId;
     private Long roomTypeId;
+    private Long capacity;
+    private Long building;
+    private Long floor;
 }
