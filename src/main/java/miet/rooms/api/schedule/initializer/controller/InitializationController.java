@@ -142,7 +142,9 @@ public class InitializationController {
             @RequestParam(value = "weekAmount") Long weekAmount,
             @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate
     ) throws IOException {
-        retrieveDataFromServer();
+        if(schedule == null) {
+            retrieveDataFromServer();
+        }
         List<Datum> datumList = schedule.stream().flatMap(ttd -> ttd.getData().stream()).collect(Collectors.toList());
         int maxCycleWeekNumber = (int) datumList.stream().mapToLong(Datum::getWeekNumber).max().orElse(0) + 1;
         initializeFirstCycle(datumList, startDate, maxCycleWeekNumber);
