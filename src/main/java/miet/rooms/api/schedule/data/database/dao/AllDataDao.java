@@ -15,11 +15,11 @@ import java.util.List;
 public interface AllDataDao extends JpaRepository<AllData, Long> {
     List<Group> findGroupByDateAndAndPair_IdAndRoom_Id(@Param("date")LocalDate localDate, @Param("pair_id") Long pairId, @Param("room_id") Long roomId);
 
-    Room findRoomByDateAndAndPair_IdAndRoom_Id(@Param("date")LocalDate localDate, @Param("pair_id") Long pairId, @Param("room_id") Long roomId);
+    List<Room> findRoomByDateAndAndPair_IdAndRoom_Id(@Param("date")LocalDate localDate, @Param("pair_id") Long pairId, @Param("room_id") Long roomId);
 
     AllData findAllById(@Param("id") Long id);
 
-    AllData findAllByDateAndAndPair_IdAndRoom_Id(@Param("date")LocalDate localDate, @Param("pair_id") Long pairId, @Param("room_id") Long roomId);
+    List<AllData> findAllByDateAndAndPair_IdAndRoom_Id(@Param("date")LocalDate localDate, @Param("pair_id") Long pairId, @Param("room_id") Long roomId);
 
     void deleteById(@Param("id") Long id);
 

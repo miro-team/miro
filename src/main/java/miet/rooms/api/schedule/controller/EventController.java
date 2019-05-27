@@ -169,7 +169,7 @@ public class EventController {
         }
 
         LocalDate date = DateTimeHelper.asLocalDate(event.getDate());
-        AllData originData = allDataDao.findAllByDateAndAndPair_IdAndRoom_Id(date, event.getPairId(), event.getRoomId());
+        AllData originData = allDataDao.findAllByDateAndAndPair_IdAndRoom_Id(date, event.getPairId(), event.getRoomId()).get(0);
         engage.setAllData(originData);
 
         engage.setInsertDate(LocalDateTime.now());
@@ -225,14 +225,14 @@ public class EventController {
 
     private boolean checkRoomFree(Event event) {
         LocalDate date = DateTimeHelper.asLocalDate(event.getDate());
-        Room room = allDataDao.findRoomByDateAndAndPair_IdAndRoom_Id(date, event.getPairId(), event.getRoomId());
+        Room room = allDataDao.findRoomByDateAndAndPair_IdAndRoom_Id(date, event.getPairId(), event.getRoomId()).get(0);
         return room == null;
     }
 
     private boolean checkRoomFree(TransferEvent event) {
         AllData fromAllData = allDataDao.findAllById(event.getFromAllDataId());
         LocalDate date = fromAllData.getDate();
-        Room room = allDataDao.findRoomByDateAndAndPair_IdAndRoom_Id(date, fromAllData.getPair().getId(), event.getRoomId());
+        Room room = allDataDao.findRoomByDateAndAndPair_IdAndRoom_Id(date, fromAllData.getPair().getId(), event.getRoomId()).get(0);
         return room == null;
     }
 }

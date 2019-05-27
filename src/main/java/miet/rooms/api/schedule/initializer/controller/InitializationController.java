@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,13 +41,16 @@ public class InitializationController {
     private RoomTypeDao roomTypeDao;
 
     @Autowired
-    SchemeDao schemeDao;
+    private SchemeDao schemeDao;
 
     @Autowired
     private EngageTypeDao engageTypeDao;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private CycleEventDao cycleEventDao;
 
     private List<TimetableData> schedule;
 
@@ -60,7 +64,33 @@ public class InitializationController {
         retrieveDataFromServer();
         initializeRooms();
         initializeGroups();
+        initializeEmptySchedule(startDate, weekAmount);
         return initializeSchedule(weekAmount, startDate);
+    }
+
+    private void initializeEmptySchedule(LocalDate startDate, Long weekAmount) {
+        List<String> roomNames = scheduleGetter.getRooms();
+        LocalDate realDay = startDate;
+        int maxWeekTypesAmount = cycleEventDao.findAll().size(); //TODO: rename table to weekType and use it as foreign key
+        int totalCycleNum = (int) (weekAmount / maxWeekTypesAmount);
+        for (int cycleNum = 0; cycleNum < totalCycleNum; cycleNum++) {
+            for (int weekType = 0; weekType < maxWeekTypesAmount; weekType++) {
+                DayOfWeek dayOfWeek = realDay.getDayOfWeek();
+                while (dayOfWeek != DayOfWeek.SUNDAY) {
+                    for (String roomName : roomNames) {
+                        for (long pairOrder = 1; pairOrder <= 7; pairOrder++) {
+                            int weekNum = weekType + maxWeekTypesAmount * cycleNum + 1;
+                            saveAllEmptyData(weekType, pairOrder, roomName, realDay, (long) weekNum);
+                            log.info("Empty week number = " + weekNum + ", room name = " + roomName + ", day of week = " + dayOfWeek);
+                        }
+                    }
+                    realDay = realDay.plusDays(1);
+                    dayOfWeek = realDay.getDayOfWeek();
+                }
+                realDay = realDay.plusDays(1);
+                log.info("Added empty week number " + (weekType + maxWeekTypesAmount * cycleNum + 1));
+            }
+        }
     }
 
     @PostMapping(value = "/rooms")
@@ -73,16 +103,22 @@ public class InitializationController {
                     room.setRoomType(roomTypeDao.findAllById(5L));
 
                     Scheme scheme = null;
-                    if (!str.equals("УВЦ")) {
-                        try {
-                            Long floor = Long.parseLong(String.valueOf(str.trim().charAt(1)));
-                            Long building = Long.parseLong(String.valueOf(str.trim().charAt(0)));
-                            scheme = schemeDao.findAllByFloorAndBuilding(floor, building);
-                        } catch (Exception ex) {
-                            log.error(ex.getMessage());
-                        }
-                    } else {
-                        scheme = schemeDao.findAllByFloorAndBuilding(3L, 3L);
+                    switch (str) {
+                        case "УВЦ":
+                            scheme = schemeDao.findAllByFloorAndBuilding(3L, 3L);
+                            break;
+                        case "5101":
+                            scheme = schemeDao.findAllByFloorAndBuilding(1L, 5L);
+                            break;
+                        default:
+                            try {
+                                Long floor = Long.parseLong(String.valueOf(str.trim().charAt(1)));
+                                Long building = Long.parseLong(String.valueOf(str.trim().charAt(0)));
+                                scheme = schemeDao.findAllByFloorAndBuilding(floor, building);
+                            } catch (Exception ex) {
+                                log.error(ex.getMessage());
+                            }
+
                     }
                     room.setScheme(scheme);
                     return room;
@@ -105,7 +141,8 @@ public class InitializationController {
     List<TimetableData> initializeSchedule(
             @RequestParam(value = "weekAmount") Long weekAmount,
             @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate
-    ) {
+    ) throws IOException {
+        retrieveDataFromServer();
         List<Datum> datumList = schedule.stream().flatMap(ttd -> ttd.getData().stream()).collect(Collectors.toList());
         int maxCycleWeekNumber = (int) datumList.stream().mapToLong(Datum::getWeekNumber).max().orElse(0) + 1;
         initializeFirstCycle(datumList, startDate, maxCycleWeekNumber);
@@ -119,7 +156,7 @@ public class InitializationController {
                             .plusWeeks(weekNum - 1)
                             .plusWeeks(weekType)
                             .plusDays(datum.getDay() - 1);
-                    saveAllData(weekType, datum, realDay, (long) weekNum + weekType + 1);
+                    saveAllData(datum, realDay);
                 }
                 log.info("Added week number " + (weekNum + weekType + 1));
             }
@@ -137,7 +174,7 @@ public class InitializationController {
                 LocalDate realDay = startDate.plusDays(daysShift)
                         .plusWeeks(weekType - 1)
                         .plusDays(datum.getDay() - 1);
-                saveAllData(weekType, datum, realDay, (long) weekType + 1);
+                saveAllData(datum, realDay);
             }
             log.info("Added week number " + (weekType + 1));
         }
@@ -150,28 +187,50 @@ public class InitializationController {
         for (Datum datum : weekData) {
 
             LocalDate realDay = startDate.plusWeeks(weekType).minusDays(dayNumber).plusDays(datum.getDay());
-            saveAllData(weekType, datum, realDay, 1L);
+            saveAllData(datum, realDay);
         }
         log.info("Added week number 1");
     }
 
-    private void saveAllData(long weekType, Datum datum, LocalDate realDay, Long weekNum) {
+    private void saveAllData(Datum datum, LocalDate realDay) {
+        Pair pair = getPair(datum);
+        Room room = roomDao.findAllByName(datum.getRoom().getName().trim());
+
+        AllData allData = allDataDao.findAllByDateAndAndPair_IdAndRoom_Id(realDay, pair.getId(), room.getId()).get(0);
+
+        Group group = groupDao.findAllByName(datum.getGroup().getName().trim());
+        if(allData.getGroup() != null) {
+            allData = copyAllData(allData);
+        } else {
+            allData.setGroup(group);
+        }
+
+        allDataDao.save(allData);
+    }
+
+    private AllData copyAllData(AllData allData) {
+        AllData addedAllData = new AllData();
+        addedAllData.setWeekDay(allData.getWeekDay());
+        addedAllData.setWeekNum(allData.getWeekNum());
+        addedAllData.setEngageType(allData.getEngageType());
+        addedAllData.setDate(allData.getDate());
+        addedAllData.setPair(allData.getPair());
+        addedAllData.setRoom(allData.getRoom());
+        addedAllData.setGroup(allData.getGroup());
+        addedAllData.setWeekType(allData.getWeekType());
+        allData = addedAllData;
+        return allData;
+    }
+
+    private void saveAllEmptyData(long weekType, Long pairOrder, String roomName, LocalDate realDay, Long weekNum) {
         AllData allData = new AllData();
         allData.setDate(realDay);
 
-        Pair pair = getPair(datum);
+        Pair pair = pairDao.findAllById(pairOrder); //TODO: make and use order instead of id
         allData.setPair(pair);
 
-        Room room = roomDao.findAllByName(datum.getRoom().getName().trim());
+        Room room = roomDao.findAllByName(roomName.trim());
         allData.setRoom(room);
-
-        Group group = groupDao.findAllByName(datum.getGroup().getName().trim());
-        if (group == null) {
-            group = new Group();
-            group.setName(datum.getGroup().getName());
-            groupDao.save(group);
-        }
-        allData.setGroup(group);
 
         allData.setWeekType(weekType); //TODO:temp. Need table for weeks
 

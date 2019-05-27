@@ -13,8 +13,13 @@ public class RoomController {
     @Autowired
     private RoomDao roomDao;
 
-    @GetMapping
+    @GetMapping("/by-name")
     public Room getRoomByName(@RequestParam String roomName) {
         return roomDao.findAllByName(roomName);
+    }
+
+    @GetMapping("/by-id")
+    public Room getRoomByName(@RequestParam Long roomId) {
+        return roomDao.findAllById(roomId);
     }
 }
