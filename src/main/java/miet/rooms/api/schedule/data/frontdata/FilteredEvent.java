@@ -15,4 +15,8 @@ public class FilteredEvent {
     private Long weekNum;
     private Long engageTypeId;
     private Long weekDay;
+    private Long roomTypeId;
+    private Long capacity;
+    private Long building;
+    private Long floor;
 }

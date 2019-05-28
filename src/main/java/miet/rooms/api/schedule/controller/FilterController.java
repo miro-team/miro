@@ -1,19 +1,21 @@
 package miet.rooms.api.schedule.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import miet.rooms.api.schedule.data.database.dao.*;
+import miet.rooms.api.schedule.data.database.dao.RoomDao;
+import miet.rooms.api.schedule.data.database.dao.SchemeDao;
+import miet.rooms.api.schedule.data.database.entity.Room;
+import miet.rooms.api.schedule.data.database.entity.Scheme;
 import miet.rooms.api.schedule.data.frontdata.FilteredEvent;
 import miet.rooms.api.schedule.data.frontdata.FilteredData;
 import miet.rooms.api.util.DateTimeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -24,29 +26,44 @@ public class FilterController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @GetMapping(value = "/cycle")
-    public FilteredData getFilteredData(@RequestParam(required = false) Long weekType,
+    @Autowired
+    private RoomDao roomDao;
+
+    @Autowired
+    private SchemeDao schemeDao;
+
+    private Map<Long, Room> roomMap;
+
+    @GetMapping(value = "/data")
+    public FilteredData getFilteredData(@RequestParam(required = false) Long roomId,
+                                        @RequestParam(required = false) Long weekType,
                                         @RequestParam(required = false) Long pairId,
+                                        @RequestParam(required = false) Long weekNum,
+                                        @RequestParam(required = false) String date,
+                                        @RequestParam(required = false) Long building,
+                                        @RequestParam(required = false) Long floor,
+                                        @RequestParam(required = false) Long roomTypeId,
+                                        @RequestParam(required = false) Long roomCapacity,
                                         @RequestParam(required = false) Long weekDay,
                                         @RequestParam(required = false) Long pageSize,
                                         @RequestParam(required = false) Long pageNum) {
-        String queryStr = getQuery(weekType, pairId, weekDay, pageSize, pageNum);
-        String queryCount = getQueryCount(weekType, pairId, weekDay);
+        initMap();
+        String queryStr = getQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay, pageSize, pageNum);
+        String queryCount = getQueryCount(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay);
         return getFilteredData(pageSize, pageNum, queryStr, queryCount);
     }
 
-    @GetMapping(value = "/determined")
-    public FilteredData getFilteredDataCount(@RequestParam(required = false) Long pairId,
-                                             @RequestParam(required = false) String date,
-                                             @RequestParam(required = false) Long pageSize,
-                                             @RequestParam(required = false) Long pageNum) {
-        String queryStr = getQuery(pairId, date, pageSize, pageNum);
-        String queryCount = getQueryCount(pairId, date);
-        return getFilteredData(pageSize, pageNum, queryStr, queryCount);
+    private void initMap() {
+        if (roomMap == null) {
+            roomMap = new HashMap<>();
+            for (Room room : roomDao.findAll()) {
+                roomMap.put(room.getId(), room);
+            }
+        }
     }
 
     private FilteredData getFilteredData(Long pageSize, Long pageNum, String queryStr, String queryCount) {
-        List<FilteredEvent> data = returnFilteredData(queryStr);
+        List<FilteredEvent> data = returnFilteredEvents(queryStr);
         Collections.reverse(data);
         FilteredData filteredData = new FilteredData();
         filteredData.setFilteredEventList(data);
@@ -56,7 +73,7 @@ public class FilterController {
         return filteredData;
     }
 
-    private List<FilteredEvent> returnFilteredData(String queryStr) {
+    private List<FilteredEvent> returnFilteredEvents(String queryStr) {
         return jdbcTemplate.query(queryStr, (rs, rowNum) -> {
             FilteredEvent filteredEvent = new FilteredEvent();
             filteredEvent.setDate(DateTimeHelper.dateToString(rs.getDate("date").toLocalDate()));
@@ -64,10 +81,21 @@ public class FilterController {
             filteredEvent.setGroupId(rs.getLong("engaged_by_id"));
             filteredEvent.setId(rs.getLong("id"));
             filteredEvent.setPairId(rs.getLong("pair_id"));
-            filteredEvent.setRoomId(rs.getLong("room_id"));
             filteredEvent.setWeekDay(rs.getLong("week_day"));
             filteredEvent.setWeekNum(rs.getLong("week_num"));
             filteredEvent.setWeekType(rs.getLong("week_type"));
+            Long roomId = rs.getLong("room_id");
+            Room room = roomMap.get(roomId);
+            if (room != null) {
+                filteredEvent.setRoomId(roomId);
+                filteredEvent.setCapacity(room.getCapacity());
+                filteredEvent.setRoomTypeId(room.getRoomType().getId());
+                Scheme scheme = room.getScheme();
+                if (scheme != null) {
+                    filteredEvent.setBuilding(scheme.getBuilding());
+                    filteredEvent.setFloor(scheme.getFloor());
+                }
+            }
             return filteredEvent;
         });
     }
@@ -78,32 +106,21 @@ public class FilterController {
                 queryCount, new Object[]{}, Long.class);
     }
 
-    private String getQuery(Long weekType,
+    private String getQuery(Long roomId,
+                            Long weekType,
                             Long pairId,
+                            Long weekNum,
+                            String date,
+                            Long building,
+                            Long floor,
+                            Long roomTypeId,
+                            Long roomCapacity,
                             Long weekDay,
                             Long pageSize,
                             Long pageNum) {
         StringBuilder query = new StringBuilder("select * from ");
-        query.append("schedule.all_data");
-
-        query.append(" where ");
-
-        if (weekType != null) {
-            query.append("week_type = ")
-                    .append(weekType)
-                    .append(" and ");
-        }
-        if (pairId != null) {
-            query.append("pair_id = ")
-                    .append(pairId)
-                    .append(" and ");
-        }
-        if (weekDay != null) {
-            query.append("week_day = ")
-                    .append(weekDay);
-        }
-        query.append(" and engaged_by_id is null")
-                .append(" order by date asc")
+        appendToQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay, query);
+        query.append(" order by date asc")
                 .append(" limit ")
                 .append(pageSize)
                 .append(" offset ")
@@ -116,48 +133,36 @@ public class FilterController {
         return queryStr;
     }
 
-    private String getQuery(Long pairId,
-                            String date,
-                            Long pageSize,
-                            Long pageNum) {
-        StringBuilder query = new StringBuilder("select * from ");
-        query.append("schedule.all_data");
-
-        query.append(" where ");
-
-        if (pairId != null) {
-            query.append("pair_id = ")
-                    .append(pairId)
-                    .append(" and ");
-        }
-        if (date != null) {
-            query.append("date = to_date('")
-                    .append(date)
-                    .append("', 'dd.MM.yyyy')");
-        }
-
-        query.append(" and engaged_by_id is null")
-                .append(" order by date asc")
-                .append(" limit ")
-                .append(pageSize)
-                .append(" offset ")
-                .append((pageNum - 1) * pageSize);
-        String queryStr = query.toString().trim()
-                .replaceAll(" +", " ")
-                .replaceAll("and and", "and")
-                .replaceAll("where and", "where");
-        log.info(queryStr);
-        return queryStr;
-    }
-
-    private String getQueryCount(Long weekType,
+    private String getQueryCount(Long roomId,
+                                 Long weekType,
                                  Long pairId,
+                                 Long weekNum,
+                                 String date,
+                                 Long building,
+                                 Long floor,
+                                 Long roomTypeId,
+                                 Long roomCapacity,
                                  Long weekDay) {
         StringBuilder query = new StringBuilder("select count(*) from ");
+        appendToQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay, query);
+        String queryStr = query.toString().trim()
+                .replaceAll(" +", " ")
+                .replaceAll("and and", "and")
+                .replaceAll("where and", "where");
+        log.info(queryStr);
+        return queryStr;
+    }
+
+    private void appendToQuery(Long roomId, Long weekType, Long pairId, Long weekNum, String date, Long building, Long floor, Long roomTypeId, Long roomCapacity, Long weekDay, StringBuilder query) {
         query.append("schedule.all_data");
 
         query.append(" where ");
 
+        if (roomId != null) {
+            query.append("room_id = ")
+                    .append(roomId)
+                    .append(" and ");
+        }
         if (weekType != null) {
             query.append("week_type = ")
                     .append(weekType)
@@ -168,43 +173,55 @@ public class FilterController {
                     .append(pairId)
                     .append(" and ");
         }
-        if (weekDay != null) {
-            query.append("week_day = ")
-                    .append(weekDay);
-        }
-        query.append(" and engaged_by_id is null");
-        String queryStr = query.toString().trim()
-                .replaceAll(" +", " ")
-                .replaceAll("and and", "and")
-                .replaceAll("where and", "where");
-        log.info(queryStr);
-        return queryStr;
-    }
-
-    private String getQueryCount(Long pairId,
-                                 String date) {
-        StringBuilder query = new StringBuilder("select count(*) from ");
-        query.append("schedule.all_data");
-
-        query.append(" where ");
-
-        if (pairId != null) {
-            query.append("pair_id = ")
-                    .append(pairId)
+        if (weekNum != null) {
+            query.append("week_num = ")
+                    .append(weekNum)
                     .append(" and ");
         }
         if (date != null) {
             query.append("date = to_date('")
                     .append(date)
-                    .append("', 'dd.MM.yyyy')");
+                    .append("', 'dd.MM.yyyy')")
+                    .append(" and ");
         }
 
+        if (roomTypeId != null || roomCapacity != null) {
+            query.append("room_id in (select room_id from locations.rooms where ");
+
+            if (roomTypeId != null) {
+                query.append("room_type_id = ")
+                        .append(roomTypeId)
+                        .append(" and ");
+            }
+            if (roomCapacity != null) {
+                query.append("capacity = ")
+                        .append(roomCapacity)
+                        .append(" and ");
+            }
+
+            if (building != null || floor != null) {
+                query.append("scheme_id in (select scheme_id from locations.schemes where ");
+
+                if (building != null) {
+                    query.append("building = ")
+                            .append(building)
+                            .append(" and ");
+                }
+                if (floor != null) {
+                    query.append("floor = ")
+                            .append(floor);
+                }
+                query.append(")) and ");
+            }
+            else {
+                query.append(") ");
+            }
+        }
+
+        if (weekDay != null) {
+            query.append("week_day = ")
+                    .append(weekDay);
+        }
         query.append(" and engaged_by_id is null");
-        String queryStr = query.toString().trim()
-                .replaceAll(" +", " ")
-                .replaceAll("and and", "and")
-                .replaceAll("where and", "where");
-        log.info(queryStr);
-        return queryStr;
     }
 }

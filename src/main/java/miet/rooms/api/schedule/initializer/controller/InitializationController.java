@@ -166,6 +166,13 @@ public class InitializationController {
         return schedule;
     }
 
+    @PostMapping(value = "/inside")
+    public void retrieveRoomsAndSchemes() throws IOException {
+        if(schedule == null) {
+            retrieveDataFromServer();
+        }
+    }
+
     private void initializeFirstCycle(List<Datum> datumList, LocalDate startDate, int maxCycleWeekNumber) {
         initializeFirstWeek(datumList, startDate);
         for (int weekType = 1; weekType < maxCycleWeekNumber; weekType++) {
