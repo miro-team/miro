@@ -2,7 +2,6 @@ package miet.rooms.api.schedule.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import miet.rooms.api.schedule.data.database.dao.RoomDao;
-import miet.rooms.api.schedule.data.database.dao.SchemeDao;
 import miet.rooms.api.schedule.data.database.entity.Room;
 import miet.rooms.api.schedule.data.database.entity.Scheme;
 import miet.rooms.api.schedule.data.frontdata.FilteredEvent;
@@ -10,6 +9,7 @@ import miet.rooms.api.schedule.data.frontdata.FilteredData;
 import miet.rooms.api.util.DateTimeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -29,9 +29,6 @@ public class FilterController {
     @Autowired
     private RoomDao roomDao;
 
-    @Autowired
-    private SchemeDao schemeDao;
-
     private Map<Long, Room> roomMap;
 
     @GetMapping(value = "/data")
@@ -45,8 +42,8 @@ public class FilterController {
                                         @RequestParam(required = false) Long roomTypeId,
                                         @RequestParam(required = false) Long roomCapacity,
                                         @RequestParam(required = false) Long weekDay,
-                                        @RequestParam(required = false) Long pageSize,
-                                        @RequestParam(required = false) Long pageNum) {
+                                        @RequestParam Long pageSize,
+                                        @RequestParam Long pageNum) {
         initMap();
         String queryStr = getQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay, pageSize, pageNum);
         String queryCount = getQueryCount(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay);
@@ -101,7 +98,6 @@ public class FilterController {
     }
 
     private Long getCount(String queryCount) {
-        log.info(queryCount);
         return jdbcTemplate.queryForObject(
                 queryCount, new Object[]{}, Long.class);
     }
@@ -125,10 +121,7 @@ public class FilterController {
                 .append(pageSize)
                 .append(" offset ")
                 .append((pageNum - 1) * pageSize);
-        String queryStr = query.toString().trim()
-                .replaceAll(" +", " ")
-                .replaceAll("and and", "and")
-                .replaceAll("where and", "where");
+        String queryStr = getQueryStr(query);
         log.info(queryStr);
         return queryStr;
     }
@@ -145,12 +138,17 @@ public class FilterController {
                                  Long weekDay) {
         StringBuilder query = new StringBuilder("select count(*) from ");
         appendToQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay, query);
-        String queryStr = query.toString().trim()
-                .replaceAll(" +", " ")
-                .replaceAll("and and", "and")
-                .replaceAll("where and", "where");
+        String queryStr = getQueryStr(query);
         log.info(queryStr);
         return queryStr;
+    }
+
+    private String getQueryStr(StringBuilder query) {
+        String queryStr = query.toString().trim()
+                .replaceAll(" +", " ")
+                .replaceAll("and and", "and");
+        return queryStr.replaceAll("and \\)", StringUtils.countOccurrencesOf(queryStr, "\\(") == 2 ? ")) " : ") ")
+                .replaceAll("where and", "where");
     }
 
     private void appendToQuery(Long roomId, Long weekType, Long pairId, Long weekNum, String date, Long building, Long floor, Long roomTypeId, Long roomCapacity, Long weekDay, StringBuilder query) {
@@ -178,6 +176,11 @@ public class FilterController {
                     .append(weekNum)
                     .append(" and ");
         }
+        if (weekDay != null) {
+            query.append("week_day = ")
+                    .append(weekDay)
+                    .append(" and ");
+        }
         if (date != null) {
             query.append("date = to_date('")
                     .append(date)
@@ -185,8 +188,8 @@ public class FilterController {
                     .append(" and ");
         }
 
-        if (roomTypeId != null || roomCapacity != null) {
-            query.append("room_id in (select room_id from locations.rooms where ");
+        if (roomTypeId != null || roomCapacity != null || building != null || floor != null) {
+            query.append("room_id in (select id from locations.rooms where ");
 
             if (roomTypeId != null) {
                 query.append("room_type_id = ")
@@ -200,7 +203,7 @@ public class FilterController {
             }
 
             if (building != null || floor != null) {
-                query.append("scheme_id in (select scheme_id from locations.schemes where ");
+                query.append("scheme_id in (select id from locations.schemes where ");
 
                 if (building != null) {
                     query.append("building = ")
@@ -212,15 +215,10 @@ public class FilterController {
                             .append(floor);
                 }
                 query.append(")) and ");
-            }
-            else {
+
+            } else {
                 query.append(") ");
             }
-        }
-
-        if (weekDay != null) {
-            query.append("week_day = ")
-                    .append(weekDay);
         }
         query.append(" and engaged_by_id is null");
     }
