@@ -40,13 +40,13 @@ public class FilterController {
                                         @RequestParam(required = false) Long building,
                                         @RequestParam(required = false) Long floor,
                                         @RequestParam(required = false) Long roomTypeId,
-                                        @RequestParam(required = false) Long roomCapacity,
+                                        @RequestParam(required = false) Long capacity,
                                         @RequestParam(required = false) Long weekDay,
                                         @RequestParam Long pageSize,
                                         @RequestParam Long pageNum) {
         initMap();
-        String queryStr = getQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay, pageSize, pageNum);
-        String queryCount = getQueryCount(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay);
+        String queryStr = getQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, capacity, weekDay, pageSize, pageNum);
+        String queryCount = getQueryCount(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, capacity, weekDay);
         return getFilteredData(pageSize, pageNum, queryStr, queryCount);
     }
 
@@ -110,12 +110,12 @@ public class FilterController {
                             Long building,
                             Long floor,
                             Long roomTypeId,
-                            Long roomCapacity,
+                            Long capacity,
                             Long weekDay,
                             Long pageSize,
                             Long pageNum) {
         StringBuilder query = new StringBuilder("select * from ");
-        appendToQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay, query);
+        appendToQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, capacity, weekDay, query);
         query.append(" order by date asc")
                 .append(" limit ")
                 .append(pageSize)
@@ -134,10 +134,10 @@ public class FilterController {
                                  Long building,
                                  Long floor,
                                  Long roomTypeId,
-                                 Long roomCapacity,
+                                 Long capacity,
                                  Long weekDay) {
         StringBuilder query = new StringBuilder("select count(*) from ");
-        appendToQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, roomCapacity, weekDay, query);
+        appendToQuery(roomId, weekType, pairId, weekNum, date, building, floor, roomTypeId, capacity, weekDay, query);
         String queryStr = getQueryStr(query);
         log.info(queryStr);
         return queryStr;
@@ -151,7 +151,7 @@ public class FilterController {
                 .replaceAll("where and", "where");
     }
 
-    private void appendToQuery(Long roomId, Long weekType, Long pairId, Long weekNum, String date, Long building, Long floor, Long roomTypeId, Long roomCapacity, Long weekDay, StringBuilder query) {
+    private void appendToQuery(Long roomId, Long weekType, Long pairId, Long weekNum, String date, Long building, Long floor, Long roomTypeId, Long capacity, Long weekDay, StringBuilder query) {
         query.append("schedule.all_data");
 
         query.append(" where ");
@@ -188,7 +188,7 @@ public class FilterController {
                     .append(" and ");
         }
 
-        if (roomTypeId != null || roomCapacity != null || building != null || floor != null) {
+        if (roomTypeId != null || capacity != null || building != null || floor != null) {
             query.append("room_id in (select id from locations.rooms where ");
 
             if (roomTypeId != null) {
@@ -196,9 +196,9 @@ public class FilterController {
                         .append(roomTypeId)
                         .append(" and ");
             }
-            if (roomCapacity != null) {
+            if (capacity != null) {
                 query.append("capacity = ")
-                        .append(roomCapacity)
+                        .append(capacity)
                         .append(" and ");
             }
 
