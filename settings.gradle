@@ -1,6 +1,0 @@
-rootProject.name = 'api'
-//systemProp.javax.net.ssl.trustStore=$JAVA_HOME//jre//lib//security//cacerts
-//systemProp.javax.net.ssl.trustStorePassword=changeit
-//systemProp.http.ssl.insecure=true
-//systemProp.http.ssl.allowall=true
-//systemProp.http.ssl.ignore.validity.dates=true
