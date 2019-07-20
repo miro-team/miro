@@ -1,30 +1,27 @@
-README.md
-.gradle
-/build/
-!gradle/wrapper/gradle-wrapper.jar
+# Please keep in mind:
+# - If you need to ignore files on your local machine only, please use .git/info/exclude instead .gitignore
+# - Project specified ignore rules must be located in project directory only
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
+# Eclipse project files
 .settings
+.classpath
+.project
+.metadata
+.mymetadata
 .springBeans
-.sts4-cache
+.gradle
 
-### IntelliJ IDEA ###
-/.idea/
-*.iws
+# IntelliJ Idea project files
+.idea
 *.iml
 *.ipr
-/out/
+*.iws
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Netbeans project files
+nbproject
 
-### VS Code ###
-.vscode/
+# Always ignore these directories/files
+target
+logs
+*.war
+*.jar
