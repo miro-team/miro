@@ -2,21 +2,19 @@ package miet.rooms.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 
-@org.springframework.context.annotation.Configuration
+@Configuration
 @ComponentScan(basePackages = {"miet.rooms.repository.*"})
-public class Configuration {
+public class WebConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
@@ -40,15 +38,4 @@ public class Configuration {
         return new ObjectMapper();
     }
 
-    @Bean(destroyMethod="")
-    @Primary
-    public DataSource dataSource() {
-        return DataSourceBuilder
-                .create()
-                .username("java")
-                .password("qwerty")
-                .url("jdbc:postgresql://62.109.25.2:2201/test")
-                .driverClassName("org.postgresql.Driver")
-                .build();
-    }
 }
