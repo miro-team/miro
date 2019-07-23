@@ -23,7 +23,7 @@
         <version>1.8</version>
         <executions>
           <execution>
-            <phase>verify</phase>
+            <phase>package</phase>
             <configuration>
               <target>
                 <apply executable="xcop" failonerror="true">
