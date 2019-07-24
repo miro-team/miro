@@ -43,6 +43,18 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgument>-Xlint:all</compilerArgument>
+          <compilerArgument>-Xlint:-processing</compilerArgument>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <failOnError>true</failOnError>
+          <failOnWarning>true</failOnWarning>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
