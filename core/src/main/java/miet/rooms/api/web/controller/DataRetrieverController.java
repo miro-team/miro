@@ -5,15 +5,12 @@ import miet.rooms.api.model.AllDataFront;
 import miet.rooms.api.model.Retriever;
 import miet.rooms.api.util.DateTimeHelper;
 import miet.rooms.repository.dao.AllDataDao;
-import miet.rooms.repository.dao.CycleDao;
-import miet.rooms.repository.dao.EngageDao;
 import miet.rooms.repository.dao.EngageTypeDao;
 import miet.rooms.repository.dao.GroupDao;
 import miet.rooms.repository.dao.PairDao;
 import miet.rooms.repository.dao.RoomDao;
 import miet.rooms.repository.dao.RoomTypeDao;
 import miet.rooms.repository.dao.SchemeDao;
-import miet.rooms.repository.dao.TransferDao;
 import miet.rooms.repository.entity.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,15 +46,6 @@ public class DataRetrieverController {
     private EngageTypeDao engageTypeDao;
 
     @Autowired
-    private TransferDao transferDao;
-
-    @Autowired
-    private CycleDao cycleDao;
-
-    @Autowired
-    private EngageDao engageDao;
-
-    @Autowired
     private Retriever retriever;
 
     @PostMapping("/get")
@@ -89,9 +77,6 @@ public class DataRetrieverController {
         retriever.setGroups(groupDao.findAll());
         retriever.setRoomTypes(roomTypeDao.findAll());
         retriever.setPairs(pairDao.findAll());
-//      retriever.setTransfers(transferDao.findAll());
-//      retriever.setCycles(cycleDao.findAll());
-//      retriever.setEngages(engageDao.findAll());
         retriever.setEngageTypes(engageTypeDao.findAll());
     }
 }

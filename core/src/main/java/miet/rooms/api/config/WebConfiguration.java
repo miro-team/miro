@@ -10,7 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @ComponentScan(basePackages = {"miet.rooms.repository.*"})
@@ -29,7 +29,7 @@ public class WebConfiguration {
     @Bean
     public HttpEntity<String> httpEntity() {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return new HttpEntity<>("parameters", httpHeaders);
     }
 

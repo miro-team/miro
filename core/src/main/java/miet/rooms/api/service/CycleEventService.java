@@ -4,7 +4,6 @@ import miet.rooms.api.model.CycleEventModel;
 import miet.rooms.repository.dao.CycleEventDao;
 import miet.rooms.repository.entity.CycleEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -12,11 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-//@ComponentScan(basePackages = {"miet.rooms.repository.dao.*"})
 public class CycleEventService {
 
+    private final CycleEventDao cycleEventDao;
+
     @Autowired
-    private CycleEventDao cycleEventDao;
+    public CycleEventService(CycleEventDao cycleEventDao) {
+        this.cycleEventDao = cycleEventDao;
+    }
 
     public Map<Long, String> findAll() {
         List<CycleEvent> cycleEventList = cycleEventDao.findAll();

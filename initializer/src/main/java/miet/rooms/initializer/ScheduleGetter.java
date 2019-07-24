@@ -3,7 +3,7 @@ package miet.rooms.initializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import miet.rooms.initializer.initdata.TimetableData;
+import miet.rooms.initializer.jsoninitdata.TimetableData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class ScheduleGetter {
+
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final HttpEntity<String> httpEntity;

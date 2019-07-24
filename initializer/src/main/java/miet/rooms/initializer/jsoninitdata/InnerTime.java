@@ -1,4 +1,4 @@
-package miet.rooms.initializer.initdata;
+package miet.rooms.initializer.jsoninitdata;
 
 import com.fasterxml.jackson.annotation.*;
 

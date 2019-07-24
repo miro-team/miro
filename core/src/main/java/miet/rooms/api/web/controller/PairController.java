@@ -3,17 +3,19 @@ package miet.rooms.api.web.controller;
 import miet.rooms.repository.dao.PairDao;
 import miet.rooms.repository.entity.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/pair")
-//@ComponentScan(basePackages = {"miet.rooms.repository.dao"})
 public class PairController {
 
+    private final PairDao pairDao;
+
     @Autowired
-    private PairDao pairDao;
+    public PairController(PairDao pairDao) {
+        this.pairDao = pairDao;
+    }
 
     @GetMapping
     public Pair getPairByName(@RequestParam String pairName) {

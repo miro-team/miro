@@ -1,4 +1,4 @@
-package miet.rooms.initializer.initdata;
+package miet.rooms.initializer.jsoninitdata;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -23,7 +23,7 @@ public class Time {
     @JsonProperty("TimeTo")
     private String timeTo;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("Time")
     public String getTime() {

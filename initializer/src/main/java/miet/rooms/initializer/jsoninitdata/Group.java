@@ -1,4 +1,4 @@
-package miet.rooms.initializer.initdata;
+package miet.rooms.initializer.jsoninitdata;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -10,22 +10,22 @@ import java.util.Map;
         "Code",
         "Name"
 })
-public class Room {
+public class Group {
 
     @JsonProperty("Code")
-    private long code;
+    private String code;
     @JsonProperty("Name")
     private String name;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("Code")
-    public long getCode() {
+    public String getCode() {
         return code;
     }
 
     @JsonProperty("Code")
-    public void setCode(long code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

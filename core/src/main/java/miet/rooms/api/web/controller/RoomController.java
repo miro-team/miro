@@ -4,7 +4,6 @@ import miet.rooms.api.model.RoomModel;
 import miet.rooms.api.service.RoomService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -12,11 +11,14 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 @RequestMapping("/room")
-//@ComponentScan(basePackages = {"miet.rooms.repository.dao"})
 public class RoomController {
 
+    private final RoomService roomService;
+
     @Autowired
-    private RoomService roomService;
+    public RoomController(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     @GetMapping("/by-id")
     public RoomModel getRoomByName(@RequestParam Long roomId) {

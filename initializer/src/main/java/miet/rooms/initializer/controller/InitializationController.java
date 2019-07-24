@@ -2,8 +2,8 @@ package miet.rooms.initializer.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import miet.rooms.initializer.ScheduleGetter;
-import miet.rooms.initializer.initdata.Datum;
-import miet.rooms.initializer.initdata.TimetableData;
+import miet.rooms.initializer.jsoninitdata.Datum;
+import miet.rooms.initializer.jsoninitdata.TimetableData;
 import miet.rooms.repository.dao.*;
 import miet.rooms.repository.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/initialize")
 @Slf4j
 public class InitializationController {
+
     @Autowired
     private ScheduleGetter scheduleGetter;
 

@@ -5,7 +5,6 @@ import miet.rooms.repository.dao.RoomDao;
 import miet.rooms.repository.entity.Room;
 import org.json.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -13,11 +12,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-//@ComponentScan(basePackages = {"miet.rooms.repository.dao.*"})
 public class RoomService {
 
+    private final RoomDao roomDao;
+
     @Autowired
-    private RoomDao roomDao;
+    public RoomService(RoomDao roomDao) {
+        this.roomDao = roomDao;
+    }
 
     public Map<Long, String> findAll() throws JSONException {
         Map<Long, String> rooms = new HashMap<>();

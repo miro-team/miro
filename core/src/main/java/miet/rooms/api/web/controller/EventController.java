@@ -6,7 +6,6 @@ import miet.rooms.api.util.DateTimeHelper;
 import miet.rooms.repository.dao.*;
 import miet.rooms.repository.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +16,6 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/event")
-//@ComponentScan(basePackages = {"miet.rooms.repository.dao"})
 public class EventController {
 
     @Autowired

@@ -4,7 +4,6 @@ import miet.rooms.api.service.CycleEventService;
 import miet.rooms.api.service.RoomService;
 import miet.rooms.api.service.WeekDayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,8 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 @RequestMapping("/mapping")
-//@ComponentScan(basePackages = {"miet.rooms.repository.dao"})
-public class MappingController {
+public class ConfigController {
+
     @Autowired
     private RoomService roomService;
 

@@ -8,7 +8,6 @@ import miet.rooms.repository.dao.RoomDao;
 import miet.rooms.repository.entity.Room;
 import miet.rooms.repository.entity.Scheme;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,6 @@ import java.util.Map;
 @CrossOrigin
 @Slf4j
 @RequestMapping("/filter")
-//@ComponentScan(basePackages = {"miet.rooms.repository.dao"})
 public class FilterController {
 
     @Autowired
