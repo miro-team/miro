@@ -16,5 +16,3 @@ env:
     - JAVA_OPTS="-Xmx256m"
 jdk:
   - openjdk8
-after_success:
-  - "bash <(curl -s https://codecov.io/bash)"
