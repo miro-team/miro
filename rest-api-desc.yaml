@@ -832,8 +832,6 @@ definitions:
       date:
         type: string
         format: date
-      engageType:
-        type: string
       floor:
         type: string
       id:
@@ -881,8 +879,6 @@ definitions:
       capacity:
         type: integer
         format: int64
-      engageType:
-        type: string
       floor:
         type: string
       id:
@@ -904,7 +900,7 @@ definitions:
     properties:
       id:
         type: string
-      data:
+      name:
         type: string
     title: group
   innerTime:
@@ -962,7 +958,7 @@ definitions:
       id:
         type: integer
         format: int64
-      data:
+      name:
         type: string
   weekDay:
     type: object
@@ -970,7 +966,7 @@ definitions:
       id:
         type: integer
         format: int64
-      data:
+      name:
         type: string
   pairMapped:
     type: object
@@ -978,7 +974,7 @@ definitions:
       id:
         type: integer
         format: int64
-      data:
+      name:
         type: string
   building:
     type: object
@@ -986,7 +982,7 @@ definitions:
       id:
         type: integer
         format: int64
-      data:
+      name:
         type: string
   modelAndView:
     type: object
@@ -1139,7 +1135,7 @@ definitions:
       id:
         type: integer
         format: int64
-      data:
+      name:
         type: string
     title: room
   roomModel:
@@ -1157,7 +1153,7 @@ definitions:
       id:
         type: integer
         format: int64
-      data:
+      name:
         type: string
     title: roomType
   scheme:
