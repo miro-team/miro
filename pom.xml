@@ -19,31 +19,6 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.8</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <configuration>
-              <target>
-                <apply executable="xcop" failonerror="true">
-                  <fileset dir=".">
-                    <include name="**/*.xml"/>
-                    <include name="**/*.xsd"/>
-                    <exclude name=".idea/**/*"/>
-                    <exclude name="target/**/*"/>
-                    <exclude name="*/target/**/*"/>
-                  </fileset>
-                </apply>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <compilerArgument>-Xlint:all</compilerArgument>

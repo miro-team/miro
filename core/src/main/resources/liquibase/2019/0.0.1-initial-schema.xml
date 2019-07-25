@@ -221,4 +221,46 @@
             on schedule.transfers (id)
         </sql>
   </changeSet>
+  <changeSet id="4" author="ew256">
+    <sql>
+            ALTER TABLE locations.schemes
+            ALTER COLUMN building TYPE integer
+        </sql>
+  </changeSet>
+  <changeSet id="5" author="ew256">
+    <sql>
+            create table time_desc.week_days
+            (
+            id integer not null,
+            week_day_name varchar(30)
+            )
+        </sql>
+    <sql>
+            create unique index week_days_id_uindex
+            on time_desc.week_days (id)
+        </sql>
+    <sql>
+            alter table time_desc.week_days
+            add constraint week_days_pk
+            primary key (id)
+        </sql>
+    <sql>
+            create table time_desc.week_types
+            (
+            id integer not null,
+            week_type_name varchar(30)
+            )
+        </sql>
+    <sql>
+            create unique index week_types_id_uindex
+            on time_desc.week_types (id)
+        </sql>
+    <sql>
+            alter table time_desc.week_types
+            add constraint week_types_pk
+            primary key (id)
+        </sql>
+    <sql>create sequence time_desc.week_days_week_day_id_seq</sql>
+    <sql>create sequence time_desc.week_types_week_type_id_seq</sql>
+  </changeSet>
 </databaseChangeLog>
