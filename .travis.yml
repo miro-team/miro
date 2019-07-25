@@ -5,11 +5,6 @@ cache:
     - $HOME/.m2
 script:
   - mvn clean install --errors --batch-mode
-before_install:
-  - rvm install 2.6.0
-  - rvm use 2.6.0
-install:
-  - gem install xcop -v 0.6
 env:
   global:
     - MAVEN_OPTS="-Xmx256m"
