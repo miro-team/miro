@@ -5,18 +5,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FilteredEvent {
+public class FilteredEventCycleWithId {
     private Long id;
-    private String date;
     private Long pairId;
-    private Long groupId;
-    private Long weekType;
+    private Long weekTypeId;
     private Long roomId;
-    private Long weekNum;
-    private Long engageTypeId;
     private Long weekDay;
     private Long roomTypeId;
     private Long capacity;
-    private Long building;
-    private Long floor;
+    private String building;
+    private String floor;
 }

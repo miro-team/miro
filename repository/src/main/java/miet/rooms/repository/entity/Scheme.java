@@ -10,8 +10,8 @@ public class Scheme {
     private Long id;
     private String name;
     private String fileName;
-    private Long floor;
-    private Long building;
+    private Long floor;//TODO: make it string
+    private String building;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "locations.schemes_scheme_id_seq")
@@ -52,11 +52,11 @@ public class Scheme {
     }
 
     @Column(name = "building", nullable = false)
-    public Long getBuilding() {
+    public String getBuilding() {
         return building;
     }
 
-    public void setBuilding(Long building) {
+    public void setBuilding(String building) {
         this.building = building;
     }
 }

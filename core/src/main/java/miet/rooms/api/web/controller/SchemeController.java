@@ -18,7 +18,7 @@ public class SchemeController {
     }
 
     @GetMapping
-    public Scheme getSchemeByName(@RequestParam Long floor, @RequestParam Long building) {
+    public Scheme getSchemeByName(@RequestParam Long floor, @RequestParam String building) {
         return schemeDao.findAllByFloorAndBuilding(floor, building);
     }
 }

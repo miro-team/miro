@@ -1,4 +1,4 @@
-package miet.rooms.initializer.controller;
+package miet.rooms.api.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import miet.rooms.initializer.ScheduleGetter;
@@ -72,7 +72,8 @@ public class InitializationController {
     private void initializeEmptySchedule(LocalDate startDate, Long weekAmount) {
         List<String> roomNames = scheduleGetter.getRooms();
         LocalDate realDay = startDate;
-        int maxWeekTypesAmount = cycleEventDao.findAll().size(); //TODO: rename table to weekType and use it as foreign key
+        int maxWeekTypesAmount = 4; //TODO: rename table to weekType and use it as foreign key
+//        int maxWeekTypesAmount = cycleEventDao.findAll().size(); //TODO: rename table to weekType and use it as foreign key
         int totalCycleNum = (int) (weekAmount / maxWeekTypesAmount);
         for (int cycleNum = 0; cycleNum < totalCycleNum; cycleNum++) {
             for (int weekType = 0; weekType < maxWeekTypesAmount; weekType++) {
@@ -106,15 +107,15 @@ public class InitializationController {
                     Scheme scheme = null;
                     switch (str) {
                         case "УВЦ":
-                            scheme = schemeDao.findAllByFloorAndBuilding(3L, 3L);
+                            scheme = schemeDao.findAllByFloorAndBuilding(3L, "3");
                             break;
                         case "5101":
-                            scheme = schemeDao.findAllByFloorAndBuilding(1L, 5L);
+                            scheme = schemeDao.findAllByFloorAndBuilding(1L, "5");
                             break;
                         default:
                             try {
                                 Long floor = Long.parseLong(String.valueOf(str.trim().charAt(1)));
-                                Long building = Long.parseLong(String.valueOf(str.trim().charAt(0)));
+                                String building = String.valueOf(str.trim().charAt(0));
                                 scheme = schemeDao.findAllByFloorAndBuilding(floor, building);
                             } catch (Exception ex) {
                                 log.error(ex.getMessage());

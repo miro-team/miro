@@ -15,7 +15,7 @@ public interface SchemeDao extends JpaRepository<Scheme, Long> {
     List<Scheme> findAllByFloor(@Param("floor") Long floor);
 
     @Query(value = "select scheme from Scheme scheme where scheme.building=:building and scheme.floor=:floor and scheme.name<>'УВЦ'")
-    Scheme findAllByFloorAndBuilding(@Param("floor") Long floor, @Param("building") Long building);
+    Scheme findAllByFloorAndBuilding(@Param("floor") Long floor, @Param("building") String building);
 
     Scheme findAllById(@Param("id") Long id);
 }

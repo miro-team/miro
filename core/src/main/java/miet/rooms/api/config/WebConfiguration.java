@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 
 @Configuration
-@ComponentScan(basePackages = {"miet.rooms.repository.*"})
+@ComponentScan({"miet.rooms.repository.*", "miet.rooms.initializer"})
 public class WebConfiguration {
 
     @Bean

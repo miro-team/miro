@@ -63,7 +63,7 @@ paths:
         '404':
           description: Not Found
       deprecated: false
-  /filter/data/cycle:
+  /filter/cycle:
     get:
       description: Get filtered list of free rooms
       tags:
@@ -145,7 +145,7 @@ paths:
         '404':
           description: Not Found
       deprecated: false
-  /filter/data/single:
+  /filter/single:
     get:
       description: Get filtered list of free rooms
       tags:
