@@ -2,7 +2,6 @@ package miet.rooms.repository.jdbc.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import miet.rooms.repository.entity.*;
 import miet.rooms.repository.jpa.entity.*;
 import org.springframework.stereotype.Component;
 

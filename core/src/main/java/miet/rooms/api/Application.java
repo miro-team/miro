@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = {"miet.rooms.repository.jpa.dao"})
-@EntityScan(basePackages = {"miet.rooms.repository.entity"})
+@EntityScan(basePackages = {"miet.rooms.repository.jpa.entity"})
 //@EnableAuthorizationServer
 //@EnableResourceServer
 public class Application {
