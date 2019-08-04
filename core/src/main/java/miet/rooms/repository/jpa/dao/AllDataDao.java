@@ -26,4 +26,6 @@ public interface AllDataDao extends JpaRepository<AllData, Long> {
     List<AllData> findAllByEngageType(EngageType engageTypeId);
 
     AllData findFirstByDate(@Param("date") LocalDate localDate);
+
+    AllData findFirstByOrOrderByDateAsc();
 }

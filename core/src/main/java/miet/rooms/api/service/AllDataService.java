@@ -10,11 +10,19 @@ import java.time.LocalDate;
 @Service
 public class AllDataService {
 
-    @Autowired
     private AllDataDao allDataDao;
+
+    @Autowired
+    public AllDataService(AllDataDao allDataDao) {
+        this.allDataDao = allDataDao;
+    }
 
     public Long determineCurrentWeek(LocalDate date) {
         AllData currentAllData = allDataDao.findFirstByDate(date);
         return currentAllData != null ? currentAllData.getWeekNum() : 1L;
+    }
+
+    public LocalDate getSemesterStartDate() {
+        return allDataDao.findFirstByOrOrderByDateAsc().getDate();
     }
 }

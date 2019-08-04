@@ -51,6 +51,8 @@ public class FilterQueryCycle {
     }
 
     private class QueryBuilderCycle {
+        private List<String> dates = new ArrayList<>();
+
         private QueryBuilderCycle appendSelects() {
             query = new StringBuilder();
             query.append("select array_agg(ad.id)                 as events,\n")
@@ -111,50 +113,36 @@ public class FilterQueryCycle {
             return this;
         }
 
-        //TODO:start date not now but date of semestr start
         private List<String> generateDates(Long weekType, Long weekDay, Long weekNum) {
-            List<String> dates = new ArrayList<>();
+            dates = new ArrayList<>();
             Long weeksToAdd = weekTypeService.getWeeksToAdd(weekType);
+            LocalDate startDate = weekNum == 1L ? allDataService.getSemesterStartDate() : LocalDate.now();
+
             if (weekDay == null) {
                 for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
-                    if (LocalDate.now().getDayOfWeek().getValue() < LocalDate.now().with(DayOfWeek.MONDAY).getDayOfWeek().getValue())
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.MONDAY).plusWeeks(week)));
-                    else
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.MONDAY).plusWeeks(1).plusWeeks(week)));
-                    if (LocalDate.now().getDayOfWeek().getValue() < LocalDate.now().with(DayOfWeek.TUESDAY).getDayOfWeek().getValue())
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.TUESDAY).plusWeeks(week)));
-                    else
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.TUESDAY).plusWeeks(1).plusWeeks(week)));
-                    if (LocalDate.now().getDayOfWeek().getValue() < LocalDate.now().with(DayOfWeek.WEDNESDAY).getDayOfWeek().getValue())
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.WEDNESDAY).plusWeeks(week)));
-                    else
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.WEDNESDAY).plusWeeks(1).plusWeeks(week)));
-                    if (LocalDate.now().getDayOfWeek().getValue() < LocalDate.now().with(DayOfWeek.THURSDAY).getDayOfWeek().getValue())
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.THURSDAY).plusWeeks(week)));
-                    else
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.THURSDAY).plusWeeks(1).plusWeeks(week)));
-                    if (LocalDate.now().getDayOfWeek().getValue() < LocalDate.now().with(DayOfWeek.FRIDAY).getDayOfWeek().getValue())
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.FRIDAY).plusWeeks(week)));
-                    else
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.FRIDAY).plusWeeks(1).plusWeeks(week)));
-                    if (LocalDate.now().getDayOfWeek().getValue() < LocalDate.now().with(DayOfWeek.SATURDAY).getDayOfWeek().getValue())
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.SATURDAY).plusWeeks(week)));
-                    else
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.SATURDAY).plusWeeks(1).plusWeeks(week)));
-                    if (LocalDate.now().getDayOfWeek().getValue() < LocalDate.now().with(DayOfWeek.SUNDAY).getDayOfWeek().getValue())
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.SUNDAY).plusWeeks(week)));
-                    else
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.SUNDAY).plusWeeks(1).plusWeeks(week)));
+                    addDate(weekNum, startDate, week, DayOfWeek.MONDAY);
+                    addDate(weekNum, startDate, week, DayOfWeek.TUESDAY);
+                    addDate(weekNum, startDate, week, DayOfWeek.WEDNESDAY);
+                    addDate(weekNum, startDate, week, DayOfWeek.THURSDAY);
+                    addDate(weekNum, startDate, week, DayOfWeek.FRIDAY);
+                    addDate(weekNum, startDate, week, DayOfWeek.SATURDAY);
+                    addDate(weekNum, startDate, week, DayOfWeek.SUNDAY);
                 }
             } else {
                 for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
-                    if (LocalDate.now().getDayOfWeek().getValue() < LocalDate.now().with(DayOfWeek.of(weekDay.intValue())).getDayOfWeek().getValue())
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.of(weekDay.intValue())).plusWeeks(week)));
-                    else
-                        dates.add(DateTimeHelper.dateToString(LocalDate.now().with(DayOfWeek.of(weekDay.intValue())).plusWeeks(1).plusWeeks(week)));
+                    addDate(weekNum, startDate, week, DayOfWeek.of(weekDay.intValue()));
                 }
             }
             return dates;
+        }
+
+        private void addDate(Long weekNum, LocalDate startDate, int week, DayOfWeek dayOfWeek) {
+            if (startDate.getDayOfWeek().getValue() < startDate.with(dayOfWeek).getDayOfWeek().getValue())
+                dates.add(DateTimeHelper.dateToString(startDate.with(dayOfWeek)));
+            else if (weekNum == 1L)
+                dates.add(DateTimeHelper.dateToString(startDate.with(dayOfWeek)));
+            else
+                dates.add(DateTimeHelper.dateToString(startDate.with(dayOfWeek).plusWeeks(week)));
         }
 
         private QueryBuilderCycle appendGroupBy() {
