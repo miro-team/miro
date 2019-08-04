@@ -1,8 +1,8 @@
 package miet.rooms.api.service;
 
-import miet.rooms.api.model.CycleEventModel;
-import miet.rooms.repository.dao.CycleEventDao;
-import miet.rooms.repository.entity.CycleEvent;
+import miet.rooms.repository.jdbc.model.CycleEventModel;
+import miet.rooms.repository.jpa.dao.CycleEventDao;
+import miet.rooms.repository.jpa.entity.CycleEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package miet.rooms.api.web.controller;
 
-import miet.rooms.repository.dao.PairDao;
-import miet.rooms.repository.entity.Pair;
+import miet.rooms.repository.jpa.dao.PairDao;
+import miet.rooms.repository.jpa.entity.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

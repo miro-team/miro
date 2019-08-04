@@ -17,14 +17,16 @@ import java.util.Map;
 @RequestMapping("/mapping")
 public class ConfigController {
 
-    @Autowired
     private RoomService roomService;
-
-    @Autowired
     private CycleEventService cycleEventService;
+    private WeekDayService weekDayService;
 
     @Autowired
-    private WeekDayService weekDayService;
+    public ConfigController(RoomService roomService, CycleEventService cycleEventService, WeekDayService weekDayService) {
+        this.roomService = roomService;
+        this.cycleEventService = cycleEventService;
+        this.weekDayService = weekDayService;
+    }
 
     @GetMapping
     public Map<String, Map<Long, String>> getMapping() {

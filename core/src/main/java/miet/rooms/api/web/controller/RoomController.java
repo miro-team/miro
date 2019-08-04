@@ -1,6 +1,6 @@
 package miet.rooms.api.web.controller;
 
-import miet.rooms.api.model.RoomModel;
+import miet.rooms.repository.jdbc.model.RoomModel;
 import miet.rooms.api.service.RoomService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;

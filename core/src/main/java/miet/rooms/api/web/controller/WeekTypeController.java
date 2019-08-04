@@ -1,6 +1,6 @@
 package miet.rooms.api.web.controller;
 
-import miet.rooms.api.model.CycleEventModel;
+import miet.rooms.repository.jdbc.model.CycleEventModel;
 import miet.rooms.api.service.CycleEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

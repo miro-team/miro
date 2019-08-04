@@ -1,8 +1,8 @@
 package miet.rooms.api.service;
 
-import miet.rooms.api.model.RoomModel;
-import miet.rooms.repository.dao.RoomDao;
-import miet.rooms.repository.entity.Room;
+import miet.rooms.repository.jdbc.model.RoomModel;
+import miet.rooms.repository.jpa.dao.RoomDao;
+import miet.rooms.repository.jpa.entity.Room;
 import org.json.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

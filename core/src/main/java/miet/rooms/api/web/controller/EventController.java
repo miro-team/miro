@@ -1,10 +1,10 @@
 package miet.rooms.api.web.controller;
 
-import miet.rooms.api.model.Event;
-import miet.rooms.api.model.TransferEvent;
+import miet.rooms.repository.jdbc.model.Event;
+import miet.rooms.repository.jdbc.model.TransferEvent;
 import miet.rooms.api.util.DateTimeHelper;
-import miet.rooms.repository.dao.*;
-import miet.rooms.repository.entity.*;
+import miet.rooms.repository.jpa.dao.*;
+import miet.rooms.repository.jpa.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;

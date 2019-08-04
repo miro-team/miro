@@ -804,7 +804,7 @@ definitions:
   filteredSingleData:
     type: object
     properties:
-      data:
+      events:
         type: array
         items:
           $ref: '#/definitions/filteredSingleEvent'
@@ -835,8 +835,10 @@ definitions:
       floor:
         type: string
       id:
-        type: integer
-        format: int64
+        type: array
+        items:
+          type: integer
+          format: int64
       pair:
         type: string
       room:
@@ -854,7 +856,7 @@ definitions:
   filteredCycleData:
     type: object
     properties:
-      data:
+      events:
         type: array
         items:
           $ref: '#/definitions/filteredCycleEvent'
@@ -882,8 +884,10 @@ definitions:
       floor:
         type: string
       id:
-        type: integer
-        format: int64
+        type: array
+        items:
+          type: integer
+          format: int64
       pair:
         type: string
       room:

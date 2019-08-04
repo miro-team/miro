@@ -1,17 +1,17 @@
 package miet.rooms.api.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import miet.rooms.api.model.AllDataFront;
-import miet.rooms.api.model.Retriever;
+import miet.rooms.repository.jdbc.model.AllDataFront;
+import miet.rooms.repository.jdbc.model.Retriever;
 import miet.rooms.api.util.DateTimeHelper;
-import miet.rooms.repository.dao.AllDataDao;
-import miet.rooms.repository.dao.EngageTypeDao;
-import miet.rooms.repository.dao.GroupDao;
-import miet.rooms.repository.dao.PairDao;
-import miet.rooms.repository.dao.RoomDao;
-import miet.rooms.repository.dao.RoomTypeDao;
-import miet.rooms.repository.dao.SchemeDao;
-import miet.rooms.repository.entity.Group;
+import miet.rooms.repository.jpa.dao.AllDataDao;
+import miet.rooms.repository.jpa.dao.EngageTypeDao;
+import miet.rooms.repository.jpa.dao.GroupDao;
+import miet.rooms.repository.jpa.dao.PairDao;
+import miet.rooms.repository.jpa.dao.RoomDao;
+import miet.rooms.repository.jpa.dao.RoomTypeDao;
+import miet.rooms.repository.jpa.dao.SchemeDao;
+import miet.rooms.repository.jpa.entity.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

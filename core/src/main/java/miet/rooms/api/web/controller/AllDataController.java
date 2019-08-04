@@ -1,9 +1,9 @@
 package miet.rooms.api.web.controller;
 
-import miet.rooms.repository.dao.AllDataDao;
-import miet.rooms.repository.dao.EngageTypeDao;
-import miet.rooms.repository.entity.AllData;
-import miet.rooms.repository.entity.EngageType;
+import miet.rooms.repository.jpa.dao.AllDataDao;
+import miet.rooms.repository.jpa.dao.EngageTypeDao;
+import miet.rooms.repository.jpa.entity.AllData;
+import miet.rooms.repository.jpa.entity.EngageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

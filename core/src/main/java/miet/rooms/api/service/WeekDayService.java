@@ -1,7 +1,7 @@
 package miet.rooms.api.service;
 
-import miet.rooms.repository.dao.WeekDayDao;
-import miet.rooms.repository.entity.WeekDay;
+import miet.rooms.repository.jpa.dao.WeekDayDao;
+import miet.rooms.repository.jpa.entity.WeekDay;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
