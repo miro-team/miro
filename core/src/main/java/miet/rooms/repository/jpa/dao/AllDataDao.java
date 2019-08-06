@@ -27,5 +27,9 @@ public interface AllDataDao extends JpaRepository<AllData, Long> {
 
     AllData findFirstByDate(@Param("date") LocalDate localDate);
 
-    AllData findFirstByOrOrderByDateAsc();
+    AllData findFirstByOrderByDateAsc();
+
+    AllData findFirstOrderByWeekNumDesc();
+
+    void deleteByWeekNum(@Param("week_num") Long weekNum);
 }

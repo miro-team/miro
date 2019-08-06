@@ -52,6 +52,7 @@ public class FilterQueryCycle {
 
     private class QueryBuilderCycle {
         private List<String> dates = new ArrayList<>();
+        private Long weekNum;
 
         private QueryBuilderCycle appendSelects() {
             query = new StringBuilder();
@@ -99,7 +100,7 @@ public class FilterQueryCycle {
             if (cycleIncome.getWeekDay() != null)
                 query.append("day.id = ").append(cycleIncome.getWeekDay()).append(" and ");
 
-            Long weekNum = allDataService.determineCurrentWeek(LocalDate.now());
+            weekNum = allDataService.determineCurrentWeek(LocalDate.now());
             List<String> dates = generateDates(cycleIncome.getWeekType(), cycleIncome.getWeekDay(), weekNum);
             query.append("ad.date in (");
             for (String d : dates) {
@@ -118,6 +119,7 @@ public class FilterQueryCycle {
             Long weeksToAdd = weekTypeService.getWeeksToAdd(weekType);
             LocalDate startDate = weekNum == 1L ? allDataService.getSemesterStartDate() : LocalDate.now();
 
+            //TODO: 18 in const
             if (weekDay == null) {
                 for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
                     addDate(weekNum, startDate, week, DayOfWeek.MONDAY);
@@ -150,10 +152,15 @@ public class FilterQueryCycle {
                     .append("         day.id,\n")
                     .append("         r.id,\n")
                     .append("         sh.id,\n")
-                    .append("         r_type.name\n");
-//                .append(" having array_length(array_agg(id), 1) = ")
-//                .append(amount)
+                    .append("         r_type.name\n")
+                    .append(" having array_length(array_agg(id), 1) = ")
+                    //TODO: check if it is right
+                    .append(getLastWeek() - weekNum + 1);
             return this;
+        }
+
+        private Long getLastWeek() {
+            return allDataService.getLastWeek();
         }
 
         private QueryBuilderCycle appendLimit(Long pageNum, Long pageSize) {

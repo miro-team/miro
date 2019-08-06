@@ -23,6 +23,14 @@ public class AllDataService {
     }
 
     public LocalDate getSemesterStartDate() {
-        return allDataDao.findFirstByOrOrderByDateAsc().getDate();
+        return allDataDao.findFirstByOrderByDateAsc().getDate();
+    }
+
+    public Long getLastWeek() {
+        return allDataDao.findFirstOrderByWeekNumDesc().getWeekNum();
+    }
+
+    public void removeByWeekNum(Long weekNum) {
+        allDataDao.deleteByWeekNum(weekNum);
     }
 }

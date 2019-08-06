@@ -1,6 +1,7 @@
 package miet.rooms.api.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import miet.rooms.api.service.AllDataService;
 import miet.rooms.initializer.ScheduleGetter;
 import miet.rooms.initializer.jsoninitdata.Datum;
 import miet.rooms.initializer.jsoninitdata.TimetableData;
@@ -51,6 +52,9 @@ public class InitializationController {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
+    private AllDataService allDataService;
+
+    @Autowired
     private CycleEventDao cycleEventDao;
 
     private List<TimetableData> schedule;
@@ -58,7 +62,8 @@ public class InitializationController {
     @PostMapping(value = "/all")
     public List<TimetableData> initializeAll(
             @RequestParam(value = "weekAmount") Long weekAmount,
-            @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate) throws IOException {
+            @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate,
+            @RequestParam(value = "weeksToDelete") Long weeksToDelete) throws IOException {
         jdbcTemplate.execute("truncate table schedule.all_data cascade ;" +
                 "truncate table locations.rooms cascade;" +
                 "truncate table data.edu_groups cascade ;");
@@ -66,7 +71,7 @@ public class InitializationController {
         initializeRooms();
         initializeGroups();
         initializeEmptySchedule(startDate, weekAmount);
-        return initializeSchedule(weekAmount, startDate);
+        return initializeSchedule(weekAmount, startDate, weeksToDelete);
     }
 
     private void initializeEmptySchedule(LocalDate startDate, Long weekAmount) {
@@ -142,7 +147,8 @@ public class InitializationController {
     public @ResponseBody
     List<TimetableData> initializeSchedule(
             @RequestParam(value = "weekAmount") Long weekAmount,
-            @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate
+            @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate,
+            @RequestParam(value = "weeksToDelete") Long weeksToDelete
     ) throws IOException {
         if(schedule == null) {
             retrieveDataFromServer();
@@ -165,7 +171,15 @@ public class InitializationController {
                 log.info("Added week number " + (weekNum + weekType + 1));
             }
         }
+        removeLastWeeks(weeksToDelete);
         return schedule;
+    }
+
+    private void removeLastWeeks(Long weeksToDelete) {
+        Long lastWeekNum = allDataService.getLastWeek();
+        for(int weeksDeleted = 0; weeksDeleted == weeksToDelete; weeksDeleted++) {
+            allDataService.removeByWeekNum(lastWeekNum - weeksDeleted);
+        }
     }
 
     @PostMapping(value = "/inside")
