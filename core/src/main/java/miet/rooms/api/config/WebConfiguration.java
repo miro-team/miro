@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
 @Configuration
-@ComponentScan({"miet.rooms.repository.*", "miet.rooms.initializer", "miet.rooms.security"})
+@ComponentScan({"miet.rooms.repository.*", "miet.rooms.initializer", "miet.rooms.security.config"})
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebConfiguration {
 
     @Bean

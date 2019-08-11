@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class AllDataService {
@@ -27,10 +28,14 @@ public class AllDataService {
     }
 
     public Long getLastWeek() {
-        return allDataDao.findFirstOrderByWeekNumDesc().getWeekNum();
+        return allDataDao.findFirstByOrderByWeekNumDesc().getWeekNum();
     }
 
     public void removeByWeekNum(Long weekNum) {
         allDataDao.deleteByWeekNum(weekNum);
+    }
+
+    public List<AllData> getAllByEngageTypeId(Long engageTypeId) {
+        return allDataDao.findAllByEngageType_Id(engageTypeId);
     }
 }

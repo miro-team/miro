@@ -10,7 +10,7 @@ public class Scheme {
     private Long id;
     private String name;
     private String fileName;
-    private Long floor;//TODO: make it string
+    private Long floor;
     private String building;
 
     @Id

@@ -1,24 +1,26 @@
 package miet.rooms.api.web.controller;
 
-import miet.rooms.repository.jpa.dao.SchemeDao;
+import miet.rooms.api.service.SchemeService;
 import miet.rooms.repository.jpa.entity.Scheme;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/scheme")
 public class SchemeController {
 
-    private final SchemeDao schemeDao;
+    private final SchemeService schemeService;
 
     @Autowired
-    public SchemeController(SchemeDao schemeDao) {
-        this.schemeDao = schemeDao;
+    public SchemeController(SchemeService schemeService) {
+        this.schemeService = schemeService;
     }
 
     @GetMapping
-    public Scheme getSchemeByName(@RequestParam Long floor, @RequestParam String building) {
-        return schemeDao.findAllByFloorAndBuilding(floor, building);
+    public Scheme getSchemeByFloorAndBuilding(@RequestParam Long floor, @RequestParam String building) {
+        return schemeService.getSchemeByName(floor, building);
     }
 }

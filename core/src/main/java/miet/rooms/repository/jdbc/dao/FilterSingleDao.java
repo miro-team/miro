@@ -1,16 +1,16 @@
 package miet.rooms.repository.jdbc.dao;
 
+import miet.rooms.api.util.DateTimeHelper;
 import miet.rooms.repository.jdbc.model.FilteredDataSingle;
 import miet.rooms.repository.jdbc.model.FilteredEventSingle;
-import miet.rooms.api.util.DateTimeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
 
-@Component
+@Repository
 public class FilterSingleDao {
 
     private JdbcTemplate jdbcTemplate;

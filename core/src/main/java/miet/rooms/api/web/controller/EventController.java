@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/event")
 public class EventController {
 

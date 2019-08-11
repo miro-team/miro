@@ -5,12 +5,12 @@ import miet.rooms.repository.jdbc.model.FilteredDataCycle;
 import miet.rooms.repository.jdbc.model.FilteredEventCycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
 
-@Component
+@Repository
 public class FilterCycleDao {
 
     private JdbcTemplate jdbcTemplate;
@@ -37,19 +37,17 @@ public class FilterCycleDao {
     //TODO:make not null to avoid unnessesary checks
     private List<FilteredEventCycle> getFilteredEventsCycle(String queryStr, Long weekType) {
         String weekTypeName = weekTypeService.getWeekTypeName(weekType);
-        return jdbcTemplate.query(queryStr, (rs, rowNum) -> {
-            return FilteredEventCycle.builder()
-                    .events((Integer[]) rs.getArray("events").getArray())
-                    .pair(rs.getString("pair_info"))
-                    .weekDay(rs.getString("week_day_name"))
-                    .weekType(weekTypeName)
-                    .room(rs.getString("room_name"))
-                    .capacity(rs.getLong("capacity"))
-                    .roomType(rs.getString("room_type_name"))
-                    .building(rs.getString("building_name"))
-                    .floor(String.valueOf(rs.getLong("floor")))
-                    .build();
-        });
+        return jdbcTemplate.query(queryStr, (rs, rowNum) -> FilteredEventCycle.builder()
+                .events((Integer[]) rs.getArray("events").getArray())
+                .pair(rs.getString("pair_info"))
+                .weekDay(rs.getString("week_day_name"))
+                .weekType(weekTypeName)
+                .room(rs.getString("room_name"))
+                .capacity(rs.getLong("capacity"))
+                .roomType(rs.getString("room_type_name"))
+                .building(rs.getString("building_name"))
+                .floor(String.valueOf(rs.getLong("floor")))
+                .build());
     }
 
     private Long getCount(String queryCount) {

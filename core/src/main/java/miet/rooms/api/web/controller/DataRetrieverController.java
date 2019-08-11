@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/retriever")
 @Slf4j
 public class DataRetrieverController {
@@ -56,7 +55,7 @@ public class DataRetrieverController {
     @GetMapping("/initialize")
     public void initialize() {
         List<AllDataFront> allDataFronts = allDataDao.findAll().stream()
-                                                     .map(r -> {
+                .map(r -> {
                     AllDataFront allDataFront = new AllDataFront();
                     allDataFront.setDate(DateTimeHelper.dateToString(r.getDate()));
                     allDataFront.setEngageTypeId(r.getEngageType().getEngageTypeId());
@@ -70,7 +69,7 @@ public class DataRetrieverController {
                     allDataFront.setWeekType(r.getWeekType());
                     return allDataFront;
                 })
-                                                     .collect(Collectors.toList());
+                .collect(Collectors.toList());
         retriever.setAllDataList(allDataFronts);
         retriever.setRooms(roomDao.findAll());
         retriever.setSchemes(schemeDao.findAll());

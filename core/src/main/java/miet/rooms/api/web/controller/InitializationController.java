@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/initialize")
 @Slf4j
 public class InitializationController {

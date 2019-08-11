@@ -1,5 +1,6 @@
 package miet.rooms.api.web.controller;
 
+import miet.rooms.api.service.AllDataService;
 import miet.rooms.repository.jpa.dao.AllDataDao;
 import miet.rooms.repository.jpa.dao.EngageTypeDao;
 import miet.rooms.repository.jpa.entity.AllData;
@@ -10,23 +11,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/all-data")
 public class AllDataController {
 
-    private final AllDataDao allDataDao;
-
-    private final EngageTypeDao engageTypeDao;
+    private final AllDataService allDataService;
 
     @Autowired
-    public AllDataController(AllDataDao allDataDao, EngageTypeDao engageTypeDao) {
-        this.allDataDao = allDataDao;
-        this.engageTypeDao = engageTypeDao;
+    public AllDataController(AllDataService allDataService) {
+        this.allDataService = allDataService;
     }
 
     @GetMapping("by-engage-type")
     public List<AllData> getAllByEngageType(@RequestParam Long engageTypeId) {
-        EngageType engageType = engageTypeDao.findAllByEngageTypeId(engageTypeId);
-        return allDataDao.findAllByEngageType(engageType);
+        return allDataService.getAllByEngageTypeId(engageTypeId);
     }
 }

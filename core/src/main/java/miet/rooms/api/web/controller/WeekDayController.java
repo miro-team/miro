@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/week-day")
 public class WeekDayController {
 

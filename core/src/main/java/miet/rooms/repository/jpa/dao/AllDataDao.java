@@ -29,7 +29,9 @@ public interface AllDataDao extends JpaRepository<AllData, Long> {
 
     AllData findFirstByOrderByDateAsc();
 
-    AllData findFirstOrderByWeekNumDesc();
+    AllData findFirstByOrderByWeekNumDesc();
 
     void deleteByWeekNum(@Param("week_num") Long weekNum);
+
+    List<AllData> findAllByEngageType_Id(@Param("engage_type_id") Long engageTypeId);
 }
