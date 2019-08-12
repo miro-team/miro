@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/retriever")
+@RequestMapping("/api/retriever")
 @Slf4j
 public class DataRetrieverController {
 

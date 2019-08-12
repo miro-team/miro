@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 
 @Configuration
-@ComponentScan({"miet.rooms.repository.*", "miet.rooms.initializer", "miet.rooms.security.config"})
+@ComponentScan({"miet.rooms.repository.*", "miet.rooms.initializer", "miet.rooms.security"})
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebConfiguration {
 

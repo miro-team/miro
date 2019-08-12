@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/mapping")
+@RequestMapping("/api/mapping")
 public class ConfigController {
 
     private RoomService roomService;

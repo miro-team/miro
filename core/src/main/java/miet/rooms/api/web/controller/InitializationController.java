@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/initialize")
+@RequestMapping("/api/initialize")
 @Slf4j
 public class InitializationController {
 

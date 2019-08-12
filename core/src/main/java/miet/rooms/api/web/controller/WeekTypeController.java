@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/week-type")
+@RequestMapping("/api/week-type")
 public class WeekTypeController {
 
     private final CycleEventService cycleEventService;

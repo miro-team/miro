@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/pair")
+@RequestMapping("/api/pair")
 public class PairController {
 
     private final PairService pairService;
