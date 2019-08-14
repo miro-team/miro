@@ -1,6 +1,11 @@
-package miet.rooms.security;
+package miet.rooms.security.web.controller;
 
-import org.springframework.beans.factory.annotation.Value;
+import miet.rooms.security.web.exception.AuthenticationException;
+import miet.rooms.security.util.JwtTokenUtil;
+import miet.rooms.security.service.JdbcUserDetailsService;
+import miet.rooms.security.service.TokenService;
+import miet.rooms.security.web.request.Credentials;
+import miet.rooms.security.web.response.JwtTokenResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,50 +13,44 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
-public class JwtAuthenticationRestController {
-
-    @Value("${jwt.http.request.header}")
-    private String tokenHeader;
+public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-
     private final JwtTokenUtil jwtTokenUtil;
+    private final JdbcUserDetailsService userDetailsService;
+    private final TokenService tokenService;
 
-    private final UserDetailsService jwtInMemoryUserDetailsService;
-
-    public JwtAuthenticationRestController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JdbcUserDetailsService userDetailsService, TokenService tokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
+        this.userDetailsService = userDetailsService;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest)
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody Credentials credentials)
             throws AuthenticationException {
 
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        authenticate(credentials.getUsername(), credentials.getPassword());
 
-        final UserDetails userDetails = jwtInMemoryUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getUsername());
 
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        String token = jwtTokenUtil.generateToken(userDetails);
+
+        tokenService.saveToken(token, credentials);
 
         return ResponseEntity.ok(new JwtTokenResponse(token));
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
-        String authToken = request.getHeader(tokenHeader);
-        final String token = authToken.substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUserDetails user = (JwtUserDetails) jwtInMemoryUserDetailsService.loadUserByUsername(username);
+    public ResponseEntity<?> refreshAndGetAuthenticationToken(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "").trim();
 
         if (jwtTokenUtil.canTokenBeRefreshed(token)) {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
@@ -59,6 +58,13 @@ public class JwtAuthenticationRestController {
         } else {
             return ResponseEntity.badRequest().body(null);
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "").trim();
+        tokenService.removeToken(token);
+        return ResponseEntity.ok("");
     }
 
     @ExceptionHandler({AuthenticationException.class})

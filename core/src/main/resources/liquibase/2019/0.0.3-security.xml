@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="ew256">
+        <sql>
+            create schema security;
+
+            create table security.users
+            (
+            id serial,
+            username varchar not null,
+            password varchar not null
+            );
+
+            create unique index users_id_uindex
+            on security.users (id);
+
+            create unique index users_username_uindex
+            on security.users (username);
+
+            alter table security.users
+            add constraint users_pk
+            primary key (id);
+
+            create table security.tokens
+            (
+            id serial,
+            token varchar not null,
+            user_id integer not null
+            constraint tokens_users_id_fk
+            references security.users
+            );
+
+            create unique index tokens_id_uindex
+            on security.tokens (id);
+
+            alter table security.tokens
+            add constraint tokens_pk
+            primary key (id);
+        </sql>
+        <rollback>
+            drop schema security cascade;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

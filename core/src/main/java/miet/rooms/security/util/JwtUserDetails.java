@@ -1,4 +1,4 @@
-package miet.rooms.security;
+package miet.rooms.security.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,8 +10,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class JwtUserDetails implements UserDetails {
-
-    private static final long serialVersionUID = 5155720064139820502L;
 
     private final Long id;
     private final String username;

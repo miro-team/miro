@@ -1,13 +1,13 @@
-package miet.rooms.security;
+package miet.rooms.security.web.filter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import miet.rooms.security.util.JwtTokenUtil;
+import miet.rooms.security.service.JdbcUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,16 +20,18 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFilter {
+public class JwtTokenRequestFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private UserDetailsService jwtInMemoryUserDetailsService;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private final JdbcUserDetailsService userDetailsService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Value("${jwt.http.request.header}")
     private String tokenHeader;
+
+    public JwtTokenRequestFilter(JdbcUserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
+        this.userDetailsService = userDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -55,7 +57,7 @@ public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFil
         log.debug("JWT_TOKEN_USERNAME_VALUE '{}'", username);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.jwtInMemoryUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
