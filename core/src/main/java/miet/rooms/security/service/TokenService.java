@@ -23,7 +23,7 @@ public class TokenService {
         Token token = new Token();
         token.setToken(jwtToken);
 
-        User user = userDao.findAllByUsername(credentials.getUsername());
+        User user = userDao.findAllByUserLogin(credentials.getUsername());
         token.setUser(user);
 
         tokenDao.save(token);

@@ -3,4 +3,5 @@
   <include file="liquibase/2019/0.0.1-initial-schema.xml"/>
   <include file="liquibase/2019/0.0.2-permanent-data.xml"/>
   <include file="liquibase/2019/0.0.3-security.xml"/>
+  <include file="liquibase/2019/0.0.4-update-user.xml"/>
 </databaseChangeLog>

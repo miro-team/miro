@@ -17,7 +17,6 @@ import java.util.List;
 @Slf4j
 public class FilterQueryCycle {
 
-    private StringBuilder query;
     private AllDataService allDataService;
     private WeekTypeService weekTypeService;
 
@@ -44,13 +43,13 @@ public class FilterQueryCycle {
                 .appendSelectCount()
                 .appendFrom()
                 .appendParameters(cycleIncome)
-                .appendGroupBy()
                 .build();
         log.info(queryStr);
         return queryStr;
     }
 
     private class QueryBuilderCycle {
+        private StringBuilder query;
         private List<String> dates = new ArrayList<>();
         private Long weekNum;
 
@@ -58,7 +57,8 @@ public class FilterQueryCycle {
             query = new StringBuilder();
             query.append("select array_agg(ad.id)                 as events,\n")
                     .append("       day.week_day_name,\n")
-                    .append("       concat(pairs.name, ': ', pairs.time_from, '-', pairs.time_to)                       as pair_info,\n")
+                    .append("       pairs.name as pair_info,\n")
+//                    .append("       concat(pairs.name, ': ', pairs.time_from, '-', pairs.time_to)                       as pair_info,\n")
                     .append("       r.id,\n")
                     .append("       r.name                           as room_name,\n")
                     .append("       r.capacity,\n")
@@ -79,6 +79,7 @@ public class FilterQueryCycle {
         }
 
         private QueryBuilderCycle appendSelectCount() {
+            query = new StringBuilder();
             query.append("select count(*)\n");
             return this;
         }
@@ -108,6 +109,7 @@ public class FilterQueryCycle {
                         .append(d)
                         .append("', 'dd.MM.yyyy'),\n");
             }
+            query.deleteCharAt(query.lastIndexOf(","));
             query.append(") ");
 
             query.append(" and ad.engaged_by_id is null\n");
@@ -153,7 +155,7 @@ public class FilterQueryCycle {
                     .append("         r.id,\n")
                     .append("         sh.id,\n")
                     .append("         r_type.name\n")
-                    .append(" having array_length(array_agg(id), 1) = ")
+                    .append(" having array_length(array_agg(ad.id), 1) = ")
                     //TODO: check if it is right
                     .append(getLastWeek() - weekNum + 1);
             return this;

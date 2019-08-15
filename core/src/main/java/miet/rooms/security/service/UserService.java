@@ -2,6 +2,7 @@ package miet.rooms.security.service;
 
 import miet.rooms.security.jpa.dao.TokenDao;
 import miet.rooms.security.jpa.dao.UserDao;
+import miet.rooms.security.jpa.entity.Token;
 import miet.rooms.security.jpa.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,11 @@ public class UserService {
     }
 
     public User getUserByToken(String token) {
-        return tokenDao.findAllByToken(token).getUser();
+        Token tokenObj = tokenDao.findAllByToken(token);
+        return tokenObj != null ? tokenObj.getUser() : null;
     }
 
     public User getUserByUsername(String username) {
-        return userDao.findAllByUsername(username);
+        return userDao.findAllByUserLogin(username);
     }
 }

@@ -1,5 +1,6 @@
 package miet.rooms.repository.jdbc.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class FilteredEventSingle {
+    @JsonProperty("id")
     private Integer[] events;
     private String date;
     private String pair;

@@ -9,8 +9,6 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class FilterQuerySingle {
 
-    private StringBuilder query;
-
     String getQuerySingleData(FilterSingleIncome singleIncome, Long pageNum, Long pageSize) {
         String queryStr = new QueryBuilderSingle()
                 .appendSelects()
@@ -28,13 +26,14 @@ public class FilterQuerySingle {
                 .appendSelectCount()
                 .appendFrom()
                 .appendParameters(singleIncome)
-                .appendGroupBy()
                 .build();
         log.info(queryStr);
         return queryStr;
     }
 
-    private class QueryBuilderSingle {
+    private static class QueryBuilderSingle {
+        private StringBuilder query;
+
         private QueryBuilderSingle appendSelects() {
             query = new StringBuilder();
             query.append("select array_agg(ad.id)                                              as events,\n")
@@ -42,7 +41,8 @@ public class FilterQuerySingle {
                     .append("       ad.week_num,\n")
                     .append("       day.week_day_name,\n")
                     .append("       wt.week_type_name,\n")
-                    .append("       concat(pairs.name, ': ', pairs.time_from, '-', pairs.time_to) as pair_info,\n")
+                    .append("       pairs.name as pair_info,\n")
+//                    .append("       concat(pairs.name, ': ', pairs.time_from, '-', pairs.time_to) as pair_info,\n")
                     .append("       r.id,\n")
                     .append("       r.name                                                        as room_name,\n")
                     .append("       r.capacity,\n")
@@ -53,6 +53,7 @@ public class FilterQuerySingle {
         }
 
         private QueryBuilderSingle appendSelectCount() {
+            query = new StringBuilder();
             query.append("select count(*)\n");
             return this;
         }

@@ -4,6 +4,7 @@ import miet.rooms.api.service.WeekTypeService;
 import miet.rooms.repository.jdbc.model.FilteredDataCycle;
 import miet.rooms.repository.jdbc.model.FilteredEventCycle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -51,7 +52,10 @@ public class FilterCycleDao {
     }
 
     private Long getCount(String queryCount) {
-        return jdbcTemplate.queryForObject(
-                queryCount, new Object[]{}, Long.class);
+        try {
+            return jdbcTemplate.queryForObject(queryCount, Long.class);
+        } catch (EmptyResultDataAccessException ex) {
+            return 0L;
+        }
     }
 }
