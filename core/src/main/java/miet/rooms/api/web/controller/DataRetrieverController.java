@@ -52,30 +52,30 @@ public class DataRetrieverController {
         return retriever;
     }
 
-    @GetMapping("/initialize")
-    public void initialize() {
-        List<AllDataFront> allDataFronts = allDataDao.findAll().stream()
-                .map(r -> {
-                    AllDataFront allDataFront = new AllDataFront();
-                    allDataFront.setDate(DateTimeHelper.dateToString(r.getDate()));
-                    allDataFront.setEngageTypeId(r.getEngageType().getEngageTypeId());
-                    Group group = r.getGroup();
-                    allDataFront.setGroupId(group != null ? group.getId() : -1L);
-                    allDataFront.setId(r.getId());
-                    allDataFront.setPairId(r.getPair().getId());
-                    allDataFront.setRoomId(r.getRoom().getId());
-                    allDataFront.setWeekDay(r.getWeekDay());
-                    allDataFront.setWeekNum(r.getWeekNum());
-                    allDataFront.setWeekType(r.getWeekType());
-                    return allDataFront;
-                })
-                .collect(Collectors.toList());
-        retriever.setAllDataList(allDataFronts);
-        retriever.setRooms(roomDao.findAll());
-        retriever.setSchemes(schemeDao.findAll());
-        retriever.setGroups(groupDao.findAll());
-        retriever.setRoomTypes(roomTypeDao.findAll());
-        retriever.setPairs(pairDao.findAll());
-        retriever.setEngageTypes(engageTypeDao.findAll());
-    }
+//    @GetMapping("/initialize")
+//    public void initialize() {
+//        List<AllDataFront> allDataFronts = allDataDao.findAll().stream()
+//                .map(r -> {
+//                    AllDataFront allDataFront = new AllDataFront();
+//                    allDataFront.setDate(DateTimeHelper.dateToString(r.getDate()));
+//                    allDataFront.setEngageTypeId(r.getEngageType().getEngageTypeId());
+//                    Group group = r.getGroup();
+//                    allDataFront.setGroupId(group != null ? group.getId() : -1L);
+//                    allDataFront.setId(r.getId());
+//                    allDataFront.setPairId(r.getPair().getId());
+//                    allDataFront.setRoomId(r.getRoom().getId());
+//                    allDataFront.setWeekDay(r.getWeekDay());
+//                    allDataFront.setWeekNum(r.getWeekNum());
+//                    allDataFront.setWeekType(r.getWeekType());
+//                    return allDataFront;
+//                })
+//                .collect(Collectors.toList());
+//        retriever.setAllDataList(allDataFronts);
+//        retriever.setRooms(roomDao.findAll());
+//        retriever.setSchemes(schemeDao.findAll());
+//        retriever.setGroups(groupDao.findAll());
+//        retriever.setRoomTypes(roomTypeDao.findAll());
+//        retriever.setPairs(pairDao.findAll());
+//        retriever.setEngageTypes(engageTypeDao.findAll());
+//    }
 }

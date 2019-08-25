@@ -1,21 +1,32 @@
 package miet.rooms.api.util;
 
 import lombok.extern.slf4j.Slf4j;
+import miet.rooms.api.service.PeriodicityService;
 import miet.rooms.api.web.income.FilterSingleIncome;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class FilterQuerySingle {
 
-    String getQuerySingleData(FilterSingleIncome singleIncome, Long pageNum, Long pageSize) {
+    private final PeriodicityService periodicityService;
+
+    @Autowired
+    public FilterQuerySingle(PeriodicityService periodicityService) {
+        this.periodicityService = periodicityService;
+    }
+
+    String getQuerySingleData(FilterSingleIncome singleIncome, Long pageSize, Long pageNum) {
         String queryStr = new QueryBuilderSingle()
                 .appendSelects()
                 .appendFrom()
                 .appendParameters(singleIncome)
-                .appendGroupBy()
-                .appendLimit(pageNum, pageSize)
+                .appendOrderBy()
+                .appendLimit(pageSize, pageNum)
                 .build();
         log.info(queryStr);
         return queryStr;
@@ -31,13 +42,14 @@ public class FilterQuerySingle {
         return queryStr;
     }
 
-    private static class QueryBuilderSingle {
+    private class QueryBuilderSingle {
         private StringBuilder query;
 
         private QueryBuilderSingle appendSelects() {
             query = new StringBuilder();
-            query.append("select array_agg(ad.id)                                              as events,\n")
-                    .append("       ad.date,\n")
+            query.append("select    array[ad.id]                                              as events,\n")
+                    .append("       array[ad.date]                                            as dates,\n")
+//                    .append("       ad.date,\n")
                     .append("       ad.week_num,\n")
                     .append("       day.week_day_name,\n")
                     .append("       wt.week_type_name,\n")
@@ -72,15 +84,12 @@ public class FilterQuerySingle {
         private QueryBuilderSingle appendParameters(FilterSingleIncome singleIncome) {
             query.append(" where ")
                     .append("date = to_date('").append(singleIncome.getDate()).append("', 'dd.MM.yyyy') and ");
-
-            if (singleIncome.getWeekType() != null)
-                query.append("ad.week_type = ").append(singleIncome.getWeekType()).append(" and ");
             if (singleIncome.getWeekNum() != null)
                 query.append("ad.week_num = ").append(singleIncome.getWeekNum()).append(" and ");
             if (singleIncome.getBuilding() != null)
-                query.append("sh.building = ").append(singleIncome.getBuilding()).append(" and ");
+                query.append("sh.building = \'").append(singleIncome.getBuilding()).append("\' and ");
             if (singleIncome.getFloor() != null)
-                query.append("sh.floor = ").append(singleIncome.getFloor());
+                query.append("sh.floor = ").append(singleIncome.getFloor()).append(" and ");
             if (singleIncome.getRoomTypeId() != null)
                 query.append("r_type.id = ").append(singleIncome.getRoomTypeId()).append(" and ");
             if (singleIncome.getRoomId() != null)
@@ -91,28 +100,20 @@ public class FilterQuerySingle {
                 query.append("pairs.id = ").append(singleIncome.getPairId()).append(" and ");
             if (singleIncome.getWeekDay() != null)
                 query.append("day.id = ").append(singleIncome.getWeekDay()).append(" and ");
-            query.append(" and ad.engaged_by_id is null\n");
+            query.append(" and ad.engaged_by_id is null and is_engaged=false\n");
             return this;
         }
 
-        private QueryBuilderSingle appendGroupBy() {
-            query.append("group by pairs.id,\n")
-                    .append("         day.id,\n")
-                    .append("         r.id,\n")
-                    .append("         sh.id,\n")
-                    .append("         r_type.name,\n")
-                    .append("         ad.date,\n")
-                    .append("         ad.week_num,\n")
-                    .append("         wt.week_type_name\n")
-                    .append(" order by ad.date asc");
+        private QueryBuilderSingle appendOrderBy() {
+            query.append(" order by ad.date asc");
             return this;
         }
 
-        private QueryBuilderSingle appendLimit(Long pageNum, Long pageSize) {
+        private QueryBuilderSingle appendLimit(Long pageSize, Long pageNum) {
             query.append(" limit ")
                     .append(pageSize)
                     .append(" offset ")
-                    .append((pageNum - 1) * pageSize);
+                    .append(pageNum);
             return this;
         }
 

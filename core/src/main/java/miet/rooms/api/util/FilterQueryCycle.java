@@ -2,8 +2,10 @@ package miet.rooms.api.util;
 
 import lombok.extern.slf4j.Slf4j;
 import miet.rooms.api.service.AllDataService;
+import miet.rooms.api.service.PeriodicityService;
 import miet.rooms.api.service.WeekTypeService;
 import miet.rooms.api.web.income.FilterCycleIncome;
+import miet.rooms.repository.jpa.entity.WeekType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -12,18 +14,21 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class FilterQueryCycle {
 
-    private AllDataService allDataService;
-    private WeekTypeService weekTypeService;
+    private final AllDataService allDataService;
+    private final WeekTypeService weekTypeService;
+    private final PeriodicityService periodicityService;
 
     @Autowired
-    public FilterQueryCycle(AllDataService allDataService, WeekTypeService weekTypeService) {
+    public FilterQueryCycle(AllDataService allDataService, WeekTypeService weekTypeService, PeriodicityService periodicityService) {
         this.allDataService = allDataService;
         this.weekTypeService = weekTypeService;
+        this.periodicityService = periodicityService;
     }
 
     String getQueryCycleData(FilterCycleIncome cycleIncome, Long pageSize, Long pageNum) {
@@ -56,6 +61,7 @@ public class FilterQueryCycle {
         private QueryBuilderCycle appendSelects() {
             query = new StringBuilder();
             query.append("select array_agg(ad.id)                 as events,\n")
+                    .append("       array_agg(ad.date)            as dates,\n")
                     .append("       day.week_day_name,\n")
                     .append("       pairs.name as pair_info,\n")
 //                    .append("       concat(pairs.name, ': ', pairs.time_from, '-', pairs.time_to)                       as pair_info,\n")
@@ -86,10 +92,16 @@ public class FilterQueryCycle {
 
         private QueryBuilderCycle appendParameters(FilterCycleIncome cycleIncome) {
             query.append(" where ");
+            if (cycleIncome.getPeriodicity() != null)
+                query.append("ad.week_type in ( ")
+                        .append(periodicityService.getWeekTypesIdById(cycleIncome.getPeriodicity()).stream()
+                                .map(Object::toString)
+                                .collect(Collectors.joining(",")))
+                        .append(") and ");
             if (cycleIncome.getBuilding() != null)
-                query.append("sh.building = ").append(cycleIncome.getBuilding()).append(" and ");
+                query.append("sh.building = \'").append(cycleIncome.getBuilding()).append("\' and ");
             if (cycleIncome.getFloor() != null)
-                query.append("sh.floor = ").append(cycleIncome.getFloor());
+                query.append("sh.floor = ").append(cycleIncome.getFloor()).append(" and ");
             if (cycleIncome.getRoomTypeId() != null)
                 query.append("r_type.id = ").append(cycleIncome.getRoomTypeId()).append(" and ");
             if (cycleIncome.getRoomId() != null)
@@ -102,7 +114,7 @@ public class FilterQueryCycle {
                 query.append("day.id = ").append(cycleIncome.getWeekDay()).append(" and ");
 
             weekNum = allDataService.determineCurrentWeek(LocalDate.now());
-            List<String> dates = generateDates(cycleIncome.getWeekType(), cycleIncome.getWeekDay(), weekNum);
+            List<String> dates = generateDates(cycleIncome.getPeriodicity(), cycleIncome.getWeekDay(), weekNum);
             query.append("ad.date in (");
             for (String d : dates) {
                 query.append("to_date('")
@@ -112,29 +124,32 @@ public class FilterQueryCycle {
             query.deleteCharAt(query.lastIndexOf(","));
             query.append(") ");
 
-            query.append(" and ad.engaged_by_id is null\n");
+            query.append(" and ad.engaged_by_id is null and is_engaged=false\n");
             return this;
         }
 
-        private List<String> generateDates(Long weekType, Long weekDay, Long weekNum) {
+        private List<String> generateDates(Long periodicity, Long weekDay, Long weekNum) {
             dates = new ArrayList<>();
-            Long weeksToAdd = weekTypeService.getWeeksToAdd(weekType);
-            LocalDate startDate = weekNum == 1L ? allDataService.getSemesterStartDate() : LocalDate.now();
+            for(Integer weekType : periodicityService.getWeekTypesIdById(periodicity)) {
+                Long weeksToAdd = weekTypeService.getWeeksToAdd(weekType.longValue());
+                //TODO: find week type
+                LocalDate startDate = weekNum == 1L ? allDataService.getSemesterStartDate() : LocalDate.now();
 
-            //TODO: 18 in const
-            if (weekDay == null) {
-                for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
-                    addDate(weekNum, startDate, week, DayOfWeek.MONDAY);
-                    addDate(weekNum, startDate, week, DayOfWeek.TUESDAY);
-                    addDate(weekNum, startDate, week, DayOfWeek.WEDNESDAY);
-                    addDate(weekNum, startDate, week, DayOfWeek.THURSDAY);
-                    addDate(weekNum, startDate, week, DayOfWeek.FRIDAY);
-                    addDate(weekNum, startDate, week, DayOfWeek.SATURDAY);
-                    addDate(weekNum, startDate, week, DayOfWeek.SUNDAY);
-                }
-            } else {
-                for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
-                    addDate(weekNum, startDate, week, DayOfWeek.of(weekDay.intValue()));
+                //TODO: 18 in const
+                if (weekDay == null) {
+                    for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
+                        addDate(weekNum, startDate, week, DayOfWeek.MONDAY);
+                        addDate(weekNum, startDate, week, DayOfWeek.TUESDAY);
+                        addDate(weekNum, startDate, week, DayOfWeek.WEDNESDAY);
+                        addDate(weekNum, startDate, week, DayOfWeek.THURSDAY);
+                        addDate(weekNum, startDate, week, DayOfWeek.FRIDAY);
+                        addDate(weekNum, startDate, week, DayOfWeek.SATURDAY);
+                        addDate(weekNum, startDate, week, DayOfWeek.SUNDAY);
+                    }
+                } else {
+                    for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
+                        addDate(weekNum, startDate, week, DayOfWeek.of(weekDay.intValue()));
+                    }
                 }
             }
             return dates;
@@ -169,7 +184,7 @@ public class FilterQueryCycle {
             query.append(" limit ")
                     .append(pageSize)
                     .append(" offset ")
-                    .append((pageNum - 1) * pageSize);
+                    .append(pageNum);
             return this;
         }
 

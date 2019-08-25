@@ -54,13 +54,11 @@ public class ScheduleGetter {
     }
 
     private void collectGroups(String response) throws IOException {
-        int i = 1;
         for (String group : response.split(",")) {
             String groupStr = group.trim().replace("\"", "");
             groups.add(groupStr);
             log.info("Found " + groupStr);
             addTimetableEntry(groupStr);
-            if(i++ > 0) break;
         }
     }
 

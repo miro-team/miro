@@ -5,7 +5,7 @@ import miet.rooms.api.service.FilterService;
 import miet.rooms.api.web.income.FilterCycleIncome;
 import miet.rooms.api.web.income.FilterSingleIncome;
 import miet.rooms.repository.jdbc.model.FilteredDataCycle;
-import miet.rooms.repository.jdbc.model.FilteredDataSingle;
+import miet.rooms.repository.jdbc.model.FilteredData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,21 +22,21 @@ public class FilterController {
     }
 
     @GetMapping(value = "/single")
-    public FilteredDataSingle getFilteredSingleData(@RequestParam(required = false) Long roomId,
-                                                    @RequestParam(required = false) Long weekType,
-                                                    @RequestParam(required = false) Long pairId,
-                                                    @RequestParam(required = false) Long weekNum,
-                                                    @RequestParam String date,
-                                                    @RequestParam(required = false) Long building,
-                                                    @RequestParam(required = false) Long floor,
-                                                    @RequestParam(required = false) Long roomTypeId,
-                                                    @RequestParam(required = false) Long capacity,
-                                                    @RequestParam(required = false) Long weekDay,
-                                                    @RequestParam Long pageSize,
-                                                    @RequestParam Long pageNum) {
+    public FilteredData getFilteredSingleData(@RequestParam(required = false) Long roomId,
+                                              @RequestParam(required = false) Long periodicity,
+                                              @RequestParam(required = false) Long pairId,
+                                              @RequestParam(required = false) Long weekNum,
+                                              @RequestParam String date,
+                                              @RequestParam(required = false) Long building,
+                                              @RequestParam(required = false) Long floor,
+                                              @RequestParam(required = false) Long roomTypeId,
+                                              @RequestParam(required = false) Long capacity,
+                                              @RequestParam(required = false) Long weekDay,
+                                              @RequestParam Long pageSize,
+                                              @RequestParam Long pageNum) {
         FilterSingleIncome singleIncome = FilterSingleIncome.builder()
                 .roomId(roomId)
-                .weekType(weekType)
+                .periodicity(periodicity)
                 .pairId(pairId)
                 .weekNum(weekNum)
                 .date(date)
@@ -46,12 +46,12 @@ public class FilterController {
                 .capacity(capacity)
                 .weekDay(weekDay)
                 .build();
-        return filterService.getFilteredDataSingle(singleIncome, pageNum, pageSize);
+        return filterService.getFilteredData(singleIncome, pageNum, pageSize);
     }
 
     @GetMapping(value = "/cycle")
-    public FilteredDataCycle getFilteredCycleData(@RequestParam(required = false) Long roomId,
-                                                  @RequestParam Long weekType,
+    public FilteredData getFilteredCycleData(@RequestParam(required = false) Long roomId,
+                                                  @RequestParam Long periodicity,
                                                   @RequestParam(required = false) Long pairId,
                                                   @RequestParam(required = false) Long building,
                                                   @RequestParam(required = false) Long floor,
@@ -62,7 +62,7 @@ public class FilterController {
                                                   @RequestParam Long pageNum) {
         FilterCycleIncome cycleIncome = FilterCycleIncome.builder()
                 .roomId(roomId)
-                .weekType(weekType)
+                .periodicity(periodicity)
                 .pairId(pairId)
                 .building(building)
                 .floor(floor)
@@ -70,6 +70,6 @@ public class FilterController {
                 .capacity(capacity)
                 .weekDay(weekDay)
                 .build();
-        return filterService.getFilteredDataCycle(cycleIncome, pageNum, pageSize);
+        return filterService.getFilteredData(cycleIncome, pageNum, pageSize);
     }
 }

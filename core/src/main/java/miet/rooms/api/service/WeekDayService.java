@@ -20,12 +20,16 @@ public class WeekDayService {
         this.weekDayDao = weekDayDao;
     }
 
-    public Map<Long, String> findAll() throws JSONException {
-        Map<Long, String> weekDays = new HashMap<>();
-        List<WeekDay> weekDayList = weekDayDao.findAll();
-        for(WeekDay weekDay : weekDayList) {
-            weekDays.put(weekDay.getId(), weekDay.getWeekDayName());
+    public Map<Long, Object> findAll() throws JSONException {
+        Map<Long, Object> weekConfig = new HashMap<>();
+        List<WeekDay> weekDays = weekDayDao.findAll();
+        for(WeekDay weekDay : weekDays) {
+            weekConfig.put(weekDay.getId(), weekDay.getWeekDayName());
         }
-        return weekDays;
+        return weekConfig;
+    }
+
+    public WeekDay findAllByOrder(Integer order) {
+        return weekDayDao.findAllByOrder(order);
     }
 }

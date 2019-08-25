@@ -1,12 +1,19 @@
 package miet.rooms.repository.jpa.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Table(schema = "locations", name = "rooms")
 @SequenceGenerator(schema = "locations", name = "rooms", sequenceName = "locations.rooms_room_id_seq", allocationSize = 1)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
 public class Room {
 
+    @EqualsAndHashCode.Exclude
     private Long id;
     private String name;
     private Long capacity;
@@ -22,17 +29,9 @@ public class Room {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Column(name = "name", nullable = false)
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Column(name = "capacity", nullable = false)
@@ -40,17 +39,9 @@ public class Room {
         return capacity;
     }
 
-    public void setCapacity(Long capacity) {
-        this.capacity = capacity;
-    }
-
     @Column(name = "type", nullable = false)
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     @OneToOne
@@ -59,26 +50,14 @@ public class Room {
         return scheme;
     }
 
-    public void setScheme(Scheme scheme) {
-        this.scheme = scheme;
-    }
-
-    @Column(name = "schemeMapping", nullable = false)
+    @Column(name = "scheme_mapping", nullable = false)
     public Integer getSchemeMapping() {
         return schemeMapping;
-    }
-
-    public void setSchemeMapping(Integer schemeMapping) {
-        this.schemeMapping = schemeMapping;
     }
 
     @OneToOne
     @JoinColumn(name = "room_type_id")
     public RoomType getRoomType() {
         return roomType;
-    }
-
-    public void setRoomType(RoomType roomType) {
-        this.roomType = roomType;
     }
 }

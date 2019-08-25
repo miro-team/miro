@@ -2,6 +2,7 @@ package miet.rooms.api.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import miet.rooms.api.service.AllDataService;
+import miet.rooms.api.util.DateTimeHelper;
 import miet.rooms.initializer.ScheduleGetter;
 import miet.rooms.initializer.jsoninitdata.Datum;
 import miet.rooms.initializer.jsoninitdata.TimetableData;
@@ -54,7 +55,7 @@ public class InitializationController {
     private AllDataService allDataService;
 
     @Autowired
-    private CycleEventDao cycleEventDao;
+    private WeekDayDao weekDayDao;
 
     private List<TimetableData> schedule;
 
@@ -87,7 +88,7 @@ public class InitializationController {
                         for (long pairOrder = 1; pairOrder <= 7; pairOrder++) {
                             int weekNum = weekType + maxWeekTypesAmount * cycleNum + 1;
                             saveAllEmptyData(weekType, pairOrder, roomName, realDay, (long) weekNum);
-                            log.info("Empty week number = " + weekNum + ", room name = " + roomName + ", day of week = " + dayOfWeek);
+                            log.info("Empty week number = {}, room name = {}, day of week = {}, pair num = {}", weekNum, roomName, dayOfWeek, pairOrder);
                         }
                     }
                     realDay = realDay.plusDays(1);
@@ -220,16 +221,21 @@ public class InitializationController {
         Pair pair = getPair(datum);
         Room room = roomDao.findAllByName(datum.getRoom().getName().trim());
 
-        AllData allData = allDataDao.findAllByDateAndAndPair_IdAndRoom_Id(realDay, pair.getId(), room.getId()).get(0);
+        try {
+            AllData allData = allDataDao.findAllByDateAndAndPair_IdAndRoom_Id(realDay, pair.getId(), room.getId()).get(0);
 
-        Group group = groupDao.findAllByName(datum.getGroup().getName().trim());
-        if(allData.getGroup() != null) {
-            allData = copyAllData(allData);
-        } else {
-            allData.setGroup(group);
+            Group group = groupDao.findAllByName(datum.getGroup().getName().trim());
+            if (allData.getGroup() != null) {
+                allData = copyAllData(allData);
+            } else {
+                allData.setGroup(group);
+            }
+            allData.setIsEngaged(true);
+
+            allDataDao.save(allData);
+        } catch (Exception ex) {
+
         }
-
-        allDataDao.save(allData);
     }
 
     private AllData copyAllData(AllData allData) {
@@ -256,14 +262,15 @@ public class InitializationController {
         Room room = roomDao.findAllByName(roomName.trim());
         allData.setRoom(room);
 
-        allData.setWeekType(weekType); //TODO:temp. Need table for weeks
+//        allData.setWeekType(weekType/////////////////////////////////////////////////////////////////////////); //TODO:temp. Need table for weeks
 
         allData.setWeekNum(weekNum);
 
         EngageType engageType = engageTypeDao.findAllByDescription("Common");
         allData.setEngageType(engageType);
 
-        allData.setWeekDay((long) realDay.getDayOfWeek().getValue());
+        WeekDay weekDay = weekDayDao.findAllByOrder(realDay.getDayOfWeek().getValue());
+        allData.setWeekDay(weekDay);
 
         allDataDao.save(allData);
     }

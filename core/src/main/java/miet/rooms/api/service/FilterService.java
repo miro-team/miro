@@ -1,37 +1,33 @@
 package miet.rooms.api.service;
 
-import miet.rooms.api.web.income.FilterCycleIncome;
-import miet.rooms.repository.jdbc.dao.FilterCycleDao;
-import miet.rooms.repository.jdbc.dao.FilterSingleDao;
-import miet.rooms.repository.jdbc.model.FilteredDataCycle;
-import miet.rooms.repository.jdbc.model.FilteredDataSingle;
 import miet.rooms.api.util.FilterQuery;
+import miet.rooms.api.web.income.FilterCycleIncome;
 import miet.rooms.api.web.income.FilterSingleIncome;
+import miet.rooms.repository.jdbc.dao.FilterDao;
+import miet.rooms.repository.jdbc.model.FilteredData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FilterService {
     private final FilterQuery filterQuery;
-    private final FilterSingleDao filterSingleDao;
-    private final FilterCycleDao filterCycleDao;
+    private final FilterDao filterDao;
 
     @Autowired
-    public FilterService(FilterQuery filterQuery, FilterSingleDao filterSingleDao, FilterCycleDao filterCycleDao) {
+    public FilterService(FilterQuery filterQuery, FilterDao filterDao) {
         this.filterQuery = filterQuery;
-        this.filterSingleDao = filterSingleDao;
-        this.filterCycleDao = filterCycleDao;
+        this.filterDao = filterDao;
     }
 
-    public FilteredDataSingle getFilteredDataSingle(FilterSingleIncome singleIncome, Long pageNum, Long pageSize) {
-        String queryData = filterQuery.getQuerySingleData(singleIncome, pageSize, pageNum);
-        String queryCount = filterQuery.getQuerySingleCount(singleIncome);
-        return filterSingleDao.getFilteredDataSingle(pageSize, pageNum, queryData, queryCount);
+    public FilteredData getFilteredData(FilterSingleIncome incomeData, Long pageNum, Long pageSize) {
+        String queryData = filterQuery.getQuerySingleData(incomeData, pageSize, pageNum);
+        String queryCount = filterQuery.getQuerySingleCount(incomeData);
+        return filterDao.getFilteredData(pageSize, pageNum, queryData, queryCount, incomeData.getPeriodicity());
     }
 
-    public FilteredDataCycle getFilteredDataCycle(FilterCycleIncome cycleIncome, Long pageNum, Long pageSize) {
-        String queryData = filterQuery.getQueryCycleData(cycleIncome, pageSize, pageNum);
-        String queryCount = filterQuery.getQueryCycleCount(cycleIncome);
-        return filterCycleDao.getFilteredDataCycle(pageSize, pageNum, queryData, queryCount, cycleIncome.getWeekType());
+    public FilteredData getFilteredData(FilterCycleIncome incomeData, Long pageNum, Long pageSize) {
+        String queryData = filterQuery.getQueryCycleData(incomeData, pageSize, pageNum);
+        String queryCount = filterQuery.getQueryCycleCount(incomeData);
+        return filterDao.getFilteredData(pageSize, pageNum, queryData, queryCount, incomeData.getPeriodicity());
     }
 }

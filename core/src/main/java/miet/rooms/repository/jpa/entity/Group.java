@@ -1,12 +1,19 @@
 package miet.rooms.repository.jpa.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Table(schema = "data", name = "edu_groups")
 @SequenceGenerator(schema = "data", name = "edu_groups", sequenceName = "data.groups_group_id_seq", allocationSize = 1)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
 public class Group {
 
+    @EqualsAndHashCode.Exclude
     private Long id;
     private String name;
 
@@ -17,16 +24,8 @@ public class Group {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Column(name = "name", nullable = false)
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

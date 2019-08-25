@@ -3,17 +3,20 @@ package miet.rooms.repository.jdbc.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
+import java.time.LocalDate;
+import java.util.List;
+
 @Setter
-@Builder
-public class FilteredEventSingle {
-    @JsonProperty("id")
-    private Integer[] events;
-    private String date;
+@Getter
+@NoArgsConstructor
+public class UsersReservation {
+    private Long id;
+    @JsonProperty("date")
+    private List<String> dates;
     private String pair;
-    private String weekType;
     private String room;
     private Long weekNum;
     private String weekDay;
@@ -21,4 +24,8 @@ public class FilteredEventSingle {
     private Long capacity;
     private String building;
     private String floor;
+    private String eventType;
+    private String group;
+    private String teacher;
+    private String periodicity;
 }

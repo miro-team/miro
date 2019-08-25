@@ -21,13 +21,17 @@ public class RoomService {
         this.roomDao = roomDao;
     }
 
-    public Map<Long, String> findAll() throws JSONException {
-        Map<Long, String> rooms = new HashMap<>();
+    public Map<Long, Object> findAllMapping() throws JSONException {
+        Map<Long, Object> rooms = new HashMap<>();
         List<Room> roomList = roomDao.findAll();
         for(Room room : roomList) {
             rooms.put(room.getId(), room.getName());
         }
         return rooms;
+    }
+
+    public List<Room> findAll() {
+        return roomDao.findAll();
     }
 
     public RoomModel findAllById(Long id) {
@@ -36,5 +40,9 @@ public class RoomService {
         roomModel.setId(room.getId());
         roomModel.setName(room.getName());
         return roomModel;
+    }
+
+    public void saveAll(List<Room> rooms) {
+        roomDao.saveAll(rooms);
     }
 }

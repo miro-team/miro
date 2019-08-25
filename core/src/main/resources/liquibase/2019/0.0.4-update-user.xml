@@ -17,7 +17,13 @@
             alter table security.users rename username to user_login;
         </sql>
         <rollback>
+            alter table security.users drop column user_name;
 
+            alter table security.users drop column user_surname;
+
+            alter table security.users drop column user_patronymic;
+
+            alter table security.users rename user_login to username;
         </rollback>
     </changeSet>
 </databaseChangeLog>

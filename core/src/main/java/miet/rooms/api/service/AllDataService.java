@@ -38,4 +38,12 @@ public class AllDataService {
     public List<AllData> getAllByEngageTypeId(Long engageTypeId) {
         return allDataDao.findAllByEngageType_Id(engageTypeId);
     }
+
+    public void save(AllData allData) {
+        allDataDao.save(allData);
+    }
+
+    public AllData findById(Long id) {
+        return allDataDao.findById(id).orElse(null);
+    }
 }

@@ -21,6 +21,6 @@ public class SchemeController {
 
     @GetMapping
     public Scheme getSchemeByFloorAndBuilding(@RequestParam Long floor, @RequestParam String building) {
-        return schemeService.getSchemeByName(floor, building);
+        return schemeService.getSchemeByFloorAndBuilding(floor, building);
     }
 }

@@ -4,4 +4,7 @@
   <include file="liquibase/2019/0.0.2-permanent-data.xml"/>
   <include file="liquibase/2019/0.0.3-security.xml"/>
   <include file="liquibase/2019/0.0.4-update-user.xml"/>
+  <include file="liquibase/2019/0.0.5-periodicities.xml"/>
+  <include file="liquibase/2019/0.0.6-reservations.xml"/>
+  <include file="liquibase/2019/0.0.7-all-data-binding.xml"/>
 </databaseChangeLog>

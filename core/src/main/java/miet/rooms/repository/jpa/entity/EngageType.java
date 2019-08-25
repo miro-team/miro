@@ -1,13 +1,19 @@
 package miet.rooms.repository.jpa.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Table(schema = "schedule", name = "engage_type")
 @SequenceGenerator(schema = "schedule", name = "engage_type", sequenceName = "schedule.engage_types_engage_type_id_seq", allocationSize = 1)
-public class EngageType implements Serializable {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+public class EngageType {
 
+    @EqualsAndHashCode.Exclude
     private Long id;
     private Long engageTypeId;
     private String description;
@@ -28,16 +34,8 @@ public class EngageType implements Serializable {
         return engageTypeId;
     }
 
-    public void setEngageTypeId(Long engageTypeId) {
-        this.engageTypeId = engageTypeId;
-    }
-
     @Column(name = "description")
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

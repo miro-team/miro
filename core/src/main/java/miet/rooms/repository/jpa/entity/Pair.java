@@ -1,16 +1,24 @@
 package miet.rooms.repository.jpa.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Table(schema = "time_desc", name = "pairs")
 @SequenceGenerator(schema = "time_desc", name = "pairs", sequenceName = "time_desc.pairs_pair_id_seq", allocationSize = 1)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
 public class Pair {
 
+    @EqualsAndHashCode.Exclude
     private Long id;
     private String name;
     private String timeFrom;
     private String timeTo;
+    private Integer order;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "time_desc.pairs_pair_id_seq")
@@ -19,17 +27,9 @@ public class Pair {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Column(name = "name", nullable = false)
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Column(name = "time_from", nullable = false)
@@ -37,16 +37,13 @@ public class Pair {
         return timeFrom;
     }
 
-    public void setTimeFrom(String timeFrom) {
-        this.timeFrom = timeFrom;
-    }
-
     @Column(name = "time_to", nullable = false)
     public String getTimeTo() {
         return timeTo;
     }
 
-    public void setTimeTo(String timeTo) {
-        this.timeTo = timeTo;
+    @Column(name = "order", nullable = false)
+    public Integer getOrder() {
+        return order;
     }
 }

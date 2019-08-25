@@ -1,10 +1,17 @@
 package miet.rooms.repository.jpa.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Table(schema = "locations", name = "schemes")
 @SequenceGenerator(schema = "locations", name = "schemes", sequenceName = "locations.schemes_scheme_id_seq", allocationSize = 1)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@EqualsAndHashCode(of = {"name", "fileName", "floor", "building"})
 public class Scheme {
 
     private Long id;
@@ -20,17 +27,9 @@ public class Scheme {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Column(name = "name", nullable = false)
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Column(name = "file_name", nullable = false)
@@ -38,25 +37,13 @@ public class Scheme {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     @Column(name = "floor", nullable = false)
     public Long getFloor() {
         return floor;
     }
 
-    public void setFloor(Long floor) {
-        this.floor = floor;
-    }
-
     @Column(name = "building", nullable = false)
     public String getBuilding() {
         return building;
-    }
-
-    public void setBuilding(String building) {
-        this.building = building;
     }
 }

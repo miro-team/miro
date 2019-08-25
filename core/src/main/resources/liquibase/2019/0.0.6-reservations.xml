@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="ew256">
+        <sql>
+            create table schedule.event_types
+            (
+            id serial not null,
+            name varchar(100)
+            );
+
+            create unique index event_types_id_uindex
+            on schedule.event_types (id);
+
+            alter table schedule.event_types
+            add constraint event_types_pk
+            primary key (id);
+
+
+
+            create table schedule.reservations
+            (
+            id serial not null,
+            event_type varchar(100),
+            created_by integer,
+            created_at date,
+            group_id integer
+            constraint reservations_edu_groups_id_fk
+            references data.edu_groups,
+            teacher varchar(200),
+            periodicity integer
+            constraint reservations_periodicities_id_fk
+            references time_desc.periodicities
+            );
+
+            create unique index reservations_id_uindex
+            on schedule.reservations (id);
+
+            alter table schedule.reservations
+            add constraint reservations_pk
+            primary key (id);
+
+            alter table schedule.reservations
+            add constraint reservations_users_id_fk
+            foreign key (created_by) references security.users;
+
+            alter table schedule.reservations rename column event_type to event_type_id;
+
+            alter table schedule.reservations alter column event_type_id type integer using event_type_id::integer;
+
+            alter table schedule.reservations
+            add constraint reservations_event_types_id_fk
+            foreign key (event_type_id) references schedule.event_types;
+
+            alter table schedule.all_data
+            add is_engaged bool;
+
+            update schedule.all_data set is_engaged = true where engaged_by_id notnull;
+            update schedule.all_data set is_engaged = false where engaged_by_id is null;
+
+            alter table schedule.all_data alter column is_engaged set not null;
+
+            alter table schedule.all_data
+            add reservation_id integer;
+
+            alter table schedule.all_data
+            add constraint all_data_reservations_id_fk
+            foreign key (reservation_id) references schedule.reservations;
+
+
+        </sql>
+        <rollback>
+            alter table schedule.reservations drop constraint reservations_pk;
+            alter table schedule.reservations drop constraint reservations_periodicities_id_fk;
+            alter table schedule.reservations drop constraint reservations_users_id_fk;
+            alter table schedule.reservations drop constraint reservations_edu_groups_id_fk;
+            alter table schedule.reservations drop column event_type_id;
+            alter table schedule.reservations drop column created_by;
+            alter table schedule.reservations drop column created_at;
+            alter table schedule.reservations drop column teacher;
+            alter table schedule.reservations drop column id;
+            alter table schedule.reservations drop column group_id;
+            alter table schedule.reservations drop column periodicity;
+            drop table schedule.reservations;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

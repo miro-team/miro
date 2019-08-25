@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="ew256">
+        <sql>
+            create table time_desc.periodicities
+            (
+            id serial not null,
+            week_types integer[] not null,
+            name varchar(50),
+            weeks_to_next integer
+            );
+
+            create unique index periodicities_id_uindex
+            on time_desc.periodicities (id);
+
+            create unique index periodicities_week_types_uindex
+            on time_desc.periodicities (week_types);
+
+            alter table time_desc.periodicities
+            add constraint periodicities_pk
+            primary key (id);
+
+            insert into time_desc.periodicities(id, week_types, name, weeks_to_next)
+            values (nextval('time_desc.periodicities_id_seq'), '{1}', 'Каждый 1 числитель', 4);
+            insert into time_desc.periodicities(id, week_types, name, weeks_to_next)
+            values (nextval('time_desc.periodicities_id_seq'), '{2}', 'Каждый 2 числитель', 4);
+            insert into time_desc.periodicities(id, week_types, name, weeks_to_next)
+            values (nextval('time_desc.periodicities_id_seq'), '{3}', 'Каждый 1 знаменатель', 4);
+            insert into time_desc.periodicities(id, week_types, name, weeks_to_next)
+            values (nextval('time_desc.periodicities_id_seq'), '{4}', 'Каждый 2 знаменатель', 4);
+            insert into time_desc.periodicities(id, week_types, name, weeks_to_next)
+            values (nextval('time_desc.periodicities_id_seq'), '{1,2}', 'Каждый числитель', 2);
+            insert into time_desc.periodicities(id, week_types, name, weeks_to_next)
+            values (nextval('time_desc.periodicities_id_seq'), '{3,4}', 'Каждый знаменатель', 2);
+            insert into time_desc.periodicities(id, week_types, name, weeks_to_next)
+            values (nextval('time_desc.periodicities_id_seq'), '{1,2,3,4}', 'Еженедельно', 1);
+
+        </sql>
+        <rollback>
+            alter table time_desc.periodicities drop constraint periodicities_pk;
+            drop index time_desc.periodicities_id_uindex;
+            drop index time_desc.periodicities_week_types_uindex;
+            alter table time_desc.periodicities drop column name;
+            alter table time_desc.periodicities drop column weeks_to_next;
+            alter table time_desc.periodicities drop column week_types;
+            alter table time_desc.periodicities drop column id;
+            drop table time_desc.periodicities;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,11 +1,18 @@
 package miet.rooms.security.jpa.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Table(schema = "security", name = "users")
 @SequenceGenerator(schema = "security", name = "users", sequenceName = "security.users_id_seq", allocationSize = 1)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
 public class User {
+    @EqualsAndHashCode.Exclude
     private Long id;
     private String userLogin;
     private String password;
@@ -20,17 +27,9 @@ public class User {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Column(name = "user_login", nullable = false)
     public String getUserLogin() {
         return userLogin;
-    }
-
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
     }
 
     @Column(name = "password", nullable = false)
@@ -38,17 +37,9 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Column(name = "user_name", nullable = false)
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Column(name = "user_surname", nullable = false)
@@ -56,16 +47,8 @@ public class User {
         return surname;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
     @Column(name = "user_patronymic", nullable = false)
     public String getPatronymic() {
         return patronymic;
-    }
-
-    public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
     }
 }

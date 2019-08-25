@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 public class FilterCycleIncome {
     private Long roomId;
-    private Long weekType;
+    private Long periodicity;
     private Long pairId;
     private Long building;
     private Long floor;
