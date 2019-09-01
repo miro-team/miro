@@ -13,13 +13,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilterQuerySingle {
 
-    private final PeriodicityService periodicityService;
-
-    @Autowired
-    public FilterQuerySingle(PeriodicityService periodicityService) {
-        this.periodicityService = periodicityService;
-    }
-
     String getQuerySingleData(FilterSingleIncome singleIncome, Long pageSize, Long pageNum) {
         String queryStr = new QueryBuilderSingle()
                 .appendSelects()

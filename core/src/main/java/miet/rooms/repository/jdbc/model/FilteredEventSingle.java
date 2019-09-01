@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @EqualsAndHashCode
-public class FilteredEvent {
+public class FilteredEventSingle {
     @JsonProperty("id")
     private Integer[] events;
     private String[] date;

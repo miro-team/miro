@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class FilteredDataCycle {
     @JsonProperty("events")
-    private List<FilteredEvent> filteredEventList;
+    private List<FilteredEventSingle> filteredEventSingleList;
     private Long pageSize;
     private Long pageNum;
     private Long totalAmount;

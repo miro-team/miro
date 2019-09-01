@@ -22,7 +22,7 @@ public class FilterService {
     public FilteredData getFilteredData(FilterSingleIncome incomeData, Long pageNum, Long pageSize) {
         String queryData = filterQuery.getQuerySingleData(incomeData, pageSize, pageNum);
         String queryCount = filterQuery.getQuerySingleCount(incomeData);
-        return filterDao.getFilteredData(pageSize, pageNum, queryData, queryCount, incomeData.getPeriodicity());
+        return filterDao.getFilteredDataSingle(pageSize, pageNum, queryData, queryCount);
     }
 
     public FilteredData getFilteredData(FilterCycleIncome incomeData, Long pageNum, Long pageSize) {

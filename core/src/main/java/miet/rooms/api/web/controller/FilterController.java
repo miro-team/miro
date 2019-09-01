@@ -23,7 +23,6 @@ public class FilterController {
 
     @GetMapping(value = "/single")
     public FilteredData getFilteredSingleData(@RequestParam(required = false) Long roomId,
-                                              @RequestParam(required = false) Long periodicity,
                                               @RequestParam(required = false) Long pairId,
                                               @RequestParam(required = false) Long weekNum,
                                               @RequestParam String date,
@@ -36,7 +35,6 @@ public class FilterController {
                                               @RequestParam Long pageNum) {
         FilterSingleIncome singleIncome = FilterSingleIncome.builder()
                 .roomId(roomId)
-                .periodicity(periodicity)
                 .pairId(pairId)
                 .weekNum(weekNum)
                 .date(date)

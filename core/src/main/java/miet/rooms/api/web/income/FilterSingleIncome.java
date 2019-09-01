@@ -7,7 +7,6 @@ import lombok.Getter;
 @Builder
 public class FilterSingleIncome {
     private Long roomId;
-    private Long periodicity;
     private Long pairId;
     private Long weekNum;
     private String date;
