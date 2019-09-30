@@ -3,7 +3,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-    <changeSet id="1" author="ew256">
+    <changeSet id="1" author="ew256" context="prod">
         <sql>
             insert into time_desc.pairs (id, name, time_from, time_to)
             values (nextval('time_desc.pairs_pair_id_seq'), '1 пара', '09:00', '10:30')
@@ -33,13 +33,13 @@
             values (nextval('time_desc.pairs_pair_id_seq'), '7 пара', '20:00', '21:30')
         </sql>
     </changeSet>
-    <changeSet id="2" author="ew256">
+    <changeSet id="2" author="ew256" context="prod">
         <sql>
             ALTER TABLE locations.schemes
             ALTER COLUMN building TYPE VARCHAR(100)
         </sql>
     </changeSet>
-    <changeSet id="3" author="ew2">
+    <changeSet id="3" author="ew2" context="prod">
         <sql>
             insert into locations.schemes (id, name, file_name, floor, building)
             VALUES(nextval('locations.schemes_scheme_id_seq'), '1 корпус', null, 1, '1')
@@ -81,7 +81,7 @@
             VALUES(nextval('locations.schemes_scheme_id_seq'), 'Студ. гор.', null, 2, 'Студ. гор.')
         </sql>
     </changeSet>
-    <changeSet id="4" author="ew256">
+    <changeSet id="4" author="ew256" context="prod">
         <sql>
             insert into locations.room_type (id, name)
             VALUES(nextval('locations.room_types_room_type_id_seq'), 'Большая лекционная')
@@ -103,7 +103,7 @@
             VALUES(nextval('locations.room_types_room_type_id_seq'), 'Лабораторная')
         </sql>
     </changeSet>
-    <changeSet id="5" author="ew256">
+    <changeSet id="5" author="ew256" context="prod">
         <sql>
             insert into time_desc.week_days (id, week_day_name)
             VALUES(nextval('time_desc.week_days_week_day_id_seq'), 'Пн')
@@ -133,7 +133,7 @@
             VALUES(nextval('time_desc.week_days_week_day_id_seq'), 'Вс')
         </sql>
     </changeSet>
-    <changeSet id="6" author="ew256">
+    <changeSet id="6" author="ew256" context="prod">
         <sql>
             insert into time_desc.week_types (id, week_type_name)
             VALUES(nextval('time_desc.week_types_week_type_id_seq'), '1 числитель')
@@ -159,7 +159,7 @@
             VALUES(nextval('time_desc.week_types_week_type_id_seq'), 'Числитель')
         </sql>
     </changeSet>
-    <changeSet id="7" author="ew256">
+    <changeSet id="7" author="ew256" context="prod">
         <sql>
             alter table time_desc.week_types
             add week_type_code varchar(30)
@@ -187,7 +187,7 @@
             update time_desc.week_types set week_type_code = 'ch2' where week_type_name = '2 знаменатель'
         </sql>
     </changeSet>
-    <changeSet id="8" author="ew256">
+    <changeSet id="8" author="ew256" context="prod">
         <sql>
             update time_desc.week_types set week_type_code = 'zn2' where week_type_name = '2 знаменатель'
         </sql>
@@ -195,7 +195,7 @@
             update time_desc.week_types set week_type_code = 'zn', week_type_name = 'Знаменатель' where id = 6
         </sql>
     </changeSet>
-    <changeSet id="9" author="ew256">
+    <changeSet id="9" author="ew256" context="prod">
         <sql>
             alter table time_desc.week_types
             add week_type_code_num integer
@@ -222,7 +222,7 @@
             update time_desc.week_types set week_type_code_num = 6 where week_type_code = 'weekly'
         </sql>
     </changeSet>
-    <changeSet id="10" author="ew256">
+    <changeSet id="10" author="ew256" context="prod">
         <sql>
             alter table time_desc.week_types
             add weeks_to_next integer

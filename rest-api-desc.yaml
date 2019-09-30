@@ -1081,41 +1081,25 @@ definitions:
     type: object
     properties:
       weekDays:
-        type: array
-        items:
-          $ref: '#/definitions/weekDay'
+        $ref: '#/definitions/weekDay'
       pairs:
-        type: array
-        items:
-          $ref: '#/definitions/pairMapped'
+        $ref: '#/definitions/pairMapped'
       roomTypes:
-        type: array
-        items:
-          $ref: '#/definitions/roomType'
+        $ref: '#/definitions/roomType'
       schemes:
-        type: array
-        items:
-          $ref: '#/definitions/scheme'
+        $ref: '#/definitions/scheme'
       buildings:
         type: array
         items:
           $ref: '#/definitions/building'
       groups:
-        type: array
-        items:
-          $ref: '#/definitions/group'
+        $ref: '#/definitions/group'
       rooms:
-        type: array
-        items:
-          $ref: '#/definitions/room'
+        $ref: '#/definitions/room'
       periodicities:
-        type: array
-        items:
-          $ref: '#/definitions/periodicity'
+        $ref: '#/definitions/periodicity'
       eventTypes:
-        type: array
-        items:
-          $ref: '#/definitions/eventType'
+        $ref: '#/definitions/eventType'
     title: config
   weekType:
     type: object
@@ -1150,9 +1134,7 @@ definitions:
         type: integer
         format: int64
       name:
-        type: array
-        items:
-          type: string
+        type: string
   pairMapped:
     type: object
     properties:

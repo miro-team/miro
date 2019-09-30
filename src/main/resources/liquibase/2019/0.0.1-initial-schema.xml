@@ -6,7 +6,7 @@
     <sql>create schema time_desc;</sql>
     <sql>create schema data</sql>
   </changeSet>
-  <changeSet id="2" author="ew256">
+  <changeSet id="2" author="ew256" context="prod">
     <sql>create sequence locations.rooms_room_id_seq</sql>
     <sql>create sequence locations.schemes_scheme_id_seq</sql>
     <sql>create sequence schedule.all_data_data_id_seq</sql>
@@ -19,7 +19,7 @@
     <sql>create sequence schedule.transfer_transfers_id_seq</sql>
     <sql>create sequence locations.room_types_room_type_id_seq</sql>
   </changeSet>
-  <changeSet id="3" author="ew256">
+  <changeSet id="3" author="ew256" context="prod">
     <sql>
             create table schedule.cycle_events
             (
@@ -221,13 +221,13 @@
             on schedule.transfers (id)
         </sql>
   </changeSet>
-  <changeSet id="4" author="ew256">
+  <changeSet id="4" author="ew256" context="prod">
     <sql>
             ALTER TABLE locations.schemes
             ALTER COLUMN building TYPE integer
         </sql>
   </changeSet>
-  <changeSet id="5" author="ew256">
+  <changeSet id="5" author="ew256" context="prod">
     <sql>
             create table time_desc.week_days
             (

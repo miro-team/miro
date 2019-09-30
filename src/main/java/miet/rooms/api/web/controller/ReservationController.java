@@ -30,7 +30,7 @@ public class ReservationController {
                                           @RequestParam Long eventTypeId,
                                           @RequestParam(required = false) Long groupId,
                                           @RequestParam(required = false) String teacher,
-                                          @RequestParam Long periodicityId) {
+                                         @RequestParam Long periodicityId) {
         User user = UserUtil.getUserByAuthHeader(authorizationHeader);
         ReservationIncome reservationIncome = ReservationIncome.builder()
                 .allDataId(allDataId)
