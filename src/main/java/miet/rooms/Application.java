@@ -1,4 +1,4 @@
-package miet.rooms.api;
+package miet.rooms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

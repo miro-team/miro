@@ -1,41 +1,29 @@
 package miet.rooms.repository.jpa.entity;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "schedule", name = "engage_type")
-@SequenceGenerator(schema = "schedule", name = "engage_type", sequenceName = "schedule.engage_types_engage_type_id_seq", allocationSize = 1)
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(schema = "schedule", name = "event_types")
+@SequenceGenerator(schema = "schedule", name = "event_types", sequenceName = "schedule.event_types_id_seq", allocationSize = 1)
 @Setter
 public class EngageType {
 
     @EqualsAndHashCode.Exclude
     private Long id;
-    private Long engageTypeId;
-    private String description;
+    private String name;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.engage_types_engage_type_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.event_types_id_seq")
     @Column(name = "id", nullable = false)
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Column(name = "engage_type_id", nullable = false)
-    public Long getEngageTypeId() {
-        return engageTypeId;
-    }
-
-    @Column(name = "description")
-    public String getDescription() {
-        return description;
+    @Column(name = "name", nullable = false)
+    public String getName() {
+        return name;
     }
 }

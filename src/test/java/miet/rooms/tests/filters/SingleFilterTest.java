@@ -1,11 +1,11 @@
 package miet.rooms.tests.filters;
 
 import lombok.extern.slf4j.Slf4j;
-import miet.rooms.api.Application;
+import miet.rooms.Application;
 import miet.rooms.api.service.*;
 import miet.rooms.api.util.DateTimeHelper;
 import miet.rooms.api.web.controller.FilterController;
-import miet.rooms.repository.jpa.entity.AllData;
+import miet.rooms.repository.jpa.entity.Event;
 import miet.rooms.repository.jpa.entity.Group;
 import miet.rooms.repository.jpa.entity.Room;
 import miet.rooms.repository.jpa.entity.WeekType;
@@ -253,19 +253,19 @@ public class SingleFilterTest {
                     currentLocalDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
                 for (Room room : roomService.findAll()) {
                     for (int pairNum = 1; pairNum < 3; pairNum++) {
-                        AllData allData = AllData.builder()
+                        Event event = Event.builder()
                                 .date(currentLocalDate)
                                 .pair(pairService.getPairByOrder(pairNum))
-                                .group(null)
+//                                .group(null)
                                 .weekType(weekType)
                                 .room(room)
                                 .weekNum(weekNum)
-                                .engageType(null)
-                                .weekDay(weekDayService.findAllByOrder(currentLocalDate.getDayOfWeek().getValue()))
-                                .isEngaged(false)
-                                .reservation(null)
+//                                .engageType(null)
+//                                .weekDay(weekDayService.findAllByOrder(currentLocalDate.getDayOfWeek().getValue()))
+//                                .isEngaged(false)
+//                                .reservation(null)
                                 .build();
-                        allDataService.save(allData);
+                        allDataService.save(event);
                     }
                 }
 

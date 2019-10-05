@@ -1,7 +1,7 @@
 package miet.rooms.api.service;
 
-import miet.rooms.repository.jpa.dao.AllDataDao;
-import miet.rooms.repository.jpa.entity.AllData;
+import miet.rooms.repository.jpa.dao.EventDao;
+import miet.rooms.repository.jpa.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,39 +11,40 @@ import java.util.List;
 @Service
 public class AllDataService {
 
-    private AllDataDao allDataDao;
+    private EventDao eventDao;
 
     @Autowired
-    public AllDataService(AllDataDao allDataDao) {
-        this.allDataDao = allDataDao;
+    public AllDataService(EventDao eventDao) {
+        this.eventDao = eventDao;
     }
 
     public Long determineCurrentWeek(LocalDate date) {
-        AllData currentAllData = allDataDao.findFirstByDate(date);
-        return currentAllData != null ? currentAllData.getWeekNum() : 1L;
+        Event currentEvent = eventDao.findFirstByDate(date);
+        return currentEvent != null ? currentEvent.getWeekNum() : 1L;
     }
 
     public LocalDate getSemesterStartDate() {
-        return allDataDao.findFirstByOrderByDateAsc().getDate();
+        return eventDao.findFirstByOrderByDateAsc().getDate();
     }
 
     public Long getLastWeek() {
-        return allDataDao.findFirstByOrderByWeekNumDesc().getWeekNum();
+        return eventDao.findFirstByOrderByWeekNumDesc().getWeekNum();
     }
 
     public void removeByWeekNum(Long weekNum) {
-        allDataDao.deleteByWeekNum(weekNum);
+        eventDao.deleteByWeekNum(weekNum);
     }
 
-    public List<AllData> getAllByEngageTypeId(Long engageTypeId) {
-        return allDataDao.findAllByEngageType_Id(engageTypeId);
+    public List<Event> getAllByEngageTypeId(Long engageTypeId) {
+//        return eventDao.findAllByEngageType_Id(engageTypeId);
+        return null;
     }
 
-    public void save(AllData allData) {
-        allDataDao.save(allData);
+    public void save(Event event) {
+        eventDao.save(event);
     }
 
-    public AllData findById(Long id) {
-        return allDataDao.findById(id).orElse(null);
+    public Event findById(Long id) {
+        return eventDao.findById(id).orElse(null);
     }
 }

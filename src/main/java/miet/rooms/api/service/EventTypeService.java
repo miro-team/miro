@@ -1,7 +1,7 @@
 package miet.rooms.api.service;
 
-import miet.rooms.repository.jpa.dao.EventTypeDao;
-import miet.rooms.repository.jpa.entity.EventType;
+import miet.rooms.repository.jpa.dao.EngageTypeDao;
+import miet.rooms.repository.jpa.entity.EngageType;
 import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
@@ -11,17 +11,17 @@ import java.util.Map;
 
 @Service
 public class EventTypeService {
-    private final EventTypeDao eventTypeDao;
+    private final EngageTypeDao engageTypeDao;
 
-    public EventTypeService(EventTypeDao eventTypeDao) {
-        this.eventTypeDao = eventTypeDao;
+    public EventTypeService(EngageTypeDao engageTypeDao) {
+        this.engageTypeDao = engageTypeDao;
     }
 
     public Map<Long, Object> findAll() throws JSONException {
         Map<Long, Object> eventConfig = new HashMap<>();
-        List<EventType> eventTypes = eventTypeDao.findAll();
-        for (EventType eventType : eventTypes) {
-            eventConfig.put(eventType.getId(), eventType.getName());
+        List<EngageType> engageTypes = engageTypeDao.findAll();
+        for (EngageType engageType : engageTypes) {
+            eventConfig.put(engageType.getId(), engageType.getName());
         }
         return eventConfig;
     }
