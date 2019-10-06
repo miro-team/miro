@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="ew256" context="prod">
+        <sql>
+            alter table schedule.all_data
+            add constraint all_data_week_days_id_fk
+            foreign key (week_day) references time_desc.week_days;
+
+            insert into schedule.event_types(name) values ('Консультация');
+            insert into schedule.event_types(name) values ('Собрание');
+            insert into schedule.event_types(name) values ('Конференция');
+            insert into schedule.event_types(name) values ('Занятие');
+            insert into schedule.event_types(name) values ('Экзамен');
+
+
+            alter table time_desc.week_days
+            add "order" integer;
+
+            create unique index week_days_order_uindex
+            on time_desc.week_days ("order");
+
+            update time_desc.week_days set "order"=1 where week_day_name = 'Пн';
+            update time_desc.week_days set "order"=2 where week_day_name = 'Вт';
+            update time_desc.week_days set "order"=3 where week_day_name = 'Ср';
+            update time_desc.week_days set "order"=4 where week_day_name = 'Чт';
+            update time_desc.week_days set "order"=5 where week_day_name = 'Пт';
+            update time_desc.week_days set "order"=6 where week_day_name = 'Сб';
+            update time_desc.week_days set "order"=7 where week_day_name = 'Вс';
+
+            alter table time_desc.pairs
+            add "order" integer;
+
+            update time_desc.pairs set "order"=1 where name = '1 пара';
+            update time_desc.pairs set "order"=2 where name = '2 пара';
+            update time_desc.pairs set "order"=3 where name = '3 пара';
+            update time_desc.pairs set "order"=4 where name = '4 пара';
+            update time_desc.pairs set "order"=5 where name = '5 пара';
+            update time_desc.pairs set "order"=6 where name = '6 пара';
+            update time_desc.pairs set "order"=7 where name = '7 пара';
+        </sql>
+        <rollback>
+            alter table schedule.all_data drop constraint all_data_week_days_id_fk;
+            truncate table schedule.event_types;
+
+            drop index time_desc.week_days_order_uindex;
+
+            alter table time_desc.week_days drop column "order";
+
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

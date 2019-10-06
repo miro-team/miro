@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="ew256" context="prod">
+        <sql>
+            create table time_desc.week_day
+            (
+            id serial not null,
+            day_code varchar(30) not null,
+            day_name varchar(30) not null
+            );
+
+            create unique index week_day_day_code_uindex
+            on time_desc.week_day (day_code);
+
+            create unique index week_day_day_name_uindex
+            on time_desc.week_day (day_name);
+
+            create unique index week_day_id_uindex
+            on time_desc.week_day (id);
+
+            alter table time_desc.week_day
+            add constraint week_day_pk
+            primary key (id);
+
+            alter table time_desc.week_day
+            add "order" int not null;
+
+            create unique index week_day_order_uindex
+            on time_desc.week_day ("order");
+
+            alter table time_desc.week_day rename column "order" to order_num;
+
+            alter table time_desc.week_day rename to week_days;
+
+            insert into time_desc.week_days (day_code, day_name, order_num)
+            VALUES ('Пн', 'Понедельник', 1);
+            insert into time_desc.week_days (day_code, day_name, order_num)
+            VALUES ('Вт', 'Вторник', 2);
+            insert into time_desc.week_days (day_code, day_name, order_num)
+            VALUES ('Ср', 'Среда', 3);
+            insert into time_desc.week_days (day_code, day_name, order_num)
+            VALUES ('Чт', 'Четверг', 4);
+            insert into time_desc.week_days (day_code, day_name, order_num)
+            VALUES ('Пт', 'Пятница', 5);
+            insert into time_desc.week_days (day_code, day_name, order_num)
+            VALUES ('Сб', 'Суббота', 6);
+            insert into time_desc.week_days (day_code, day_name, order_num)
+            VALUES ('Вс', 'Воскресенье', 7);
+
+            alter table schedule.events
+            add week_day int not null;
+
+            alter table schedule.events
+            add constraint events_week_days_id_fk
+            foreign key (week_day) references time_desc.week_days;
+
+            drop sequence time_desc.week_days_week_day_id_seq;
+
+            update locations.schemes set floor = 2 where building = '1';
+            insert into locations.schemes (id, name, floor, building)
+            values (11, '7 корпус', 2, '7');
+            update locations.schemes set building = '10' where id = 10;
+            alter table locations.rooms drop column type;
+        </sql>
+        <rollback>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
