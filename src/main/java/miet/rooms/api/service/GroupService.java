@@ -1,14 +1,14 @@
 package miet.rooms.api.service;
 
+import miet.rooms.api.web.response.ConfigResponse;
 import miet.rooms.repository.jpa.dao.GroupDao;
 import miet.rooms.repository.jpa.entity.Group;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -24,13 +24,15 @@ public class GroupService {
         return groupDao.findAllByName(groupName);
     }
 
-    public Map<Long, Object> findAll() throws JSONException {
-        Map<Long, Object> groupConfig = new HashMap<>();
-        List<Group> groups = groupDao.findAll();
-        for(Group group : groups) {
-            groupConfig.put(group.getId(), group.getName());
-        }
-        return groupConfig;
+    public List<Object> findAllMapping() throws JSONException {
+        return groupDao.findAll().stream()
+                .map(r -> {
+                    ConfigResponse response = new ConfigResponse();
+                    response.setId(r.getId());
+                    response.setName(r.getName());
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 
     public void saveAll(List<Group> groups) {

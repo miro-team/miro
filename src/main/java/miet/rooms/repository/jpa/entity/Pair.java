@@ -18,7 +18,7 @@ public class Pair {
     private String name;
     private String timeFrom;
     private String timeTo;
-    private Integer order;
+    private Long order;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "time_desc.pairs_pair_id_seq")
@@ -43,7 +43,7 @@ public class Pair {
     }
 
     @Column(name = "order", nullable = false)
-    public Integer getOrder() {
+    public Long getOrder() {
         return order;
     }
 }

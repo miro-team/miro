@@ -7,9 +7,8 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class SchemeService {
@@ -25,18 +24,15 @@ public class SchemeService {
         return schemeDao.findAllByFloorAndBuilding(floor, building);
     }
 
-    public Map<Long, Object> findAll() throws JSONException {
-        Map<Long, Object> schemeConfig = new HashMap<>();
-        List<Scheme> schemes = schemeDao.findAll();
-        for(Scheme scheme : schemes) {
-            SchemeConfigMapping schemeConfigMapping = SchemeConfigMapping.builder()
-                    .name(scheme.getName())
-                    .building(scheme.getBuilding())
-                    .fileName(scheme.getFileName())
-                    .floor(scheme.getFloor())
-                    .build();
-            schemeConfig.put(scheme.getId(), schemeConfigMapping);
-        }
-        return schemeConfig;
+    public List<Object> findAllMapping() throws JSONException {
+        return schemeDao.findAll().stream()
+                .map(r -> SchemeConfigMapping.builder()
+                        .id(r.getId())
+                        .name(r.getName())
+                        .building(r.getBuilding())
+                        .fileName(r.getFileName())
+                        .floor(r.getFloor())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

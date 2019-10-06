@@ -25,17 +25,17 @@ public class Teacher {
         return id;
     }
 
-    @Column(name = "name")
+    @Column(name = "teacher_name")
     public Long getName() {
         return name;
     }
 
-    @Column(name = "surname")
+    @Column(name = "teacher_surname")
     public Long getSurname() {
         return surname;
     }
 
-    @Column(name = "patronymic")
+    @Column(name = "teacher_patronymic")
     public Long getPatronymic() {
         return patronymic;
     }

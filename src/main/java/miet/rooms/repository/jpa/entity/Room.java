@@ -17,7 +17,6 @@ public class Room {
     private Long id;
     private String name;
     private Long capacity;
-    private String type;
     private Scheme scheme;
     private Integer schemeMapping;
     private RoomType roomType;
@@ -37,11 +36,6 @@ public class Room {
     @Column(name = "capacity", nullable = false)
     public Long getCapacity() {
         return capacity;
-    }
-
-    @Column(name = "type", nullable = false)
-    public String getType() {
-        return type;
     }
 
     @OneToOne

@@ -1,62 +1,36 @@
-//package miet.rooms.api.web.controller;
-//
-//import lombok.extern.slf4j.Slf4j;
-//import miet.rooms.api.service.AllDataService;
-//import miet.rooms.initializer.ScheduleGetter;
-//import miet.rooms.initializer.jsoninitdata.Datum;
-//import miet.rooms.initializer.jsoninitdata.TimetableData;
-//import miet.rooms.repository.jpa.dao.*;
-//import miet.rooms.repository.jpa.entity.*;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.format.annotation.DateTimeFormat;
-//import org.springframework.jdbc.core.JdbcTemplate;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.io.IOException;
-//import java.time.DayOfWeek;
-//import java.time.LocalDate;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//@RestController
-//@RequestMapping("/api/initialize")
-//@Slf4j
-//public class InitializationController {
-//
-//    @Autowired
-//    private ScheduleGetter scheduleGetter;
-//
-//    @Autowired
-//    private PairDao pairDao;
-//
-//    @Autowired
-//    private EventDao eventDao;
-//
-//    @Autowired
-//    private GroupDao groupDao;
-//
-//    @Autowired
-//    private RoomDao roomDao;
-//
-//    @Autowired
-//    private RoomTypeDao roomTypeDao;
-//
-//    @Autowired
-//    private SchemeDao schemeDao;
-//
-//    @Autowired
-//    private EngageTypeDao engageTypeDao;
-//
-//    @Autowired
-//    private JdbcTemplate jdbcTemplate;
-//
-//    @Autowired
-//    private AllDataService allDataService;
-//
-//    @Autowired
-//    private WeekDayDao weekDayDao;
-//
-//    private List<TimetableData> schedule;
+package miet.rooms.api.web.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import miet.rooms.api.service.InitializationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.time.LocalDate;
+
+@RestController
+@RequestMapping("/api/initialize")
+@Slf4j
+public class InitializationController {
+
+    private final InitializationService initializationService;
+
+    @Autowired
+    public InitializationController(InitializationService initializationService) {
+        this.initializationService = initializationService;
+    }
+
+
+    @PostMapping
+    public void initializeAll(
+            @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate) throws IOException {
+        initializationService.initializeSchedule(startDate);
+    }
+
 //
 //    @PostMapping(value = "/all")
 //    public List<TimetableData> initializeAll(
@@ -149,7 +123,7 @@
 //            @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate,
 //            @RequestParam(value = "weeksToDelete") Long weeksToDelete
 //    ) throws IOException {
-//        if(schedule == null) {
+//        if (schedule == null) {
 //            retrieveDataFromServer();
 //        }
 //        List<Datum> datumList = schedule.stream().flatMap(ttd -> ttd.getData().stream()).collect(Collectors.toList());
@@ -176,14 +150,14 @@
 //
 //    private void removeLastWeeks(Long weeksToDelete) {
 //        Long lastWeekNum = allDataService.getLastWeek();
-//        for(int weeksDeleted = 0; weeksDeleted == weeksToDelete; weeksDeleted++) {
+//        for (int weeksDeleted = 0; weeksDeleted == weeksToDelete; weeksDeleted++) {
 //            allDataService.removeByWeekNum(lastWeekNum - weeksDeleted);
 //        }
 //    }
 //
 //    @PostMapping(value = "/inside")
 //    public void retrieveRoomsAndSchemes() throws IOException {
-//        if(schedule == null) {
+//        if (schedule == null) {
 //            retrieveDataFromServer();
 //        }
 //    }
@@ -296,4 +270,4 @@
 //    private void retrieveDataFromServer() throws IOException {
 //        schedule = getScheduleFromServer();
 //    }
-//}
+}

@@ -22,6 +22,7 @@ public class Event {
     private Room room;
     private Long weekNum;
     private Engagement engagement;
+    private WeekDay weekDay;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.events_id_seq")
@@ -58,4 +59,9 @@ public class Event {
         return weekNum;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "week_day", nullable = false)
+    public WeekDay getWeekDay() {
+        return weekDay;
+    }
 }

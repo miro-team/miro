@@ -70,7 +70,7 @@ public class TestConfig {
         liquibase.setDataSource(dataSource);
         liquibase.setDefaultSchema("public");
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource("src/main/resources/liquibase/master.xml")).getFile());
+        File file = new File(Objects.requireNonNull(classLoader.getResource("liquibase/master.xml")).getFile());
         liquibase.setChangeLog("file:" + file.getAbsolutePath());
         return liquibase;
     }

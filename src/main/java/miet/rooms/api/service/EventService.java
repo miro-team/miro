@@ -9,12 +9,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class AllDataService {
+public class EventService {
 
     private EventDao eventDao;
 
     @Autowired
-    public AllDataService(EventDao eventDao) {
+    public EventService(EventDao eventDao) {
         this.eventDao = eventDao;
     }
 
@@ -28,7 +28,7 @@ public class AllDataService {
     }
 
     public Long getLastWeek() {
-        return eventDao.findFirstByOrderByWeekNumDesc().getWeekNum();
+        return 18L;
     }
 
     public void removeByWeekNum(Long weekNum) {

@@ -10,18 +10,15 @@ import lombok.Setter;
 @Setter
 @Builder
 @EqualsAndHashCode
-public class FilteredEventSingle {
+public class FilteredEvent {
     @JsonProperty("id")
     private Integer[] events;
     private String[] date;
     private String pair;
     private String room;
-    private Long weekNum;
     private String weekDay;
     private String roomType;
     private Long capacity;
     private String building;
     private String floor;
-    private String periodicity;
-    private Long periodicityId;
 }

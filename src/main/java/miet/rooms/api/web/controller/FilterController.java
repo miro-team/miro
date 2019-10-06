@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import miet.rooms.api.service.FilterService;
 import miet.rooms.api.web.income.FilterCycleIncome;
 import miet.rooms.api.web.income.FilterSingleIncome;
-import miet.rooms.repository.jdbc.model.FilteredDataCycle;
 import miet.rooms.repository.jdbc.model.FilteredData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
@@ -49,15 +51,15 @@ public class FilterController {
 
     @GetMapping(value = "/cycle")
     public FilteredData getFilteredCycleData(@RequestParam(required = false) Long roomId,
-                                                  @RequestParam Long periodicity,
-                                                  @RequestParam(required = false) Long pairId,
-                                                  @RequestParam(required = false) Long building,
-                                                  @RequestParam(required = false) Long floor,
-                                                  @RequestParam(required = false) Long roomTypeId,
-                                                  @RequestParam(required = false) Long capacity,
-                                                  @RequestParam(required = false) Long weekDay,
-                                                  @RequestParam Long pageSize,
-                                                  @RequestParam Long pageNum) {
+                                             @RequestParam Long periodicity,
+                                             @RequestParam(required = false) Long pairId,
+                                             @RequestParam(required = false) Long building,
+                                             @RequestParam(required = false) Long floor,
+                                             @RequestParam(required = false) Long roomTypeId,
+                                             @RequestParam(required = false) Long capacity,
+                                             @RequestParam(required = false) Long weekDay,
+                                             @RequestParam Long pageSize,
+                                             @RequestParam Long pageNum) {
         FilterCycleIncome cycleIncome = FilterCycleIncome.builder()
                 .roomId(roomId)
                 .periodicity(periodicity)

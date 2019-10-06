@@ -1,13 +1,13 @@
 package miet.rooms.api.service;
 
+import miet.rooms.api.web.response.ConfigResponse;
 import miet.rooms.repository.jpa.dao.RoomTypeDao;
 import miet.rooms.repository.jpa.entity.RoomType;
 import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomTypeService {
@@ -18,13 +18,15 @@ public class RoomTypeService {
         this.roomTypeDao = roomTypeDao;
     }
 
-    public Map<Long, Object> findAll() throws JSONException {
-        Map<Long, Object> roomTypeConfig = new HashMap<>();
-        List<RoomType> roomTypes = roomTypeDao.findAll();
-        for (RoomType roomType : roomTypes) {
-            roomTypeConfig.put(roomType.getId(), roomType.getName());
-        }
-        return roomTypeConfig;
+    public List<Object> findAllMapping() throws JSONException {
+        return roomTypeDao.findAll().stream()
+                .map(r -> {
+                    ConfigResponse response = new ConfigResponse();
+                    response.setId(r.getId());
+                    response.setName(r.getName());
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 
     public RoomType findAllById(Long id) {

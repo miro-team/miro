@@ -120,8 +120,6 @@
             foreign key (discipline_id) references schedule.discipline;
         </sql>
         <rollback>
-
-
         </rollback>
     </changeSet>
 </databaseChangeLog>

@@ -1,6 +1,6 @@
 package miet.rooms.api.service;
 
-import io.swagger.models.auth.In;
+import miet.rooms.api.web.response.PairConfigResponse;
 import miet.rooms.repository.jpa.dao.PairDao;
 import miet.rooms.repository.jpa.entity.Pair;
 import org.json.JSONException;
@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PairService {
@@ -26,13 +25,17 @@ public class PairService {
         return pairDao.findAllById(id);
     }
 
-    public Map<Long, Object> findAll() throws JSONException {
-        Map<Long, Object> pairConfig = new HashMap<>();
-        List<Pair> pairs = pairDao.findAll();
-        for(Pair pair : pairs) {
-            pairConfig.put(pair.getId(), pair.getName());
-        }
-        return pairConfig;
+    public List<Object> findAllMapping() throws JSONException {
+        return pairDao.findAll().stream()
+                .map(r -> PairConfigResponse.builder()
+                        .id(r.getId())
+                        .name(r.getName())
+                        .timeFrom(r.getTimeFrom())
+                        .timeTo(r.getTimeTo())
+                        .order(r.getOrder())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 
     public Pair getPairByOrder(Integer order) {

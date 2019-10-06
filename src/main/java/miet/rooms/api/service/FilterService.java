@@ -28,6 +28,6 @@ public class FilterService {
     public FilteredData getFilteredData(FilterCycleIncome incomeData, Long pageNum, Long pageSize) {
         String queryData = filterQuery.getQueryCycleData(incomeData, pageSize, pageNum);
         String queryCount = filterQuery.getQueryCycleCount(incomeData);
-        return filterDao.getFilteredData(pageSize, pageNum, queryData, queryCount, incomeData.getPeriodicity());
+        return filterDao.getFilteredData(pageSize, pageNum, queryData, queryCount);
     }
 }

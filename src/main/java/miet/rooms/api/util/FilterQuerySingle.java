@@ -35,19 +35,17 @@ public class FilterQuerySingle {
         return queryStr;
     }
 
-    private class QueryBuilderSingle {
+    private static class QueryBuilderSingle {
         private StringBuilder query;
 
         private QueryBuilderSingle appendSelects() {
             query = new StringBuilder();
             query.append("select    array[ad.id]                                              as events,\n")
                     .append("       array[ad.date]                                            as dates,\n")
-//                    .append("       ad.date,\n")
                     .append("       ad.week_num,\n")
-                    .append("       day.week_day_name,\n")
-                    .append("       wt.week_type_name,\n")
+                    .append("       day.day_code,\n")
+                    .append("       wt.week_type_code,\n")
                     .append("       pairs.name as pair_info,\n")
-//                    .append("       concat(pairs.name, ': ', pairs.time_from, '-', pairs.time_to) as pair_info,\n")
                     .append("       r.id,\n")
                     .append("       r.name                                                        as room_name,\n")
                     .append("       r.capacity,\n")
@@ -64,7 +62,7 @@ public class FilterQuerySingle {
         }
 
         private QueryBuilderSingle appendFrom() {
-            query.append("from schedule.all_data ad\n")
+            query.append("from schedule.events ad\n")
                     .append("         inner join locations.rooms r on r.id = ad.room_id\n")
                     .append("         inner join locations.schemes sh on sh.id = r.scheme_id\n")
                     .append("         inner join time_desc.week_days day on day.id = ad.week_day\n")
@@ -93,7 +91,7 @@ public class FilterQuerySingle {
                 query.append("pairs.id = ").append(singleIncome.getPairId()).append(" and ");
             if (singleIncome.getWeekDay() != null)
                 query.append("day.id = ").append(singleIncome.getWeekDay()).append(" and ");
-            query.append(" and ad.engaged_by_id is null and is_engaged=false\n");
+            query.append(" and eng_id is null\n");
             return this;
         }
 

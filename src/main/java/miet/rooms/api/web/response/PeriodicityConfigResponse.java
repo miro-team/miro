@@ -5,10 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SchemeConfigMapping {
+public class PeriodicityConfigResponse {
     private Long id;
+    private Integer[] weekTypes;
     private String name;
-    private String building;
-    private String fileName;
-    private Long floor;
 }

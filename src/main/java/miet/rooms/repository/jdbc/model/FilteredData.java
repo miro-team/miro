@@ -14,8 +14,8 @@ import java.util.List;
 @EqualsAndHashCode
 public class FilteredData {
     @JsonProperty("events")
-    private List<FilteredEventSingle> filteredEventSingleList;
+    private List<FilteredEvent> filteredEventList;
     private Long pageSize;
     private Long pageNum;
-    private Long totalAmount;
+    private Long pageCount;
 }

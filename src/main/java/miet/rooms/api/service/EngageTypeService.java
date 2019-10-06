@@ -1,32 +1,30 @@
 package miet.rooms.api.service;
 
 import miet.rooms.api.web.response.ConfigResponse;
-import miet.rooms.repository.jpa.dao.WeekDayDao;
+import miet.rooms.repository.jpa.dao.EngageTypeDao;
 import org.json.JSONException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class WeekDayService {
+public class EngageTypeService {
+    private final EngageTypeDao engageTypeDao;
 
-    private final WeekDayDao weekDayDao;
-
-    @Autowired
-    public WeekDayService(WeekDayDao weekDayDao) {
-        this.weekDayDao = weekDayDao;
+    public EngageTypeService(EngageTypeDao engageTypeDao) {
+        this.engageTypeDao = engageTypeDao;
     }
 
     public List<Object> findAllMapping() throws JSONException {
-        return weekDayDao.findAll().stream()
+        return engageTypeDao.findAll().stream()
                 .map(r -> {
                     ConfigResponse response = new ConfigResponse();
                     response.setId(r.getId());
-                    response.setName(r.getDayCode());
+                    response.setName(r.getName());
                     return response;
                 })
                 .collect(Collectors.toList());
     }
+
 }

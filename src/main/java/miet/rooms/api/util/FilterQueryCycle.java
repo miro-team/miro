@@ -1,33 +1,23 @@
 package miet.rooms.api.util;
 
 import lombok.extern.slf4j.Slf4j;
-import miet.rooms.api.service.AllDataService;
 import miet.rooms.api.service.PeriodicityService;
-import miet.rooms.api.service.WeekTypeService;
 import miet.rooms.api.web.income.FilterCycleIncome;
-import miet.rooms.repository.jpa.entity.WeekType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class FilterQueryCycle {
 
-    private final AllDataService allDataService;
-    private final WeekTypeService weekTypeService;
     private final PeriodicityService periodicityService;
 
     @Autowired
-    public FilterQueryCycle(AllDataService allDataService, WeekTypeService weekTypeService, PeriodicityService periodicityService) {
-        this.allDataService = allDataService;
-        this.weekTypeService = weekTypeService;
+    public FilterQueryCycle(PeriodicityService periodicityService) {
         this.periodicityService = periodicityService;
     }
 
@@ -55,16 +45,13 @@ public class FilterQueryCycle {
 
     private class QueryBuilderCycle {
         private StringBuilder query;
-        private List<String> dates = new ArrayList<>();
-        private Long weekNum;
 
         private QueryBuilderCycle appendSelects() {
             query = new StringBuilder();
             query.append("select array_agg(ad.id)                 as events,\n")
                     .append("       array_agg(ad.date)            as dates,\n")
-                    .append("       day.week_day_name,\n")
+                    .append("       day.day_code,\n")
                     .append("       pairs.name as pair_info,\n")
-//                    .append("       concat(pairs.name, ': ', pairs.time_from, '-', pairs.time_to)                       as pair_info,\n")
                     .append("       r.id,\n")
                     .append("       r.name                           as room_name,\n")
                     .append("       r.capacity,\n")
@@ -75,7 +62,7 @@ public class FilterQueryCycle {
         }
 
         private QueryBuilderCycle appendFrom() {
-            query.append("from schedule.all_data ad\n")
+            query.append("from schedule.events ad\n")
                     .append("         inner join locations.rooms r on r.id = ad.room_id\n")
                     .append("         inner join locations.schemes sh on sh.id = r.scheme_id\n")
                     .append("         inner join time_desc.week_days day on day.id = ad.week_day\n")
@@ -113,55 +100,10 @@ public class FilterQueryCycle {
             if (cycleIncome.getWeekDay() != null)
                 query.append("day.id = ").append(cycleIncome.getWeekDay()).append(" and ");
 
-            weekNum = allDataService.determineCurrentWeek(LocalDate.now());
-            List<String> dates = generateDates(cycleIncome.getPeriodicity(), cycleIncome.getWeekDay(), weekNum);
-            query.append("ad.date in (");
-            for (String d : dates) {
-                query.append("to_date('")
-                        .append(d)
-                        .append("', 'dd.MM.yyyy'),\n");
-            }
-            query.deleteCharAt(query.lastIndexOf(","));
-            query.append(") ");
-
-            query.append(" and ad.engaged_by_id is null and is_engaged=false\n");
+            query.append("and ad.date >= to_date('")
+                    .append(DateTimeHelper.dateToString(LocalDate.now()))
+                    .append("', 'dd.MM.yyyy') and eng_id is null\n");
             return this;
-        }
-
-        private List<String> generateDates(Long periodicity, Long weekDay, Long weekNum) {
-            dates = new ArrayList<>();
-            for(Integer weekType : periodicityService.getWeekTypesIdById(periodicity)) {
-                Long weeksToAdd = weekTypeService.getWeeksToAdd(weekType.longValue());
-                //TODO: find week type
-                LocalDate startDate = weekNum == 1L ? allDataService.getSemesterStartDate() : LocalDate.now();
-
-                //TODO: 18 in const
-                if (weekDay == null) {
-                    for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
-                        addDate(weekNum, startDate, week, DayOfWeek.MONDAY);
-                        addDate(weekNum, startDate, week, DayOfWeek.TUESDAY);
-                        addDate(weekNum, startDate, week, DayOfWeek.WEDNESDAY);
-                        addDate(weekNum, startDate, week, DayOfWeek.THURSDAY);
-                        addDate(weekNum, startDate, week, DayOfWeek.FRIDAY);
-                        addDate(weekNum, startDate, week, DayOfWeek.SATURDAY);
-                        addDate(weekNum, startDate, week, DayOfWeek.SUNDAY);
-                    }
-                } else {
-                    for (int week = 0; week < 18 - weekNum.intValue(); week += weeksToAdd) {
-                        addDate(weekNum, startDate, week, DayOfWeek.of(weekDay.intValue()));
-                    }
-                }
-            }
-            return dates;
-        }
-
-        private void addDate(Long weekNum, LocalDate startDate, int week, DayOfWeek dayOfWeek) {
-            if (startDate.getDayOfWeek().getValue() < startDate.with(dayOfWeek).getDayOfWeek().getValue())
-                dates.add(DateTimeHelper.dateToString(startDate.with(dayOfWeek)));
-            else if (weekNum == 1L)
-                dates.add(DateTimeHelper.dateToString(startDate.with(dayOfWeek)));
-            else
-                dates.add(DateTimeHelper.dateToString(startDate.with(dayOfWeek).plusWeeks(week)));
         }
 
         private QueryBuilderCycle appendGroupBy() {
@@ -169,15 +111,8 @@ public class FilterQueryCycle {
                     .append("         day.id,\n")
                     .append("         r.id,\n")
                     .append("         sh.id,\n")
-                    .append("         r_type.name\n")
-                    .append(" having array_length(array_agg(ad.id), 1) = ")
-                    //TODO: check if it is right
-                    .append(getLastWeek() - weekNum + 1);
+                    .append("         r_type.name\n");
             return this;
-        }
-
-        private Long getLastWeek() {
-            return allDataService.getLastWeek();
         }
 
         private QueryBuilderCycle appendLimit(Long pageNum, Long pageSize) {

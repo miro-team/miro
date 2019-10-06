@@ -44,6 +44,7 @@ public class ScheduleGetter {
     }
 
     private void initialize() throws IOException {
+//        String response = "";
         String response = getResponse();
         collectGroups(response);
     }
@@ -54,6 +55,7 @@ public class ScheduleGetter {
     }
 
     private void collectGroups(String response) throws IOException {
+//        String group = "ПИН-41";
         for (String group : response.split(",")) {
             String groupStr = group.trim().replace("\"", "");
             groups.add(groupStr);

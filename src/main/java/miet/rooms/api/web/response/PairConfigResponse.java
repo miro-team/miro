@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SchemeConfigMapping {
+public class PairConfigResponse {
     private Long id;
     private String name;
-    private String building;
-    private String fileName;
-    private Long floor;
+    private String timeFrom;
+    private String timeTo;
+    private Long order;
 }

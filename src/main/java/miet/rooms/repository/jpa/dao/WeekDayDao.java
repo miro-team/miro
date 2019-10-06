@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface WeekDayDao extends JpaRepository<WeekDay, Long> {
     WeekDay findAllById(@Param("id") Long id);
 
-    WeekDay findAllByOrder(@Param("order") Integer order);
+//    WeekDay findAllByOrder(@Param("order") Integer order);
 }

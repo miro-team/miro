@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,10 +21,10 @@ public class ConfigController {
     private final GroupService groupService;
     private final RoomService roomService;
     private final PeriodicityService periodicityService;
-    private final EventTypeService eventTypeService;
+    private final EngageTypeService engageTypeService;
 
     @Autowired
-    public ConfigController(RoomService roomService, WeekDayService weekDayService, PairService pairService, RoomTypeService roomTypeService, SchemeService schemeService, GroupService groupService, PeriodicityService periodicityService, EventTypeService eventTypeService) {
+    public ConfigController(RoomService roomService, WeekDayService weekDayService, PairService pairService, RoomTypeService roomTypeService, SchemeService schemeService, GroupService groupService, PeriodicityService periodicityService, EngageTypeService engageTypeService) {
         this.roomService = roomService;
         this.weekDayService = weekDayService;
         this.pairService = pairService;
@@ -31,20 +32,21 @@ public class ConfigController {
         this.schemeService = schemeService;
         this.groupService = groupService;
         this.periodicityService = periodicityService;
-        this.eventTypeService = eventTypeService;
+        this.engageTypeService = engageTypeService;
     }
 
     @GetMapping
-    public Map<String, Map<Long, Object>> getMapping() {
-        Map<String, Map<Long, Object>> mappings = new HashMap<>();
-        mappings.put("weekDays", weekDayService.findAll());
-        mappings.put("pairs", pairService.findAll());
-        mappings.put("roomTypes", roomTypeService.findAll());
-        mappings.put("schemes", schemeService.findAll());
-        mappings.put("groups", groupService.findAll());
+    public Map<String, List<Object>> getMapping() {
+        Map<String, List<Object>> mappings = new HashMap<>();
+        mappings.put("weekDays", weekDayService.findAllMapping());
+        mappings.put("pairs", pairService.findAllMapping());
+        mappings.put("roomTypes", roomTypeService.findAllMapping());
+        mappings.put("schemes", schemeService.findAllMapping());
+        mappings.put("groups", groupService.findAllMapping());
         mappings.put("rooms", roomService.findAllMapping());
-        mappings.put("periodicities", periodicityService.findAll());
-        mappings.put("eventTypes", eventTypeService.findAll());
+        mappings.put("periodicities", periodicityService.findAllMapping());
+        mappings.put("eventTypes", engageTypeService.findAllMapping());
+        //TODO: add disciplines and teachers
         return mappings;
     }
 }
