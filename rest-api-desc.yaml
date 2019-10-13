@@ -1060,7 +1060,8 @@ definitions:
     type: object
     properties:
       id:
-        type: string
+        type: integer
+        format: int64
       name:
         type: string
     title: group
@@ -1081,25 +1082,41 @@ definitions:
     type: object
     properties:
       weekDays:
-        $ref: '#/definitions/weekDay'
+        type: array
+        items:
+          $ref: '#/definitions/weekDay'
       pairs:
-        $ref: '#/definitions/pairMapped'
+        type: array
+        items:
+          $ref: '#/definitions/pairMapped'
       roomTypes:
-        $ref: '#/definitions/roomType'
+        type: array
+        items:
+          $ref: '#/definitions/roomType'
       schemes:
-        $ref: '#/definitions/scheme'
+        type: array
+        items:
+          $ref: '#/definitions/scheme'
       buildings:
         type: array
         items:
           $ref: '#/definitions/building'
       groups:
-        $ref: '#/definitions/group'
+        type: array
+        items:
+          $ref: '#/definitions/group'
       rooms:
-        $ref: '#/definitions/room'
+        type: array
+        items:
+          $ref: '#/definitions/room'
       periodicities:
-        $ref: '#/definitions/periodicity'
+        type: array
+        items:
+          $ref: '#/definitions/periodicity'
       eventTypes:
-        $ref: '#/definitions/eventType'
+        type: array
+        items:
+          $ref: '#/definitions/eventType'
     title: config
   weekType:
     type: object
@@ -1115,10 +1132,13 @@ definitions:
       id:
         type: integer
         format: int64
-      weeks:
+      weekTypes:
         type: array
         items:
-          type: string
+          type: integer
+          format: int64
+      name:
+        type: string
   eventType:
     type: object
     properties:
@@ -1142,6 +1162,10 @@ definitions:
         type: integer
         format: int64
       name:
+        type: string
+      timeFrom:
+        type: string
+      timeTo:
         type: string
   building:
     type: object
@@ -1304,6 +1328,18 @@ definitions:
         format: int64
       name:
         type: string
+      capacity:
+        type: integer
+        format: int64
+      schemeId:
+        type: integer
+        format: int64
+      schemeMapping:
+        type:
+          string
+      roomTypeId:
+        type: integer
+        format: int64
     title: room
   roomModel:
     type: object
@@ -1331,13 +1367,8 @@ definitions:
         format: int64
       name:
         type: string
-      building:
-        type: string
       fileName:
         type: string
-      floor:
-        type: integer
-        format: int64
     title: scheme
   time:
     type: object

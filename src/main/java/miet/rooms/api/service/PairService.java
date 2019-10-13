@@ -32,7 +32,6 @@ public class PairService {
                         .name(r.getName())
                         .timeFrom(r.getTimeFrom())
                         .timeTo(r.getTimeTo())
-                        .order(r.getOrder())
                         .build()
                 )
                 .collect(Collectors.toList());

@@ -8,7 +8,5 @@ import lombok.Data;
 public class SchemeConfigMapping {
     private Long id;
     private String name;
-    private String building;
     private String fileName;
-    private Long floor;
 }

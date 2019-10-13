@@ -10,5 +10,4 @@ public class PairConfigResponse {
     private String name;
     private String timeFrom;
     private String timeTo;
-    private Long order;
 }

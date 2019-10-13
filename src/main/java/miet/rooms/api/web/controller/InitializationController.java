@@ -26,8 +26,9 @@ public class InitializationController {
 
 
     @PostMapping
-    public void initializeAll(
-            @RequestParam(value = "startDate") @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate startDate) throws IOException {
+    public void initializeAll(@RequestParam(value = "startDate")
+                              @DateTimeFormat(pattern = "dd.MM.yyyy")
+                                      LocalDate startDate) throws IOException {
         initializationService.initializeSchedule(startDate);
     }
 
