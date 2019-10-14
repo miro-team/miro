@@ -55,13 +55,13 @@ public class ScheduleGetter {
     }
 
     private void collectGroups(String response) throws IOException {
-//        String group = "ПИН-41";
-        for (String group : response.split(",")) {
+        String group = "ПИН-41";
+//        for (String group : response.split(",")) {
             String groupStr = group.trim().replace("\"", "");
             groups.add(groupStr);
             log.info("Found " + groupStr);
             addTimetableEntry(groupStr);
-        }
+//        }
     }
 
     public List<String> getRooms() {

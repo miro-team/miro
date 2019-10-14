@@ -2,15 +2,23 @@ package miet.rooms.api.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import miet.rooms.api.service.InitializationService;
+import miet.rooms.initializer.ScheduleGetter;
+import miet.rooms.initializer.jsoninitdata.Datum;
+import miet.rooms.initializer.jsoninitdata.TimetableData;
+import miet.rooms.repository.jpa.entity.EngageType;
+import miet.rooms.repository.jpa.entity.Engagement;
+import miet.rooms.repository.jpa.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/initialize")
@@ -30,6 +38,22 @@ public class InitializationController {
                               @DateTimeFormat(pattern = "dd.MM.yyyy")
                                       LocalDate startDate) throws IOException {
         initializationService.initializeSchedule(startDate);
+        System.out.println("Over");
+    }
+
+    @Autowired
+    ScheduleGetter scheduleGetter;
+
+    @GetMapping
+    public void test() throws IOException {
+        List<TimetableData> scheduleFromServer = scheduleGetter.getScheduleFromServer();
+
+        scheduleFromServer.stream()
+                .map(TimetableData::getData)
+                .flatMap(Collection::stream)
+                .map(Datum::getWeekNumber)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
 //

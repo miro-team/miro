@@ -1,26 +1,28 @@
 <?xml version="1.0"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-  <changeSet id="1" author="ew256">
-    <sql>create schema locations</sql>
-    <sql>create schema schedule</sql>
-    <sql>create schema time_desc;</sql>
-    <sql>create schema data</sql>
-  </changeSet>
-  <changeSet id="2" author="ew256" context="prod">
-    <sql>create sequence locations.rooms_room_id_seq</sql>
-    <sql>create sequence locations.schemes_scheme_id_seq</sql>
-    <sql>create sequence schedule.all_data_data_id_seq</sql>
-    <sql>create sequence schedule.cycle_events_event_id_seq</sql>
-    <sql>create sequence schedule.engages_engage_id_seq</sql>
-    <sql>create sequence time_desc.pairs_pair_id_seq</sql>
-    <sql>create sequence data.groups_group_id_seq</sql>
-    <sql>create sequence schedule.engage_types_engage_type_id_seq</sql>
-    <sql>create sequence schedule.cycle_cycles_id_seq</sql>
-    <sql>create sequence schedule.transfer_transfers_id_seq</sql>
-    <sql>create sequence locations.room_types_room_type_id_seq</sql>
-  </changeSet>
-  <changeSet id="3" author="ew256" context="prod">
-    <sql>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="ew256">
+        <sql>create schema locations</sql>
+        <sql>create schema schedule</sql>
+        <sql>create schema time_desc;</sql>
+        <sql>create schema data</sql>
+    </changeSet>
+    <changeSet id="2" author="ew256" context="prod">
+        <sql>create sequence locations.rooms_room_id_seq</sql>
+        <sql>create sequence locations.schemes_scheme_id_seq</sql>
+        <sql>create sequence schedule.all_data_data_id_seq</sql>
+        <sql>create sequence schedule.cycle_events_event_id_seq</sql>
+        <sql>create sequence schedule.engages_engage_id_seq</sql>
+        <sql>create sequence time_desc.pairs_pair_id_seq</sql>
+        <sql>create sequence data.groups_group_id_seq</sql>
+        <sql>create sequence schedule.engage_types_engage_type_id_seq</sql>
+        <sql>create sequence schedule.cycle_cycles_id_seq</sql>
+        <sql>create sequence schedule.transfer_transfers_id_seq</sql>
+        <sql>create sequence locations.room_types_room_type_id_seq</sql>
+    </changeSet>
+    <changeSet id="3" author="ew256" context="prod">
+        <sql>
             create table schedule.cycle_events
             (
             id integer not null
@@ -31,11 +33,11 @@
             seq_num integer
             )
         </sql>
-    <sql>
+        <sql>
             create unique index cycle_events_id_uindex
             on schedule.cycle_events (id)
         </sql>
-    <sql>
+        <sql>
             create table locations.schemes
             (
             id integer not null
@@ -47,11 +49,11 @@
             building integer
             )
         </sql>
-    <sql>
+        <sql>
             create unique index schemes_id_uindex
             on locations.schemes (id)
         </sql>
-    <sql>
+        <sql>
             create table time_desc.pairs
             (
             id integer not null
@@ -62,11 +64,11 @@
             time_to varchar(100)
             )
         </sql>
-    <sql>
+        <sql>
             create unique index pairs_id_uindex
             on time_desc.pairs (id)
         </sql>
-    <sql>
+        <sql>
             create table data.edu_groups
             (
             id integer not null
@@ -75,11 +77,11 @@
             name varchar(30)
             )
         </sql>
-    <sql>
+        <sql>
             create unique index edu_groups_id_uindex
             on data.edu_groups (id)
         </sql>
-    <sql>
+        <sql>
             create table schedule.engage_type
             (
             id integer not null
@@ -89,25 +91,25 @@
             description varchar(100)
             )
         </sql>
-    <sql>
+        <sql>
             create unique index engagetype_id_uindex
             on schedule.engage_type (id)
         </sql>
-    <sql>
+        <sql>
             create unique index engagetype_engage_type_id_uindex
             on schedule.engage_type (engage_type_id)
         </sql>
-    <sql>
+        <sql>
             create table locations.room_type
             (
             id integer not null,
             name varchar(100)
             )
         </sql>
-    <sql>create unique index room_type_id_uindex
+        <sql>create unique index room_type_id_uindex
             on locations.room_type (id)
         </sql>
-    <sql>
+        <sql>
             create table locations.rooms
             (
             id integer not null
@@ -125,7 +127,7 @@
             references locations.room_type (id)
             )
         </sql>
-    <sql>
+        <sql>
             create table schedule.all_data
             (
             date date not null,
@@ -149,11 +151,11 @@
             week_day integer
             )
         </sql>
-    <sql>
+        <sql>
             create unique index all_data_id_uindex
             on schedule.all_data (id)
         </sql>
-    <sql>
+        <sql>
             create table schedule.engages
             (
             id integer not null
@@ -175,15 +177,15 @@
             references schedule.all_data
             )
         </sql>
-    <sql>
+        <sql>
             create unique index engagings_id_uindex
             on schedule.engages (id)
         </sql>
-    <sql>
+        <sql>
             create unique index rooms_id_uindex
             on locations.rooms (id)
         </sql>
-    <sql>
+        <sql>
             create table schedule.cycles
             (
             id integer not null
@@ -196,11 +198,11 @@
             cycle_id varchar(100) not null
             )
         </sql>
-    <sql>
+        <sql>
             create unique index cycles_id_uindex
             on schedule.cycles (id)
         </sql>
-    <sql>
+        <sql>
             create table schedule.transfers
             (
             id integer not null
@@ -216,51 +218,51 @@
             references schedule.all_data
             )
         </sql>
-    <sql>
+        <sql>
             create unique index transfers_id_uindex
             on schedule.transfers (id)
         </sql>
-  </changeSet>
-  <changeSet id="4" author="ew256" context="prod">
-    <sql>
+    </changeSet>
+    <changeSet id="4" author="ew256" context="prod">
+        <sql>
             ALTER TABLE locations.schemes
             ALTER COLUMN building TYPE integer
         </sql>
-  </changeSet>
-  <changeSet id="5" author="ew256" context="prod">
-    <sql>
+    </changeSet>
+    <changeSet id="5" author="ew256" context="prod">
+        <sql>
             create table time_desc.week_days
             (
             id integer not null,
             week_day_name varchar(30)
             )
         </sql>
-    <sql>
+        <sql>
             create unique index week_days_id_uindex
             on time_desc.week_days (id)
         </sql>
-    <sql>
+        <sql>
             alter table time_desc.week_days
             add constraint week_days_pk
             primary key (id)
         </sql>
-    <sql>
+        <sql>
             create table time_desc.week_types
             (
             id integer not null,
             week_type_name varchar(30)
             )
         </sql>
-    <sql>
+        <sql>
             create unique index week_types_id_uindex
             on time_desc.week_types (id)
         </sql>
-    <sql>
+        <sql>
             alter table time_desc.week_types
             add constraint week_types_pk
             primary key (id)
         </sql>
-    <sql>create sequence time_desc.week_days_week_day_id_seq</sql>
-    <sql>create sequence time_desc.week_types_week_type_id_seq</sql>
-  </changeSet>
+        <sql>create sequence time_desc.week_days_week_day_id_seq</sql>
+        <sql>create sequence time_desc.week_types_week_type_id_seq</sql>
+    </changeSet>
 </databaseChangeLog>

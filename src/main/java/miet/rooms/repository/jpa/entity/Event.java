@@ -21,7 +21,7 @@ public class Event {
     private WeekType weekType;
     private Room room;
     private Long weekNum;
-    private Engagement engagement;
+    private Long engId;
     private WeekDay weekDay;
 
     @Id
@@ -63,5 +63,10 @@ public class Event {
     @JoinColumn(name = "week_day", nullable = false)
     public WeekDay getWeekDay() {
         return weekDay;
+    }
+
+    @Column(name = "eng_id")
+    public Long getEngId() {
+        return engId;
     }
 }

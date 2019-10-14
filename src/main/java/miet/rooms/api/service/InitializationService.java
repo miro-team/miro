@@ -2,6 +2,7 @@ package miet.rooms.api.service;
 
 import lombok.extern.slf4j.Slf4j;
 import miet.rooms.initializer.ScheduleGetter;
+import miet.rooms.initializer.jsoninitdata.Datum;
 import miet.rooms.initializer.jsoninitdata.TimetableData;
 import miet.rooms.repository.jpa.dao.*;
 import miet.rooms.repository.jpa.entity.*;
@@ -13,6 +14,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,20 +37,32 @@ public class InitializationService {
     private final WeekTypeDao weekTypeDao;
     private final WeekDayDao weekDayDao;
     private final RoomTypeDao roomTypeDao;
+    private final EngageTypeDao engageTypeDao;
 
     private Map<Long, Room> roomsCache;
     private Map<Long, Pair> pairsCache;
     private Map<String, WeekType> weekTypesCache;
     private Map<String, WeekDay> weekDaysCache;
-    private Map<Long, RoomType> roomTypeCache;
+    private Map<Long, RoomType> roomTypesCache;
+    private Map<String, Discipline> disciplinesCache;
+    private Map<Long, Teacher> teachersCache;
+    private Map<String, Group> groupsCache;
+    private Map<String, EngageType> engageTypesCache;
+
+    private Map<Long, Event> eventsCache;
 
     private List<TimetableData> schedule;
+
+    private long engId;
+
+    private List<Event> events;
+    private List<Engagement> engagements;
 
     @Autowired
     public InitializationService(GroupDao groupDao, EventDao eventDao, EngagementDao engagementDao,
                                  RoomDao roomDao, DisciplineDao disciplineDao, TeacherDao teacherDao,
                                  ScheduleGetter scheduleGetter, SchemeDao schemeDao, PairDao pairDao,
-                                 WeekTypeDao weekTypeDao, WeekDayDao weekDayDao, RoomTypeDao roomTypeDao) {
+                                 WeekTypeDao weekTypeDao, WeekDayDao weekDayDao, RoomTypeDao roomTypeDao, EngageTypeDao engageTypeDao) {
         this.groupDao = groupDao;
         this.eventDao = eventDao;
         this.engagementDao = engagementDao;
@@ -57,6 +75,7 @@ public class InitializationService {
         this.weekTypeDao = weekTypeDao;
         this.weekDayDao = weekDayDao;
         this.roomTypeDao = roomTypeDao;
+        this.engageTypeDao = engageTypeDao;
     }
 
 
@@ -67,18 +86,30 @@ public class InitializationService {
         roomDao.deleteAll();
         disciplineDao.deleteAll();
         teacherDao.deleteAll();
+        engagementDao.deleteAll();
+//        eventDao.clearEngId();
     }
 
     public void initializeSchedule(LocalDate startDate) throws IOException {
         removeOldData();
         schedule = scheduleGetter.getScheduleFromServer();
+        engId = getEngId();
+        events = new ArrayList<>();
+        engagements = new ArrayList<>();
         initializeRooms();
-//      initializeGroups();
-//      initializeDisciplines();
-//      initializeTeachers();
+        initializeGroups();
+        initializeDisciplines();
+        initializeTeachers();
         initializeEmptyEvents(startDate);
-        initializeEvents();
+        initializeEvents(startDate);
 
+    }
+
+    private long getEngId() {
+        return eventDao.findAll().stream()
+                .map(Event::getEngId)
+                .max(Long::compareTo)
+                .orElse(0L);
     }
 
     private void initializeRooms() {
@@ -99,7 +130,7 @@ public class InitializationService {
     }
 
     private void initializeRoomTypesCache() {
-        roomTypeCache = roomTypeDao.findAll().stream()
+        roomTypesCache = roomTypeDao.findAll().stream()
                 .collect(Collectors.toMap(RoomType::getId, roomType -> roomType));
     }
 
@@ -141,9 +172,37 @@ public class InitializationService {
 
         weekDaysCache = weekDayDao.findAll().stream()
                 .collect(Collectors.toMap(WeekDay::getDayCode, weekDay -> weekDay));
+
+        teachersCache = teacherDao.findAll().stream()
+                .collect(Collectors.toMap(Teacher::getId, teacher -> teacher));
+
+        groupsCache = groupDao.findAll().stream()
+                .filter(distinctByKey(Group::getName))
+                .collect(Collectors.toMap(Group::getName, group -> group));
     }
 
-    public void initializeGroups() {
+    private void initializeEngageTypesCache() {
+        engageTypesCache = engageTypeDao.findAll().stream()
+                .filter(engageType -> engageType.getName().equals("Лабораторная работа")
+                        || engageType.getName().equals("Семинар")
+                        || engageType.getName().equals("Лекция")
+                        || engageType.getName().equals("Занятие")
+                )
+                .collect(Collectors.toMap(engageType -> {
+                    switch (engageType.getName()) {
+                        case "Лабораторная работа":
+                            return "Лаб";
+                        case "Лекция":
+                            return "Лек";
+                        case "Семинар":
+                            return "Пр";
+                        default:
+                            return "Зан";
+                    }
+                }, engageType -> engageType));
+    }
+
+    private void initializeGroups() {
         List<Group> groups = scheduleGetter.getGroups().stream().map(str -> {
             Group group = new Group();
             group.setName(str.trim());
@@ -152,40 +211,78 @@ public class InitializationService {
         groupDao.saveAll(groups);
     }
 
-    public void initializeDisciplines() {
+    private void initializeDisciplines() {
+        initializeEngageTypesCache();
+
         List<Discipline> disciplines = schedule.stream()
                 .flatMap(ttl -> ttl.getData().stream())
-                .map(datum -> datum.getDiscipline().getName())
-                .distinct()
+                .map(Datum::getDiscipline)
                 .map(d -> {
                     Discipline discipline = new Discipline();
-                    discipline.setTitle(d.trim());
+
+                    String disciplineName = d.getName().trim();
+                    String disciplineTypeStr = "Зан";
+
+                    Pattern p = Pattern.compile("\\[*]");
+                    Matcher m = p.matcher(d.getName().trim());
+                    if (m.find()) {
+                        disciplineName = p.matcher(d.getName().trim()).replaceAll("");
+//                        disciplineTypeStr = p.matcher(d.getName().trim()).group(0);
+                    }
+
+                    discipline.setTitle(disciplineName);
+                    discipline.setCode(d.getCode().trim());
+                    discipline.setDisType(engageTypesCache.get(disciplineTypeStr));
                     return discipline;
-                }).collect(Collectors.toList());
+                })
+                .filter(distinctByKey(Discipline::getCode))
+                .collect(Collectors.toList());
         disciplineDao.saveAll(disciplines);
+
+        initializeDisciplinesCache();
     }
 
-    public void initializeTeachers() {
+    public static <T> Predicate<T> distinctByKey(
+            Function<? super T, ?> keyExtractor) {
+
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    private void initializeDisciplinesCache() {
+        disciplinesCache = disciplineDao.findAll().stream()
+                .collect(Collectors.toMap(Discipline::getCode, discipline -> discipline));
+    }
+
+    private void initializeTeachers() {
         List<Teacher> disciplines = schedule.stream()
                 .flatMap(ttl -> ttl.getData().stream())
                 .map(datum -> datum.getDiscipline().getTeacherFull())
                 .distinct()
                 .map(d -> {
-                    Teacher teacher = new Teacher();
-//                    teacher.setName();
+                    String[] teacherFio = d.trim().split(" ");
+                    Teacher teacher = Teacher.builder()
+                            .name(teacherFio[1])
+                            .surname(teacherFio[0])
+                            .build();
+                    try {
+                        teacher.setPatronymic(teacherFio[2]);
+                    } catch (Exception ex) {
+                        teacher.setPatronymic("");
+                    }
                     return teacher;
                 }).collect(Collectors.toList());
         teacherDao.saveAll(disciplines);
     }
 
-    private void initializeEmptyEvents(LocalDate startDate) throws IOException {
+    private void initializeEmptyEvents(LocalDate startDate) {
         initializeCache();
 
         List<Event> events = new ArrayList<>();
 
         LocalDate realDate = initializeFirstEmptyCycle(startDate);
         realDate = initializeEmptyCycles(3, realDate);
-        initializeLastWeeks(2, realDate);
+        initializeLastEmptyWeeks(2, realDate);
 
         eventDao.saveAll(events);
     }
@@ -270,7 +367,7 @@ public class InitializationService {
         return realDate;
     }
 
-    private void initializeLastWeeks(int weeksAmount, LocalDate realDate) {
+    private void initializeLastEmptyWeeks(int weeksAmount, LocalDate realDate) {
         List<Event> events = new ArrayList<>();
 
         for (int weekNum = 17; weekNum < 17 + weeksAmount; weekNum++) {
@@ -295,8 +392,113 @@ public class InitializationService {
         eventDao.saveAll(events);
     }
 
-    private void initializeEvents() {
+    private void initializeEvents(LocalDate startDate) {
+        initializeEventsCache();
 
+        initializeFirstCycle(1);
+        for (int cycleNum = 2; cycleNum <= 5; cycleNum++) {
+            initializeCycles(cycleNum);
+        }
+
+//        for (Event event : events) {
+//            eventDao.update(event.getEngId(), event.getDate(), event.getRoom().getId(), event.getPair().getId());
+//        }
+        eventDao.saveAll(events);
+        engagementDao.saveAll(engagements);
+    }
+
+    private void initializeFirstCycle(int weekCycle) {
+        for (TimetableData ttd : schedule) {
+            for (Datum datum : ttd.getData()) {
+                Event event = getEvent(datum, weekCycle);
+                if (event != null) {
+                    if (wasEngaged(datum)) continue;
+
+                    Engagement engagement = Engagement.builder()
+                            .discipline(disciplinesCache.get(datum.getDiscipline().getCode().trim()))
+                            .group(groupsCache.get(datum.getGroup().getName().trim()))
+                            .teacher(getTeacherByFullName(datum.getDiscipline().getTeacherFull()))
+                            .engId(engId)
+                            .build();
+
+                    event.setEngId(engId++);
+
+                    events.add(event);
+                    engagements.add(engagement);
+                }
+            }
+        }
+    }
+
+    private void initializeCycles(int weekCycle) {
+        for (TimetableData ttd : schedule) {
+            for (Datum datum : ttd.getData()) {
+                Event event = getEvent(datum, weekCycle);
+                if (event != null) {
+                    event.setEngId(getEngIdFromLastEvent(event, datum));
+                    events.add(event);
+                    engId++;
+                    events.add(event);
+                }
+            }
+        }
+    }
+
+    private Long getEngIdFromLastEvent(Event currentEvent, Datum datum) {
+        return events.stream()
+                .filter(event -> event.getPair().getOrder().equals(getPairByPairNum(Long.parseLong(datum.getPair().getPairStr().substring(0, 1))).getOrder())
+                        && event.getRoom().getName().trim().equals(getRoomByName(datum.getRoom().getName()).getName().trim())
+                        && event.getWeekDay().getOrderNum().equals(getWeekDay((int) datum.getDay()).getOrderNum())
+                        && event.getDate().equals(currentEvent.getDate().minusWeeks(4))
+                )
+                .map(Event::getEngId)
+                .findFirst().orElse(engId);
+    }
+
+    private boolean wasEngaged(Datum datum) {
+        Long engId = checkEngageExists(datum);
+        if (engId != null) {
+            Engagement engagement = Engagement.builder()
+                    .discipline(disciplinesCache.get(datum.getDiscipline().getCode().trim()))
+                    .group(groupsCache.get(datum.getGroup().getName().trim()))
+                    .teacher(getTeacherByFullName(datum.getDiscipline().getTeacherFull()))
+                    .engId(engId)
+                    .build();
+            engagements.add(engagement);
+            return true;
+        }
+        return false;
+    }
+
+    private Long checkEngageExists(Datum datum) {
+        Event checkingEvent = events.stream()
+                .filter(event -> event.getWeekNum().equals(datum.getWeekNumber() + 1)
+                        && event.getPair().getOrder().equals(getPairByPairNum(Long.parseLong(datum.getPair().getPairStr().substring(0, 1))).getOrder())
+                        && event.getRoom().getName().trim().equals(getRoomByName(datum.getRoom().getName()).getName().trim())
+                        && event.getWeekDay().getOrderNum().equals(getWeekDay((int) datum.getDay()).getOrderNum())
+                        && event.getWeekType().getWeekTypeCode().equals(String.valueOf(datum.getWeekNumber() + 1))
+                ).findFirst().orElse(null);
+        if (checkingEvent != null && checkingEvent.getEngId() != null)
+            return checkingEvent.getEngId();
+        return engId++;
+    }
+
+    private Event getEvent(Datum datum, long weekCycle) {
+        long weekType = datum.getWeekNumber();
+        Long weekNumber = (weekCycle - 1) * 4 + weekType + 1;
+        return eventsCache.values().stream()
+                .filter(event -> event.getWeekNum().equals(weekNumber)
+                        && event.getPair().getOrder().equals(getPairByPairNum(Long.parseLong(datum.getPair().getPairStr().substring(0, 1))).getOrder())
+                        && event.getRoom().getName().trim().equals(getRoomByName(datum.getRoom().getName()).getName().trim())
+                        && event.getWeekDay().getOrderNum().equals(getWeekDay((int) datum.getDay()).getOrderNum())
+                        && event.getWeekType().getWeekTypeCode().equals(getWeekType(weekNumber.intValue()).getWeekTypeCode())
+                )
+                .findFirst().orElse(null);
+    }
+
+    private void initializeEventsCache() {
+        eventsCache = eventDao.findAll().stream()
+                .collect(Collectors.toMap(Event::getId, event -> event));
     }
 
     private WeekType getWeekType(int weekNum) {
@@ -332,6 +534,30 @@ public class InitializationService {
     }
 
     private RoomType getDefaultRoomType() {
-        return roomTypeCache.get(3L);
+        return roomTypesCache.get(3L);
+    }
+
+    private Pair getPairByPairNum(Long pairNum) {
+        return pairsCache.values().stream()
+                .filter(pair -> pair.getOrder().equals(pairNum))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Room getRoomByName(String roomName) {
+        return roomsCache.values().stream()
+                .filter(room -> room.getName().trim().equals(roomName.trim()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Teacher getTeacherByFullName(String fullName) {
+        String name = fullName.split(" ")[0];
+        String surname = fullName.split(" ")[1];
+        return teachersCache.values().stream()
+                .filter(teacher -> teacher.getName().equals(name)
+                        && teacher.getSurname().equals(surname))
+                .findFirst()
+                .orElse(null);
     }
 }

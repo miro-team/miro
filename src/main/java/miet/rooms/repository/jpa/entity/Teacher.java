@@ -10,13 +10,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@Builder
 public class Teacher {
 
     @EqualsAndHashCode.Exclude
     private Long id;
-    private Long name;
-    private Long surname;
-    private Long patronymic;
+    private String name;
+    private String surname;
+    private String patronymic;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.teachers_id_seq")
@@ -26,17 +27,17 @@ public class Teacher {
     }
 
     @Column(name = "teacher_name")
-    public Long getName() {
+    public String getName() {
         return name;
     }
 
     @Column(name = "teacher_surname")
-    public Long getSurname() {
+    public String getSurname() {
         return surname;
     }
 
     @Column(name = "teacher_patronymic")
-    public Long getPatronymic() {
+    public String getPatronymic() {
         return patronymic;
     }
 }

@@ -10,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@Builder
 public class Engagement {
 
     @EqualsAndHashCode.Exclude
@@ -18,6 +19,7 @@ public class Engagement {
     private Group group;
     private Teacher teacher;
     private Long engId;
+    private EngageType engageType;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.engagements_id_seq")
@@ -44,8 +46,14 @@ public class Engagement {
         return teacher;
     }
 
-    @Column(name = "eng_id")
+    @Column(name = "eng_id", nullable = false)
     public Long getEngId() {
         return engId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "engage_type_id")
+    public EngageType getEngageType() {
+        return engageType;
     }
 }

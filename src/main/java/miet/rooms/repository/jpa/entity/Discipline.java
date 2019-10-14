@@ -16,6 +16,7 @@ public class Discipline {
     private Long id;
     private String title;
     private EngageType disType;
+    private String code;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "schedule.discipline_id_seq")
@@ -33,5 +34,10 @@ public class Discipline {
     @JoinColumn(name = "dis_type_id")
     public EngageType getDisType() {
         return disType;
+    }
+
+    @Column(name = "code")
+    public String getCode() {
+        return code;
     }
 }
