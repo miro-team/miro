@@ -964,10 +964,7 @@ definitions:
       pageSize:
         type: integer
         format: int64
-      totalAmount:
-        type: integer
-        format: int64
-      totalPages:
+      pageCount:
         type: integer
         format: int64
     title: filteredData
@@ -1016,10 +1013,7 @@ definitions:
       pageSize:
         type: integer
         format: int64
-      totalAmount:
-        type: integer
-        format: int64
-      totalPages:
+      pageCount:
         type: integer
         format: int64
     title: filteredData
@@ -1050,11 +1044,6 @@ definitions:
         type: string
       weekDay:
         type: string
-      periodicity:
-        type: string
-      periodicityId:
-        type: integer
-        format: int64
     title: filteredEvent
   group:
     type: object
