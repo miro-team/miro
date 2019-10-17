@@ -34,8 +34,6 @@ public class ScheduleGetter {
     @Getter
     private List<String> groups = new ArrayList<>();
 
-    private List<String> rooms = new ArrayList<>();
-
     @Autowired
     public ScheduleGetter(RestTemplate restTemplate, ObjectMapper objectMapper, HttpEntity<String> httpEntity) {
         this.restTemplate = restTemplate;
@@ -55,13 +53,12 @@ public class ScheduleGetter {
     }
 
     private void collectGroups(String response) throws IOException {
-        String group = "ПИН-41";
-//        for (String group : response.split(",")) {
+        for (String group : response.split(",")) {
             String groupStr = group.trim().replace("\"", "");
             groups.add(groupStr);
             log.info("Found " + groupStr);
             addTimetableEntry(groupStr);
-//        }
+        }
     }
 
     public List<String> getRooms() {

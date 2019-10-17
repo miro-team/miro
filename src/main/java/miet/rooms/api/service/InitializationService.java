@@ -12,13 +12,12 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,7 +86,6 @@ public class InitializationService {
         disciplineDao.deleteAll();
         teacherDao.deleteAll();
         engagementDao.deleteAll();
-//        eventDao.clearEngId();
     }
 
     public void initializeSchedule(LocalDate startDate) throws IOException {
@@ -101,8 +99,8 @@ public class InitializationService {
         initializeDisciplines();
         initializeTeachers();
         initializeEmptyEvents(startDate);
-        initializeEvents(startDate);
-
+        initializeEvents();
+        log.info("Schedule was initialized.");
     }
 
     private long getEngId() {
@@ -127,6 +125,7 @@ public class InitializationService {
                     return room;
                 }).collect(Collectors.toList());
         roomDao.saveAll(rooms);
+        log.info("Rooms were initialized.");
     }
 
     private void initializeRoomTypesCache() {
@@ -209,6 +208,7 @@ public class InitializationService {
             return group;
         }).collect(Collectors.toList());
         groupDao.saveAll(groups);
+        log.info("Groups were initialized.");
     }
 
     private void initializeDisciplines() {
@@ -220,15 +220,11 @@ public class InitializationService {
                 .map(d -> {
                     Discipline discipline = new Discipline();
 
-                    String disciplineName = d.getName().trim();
+                    List<String> dividedDisciplineName = new ArrayList<>(Arrays.asList(d.getName()
+                            .trim().split(" ")));
+                    dividedDisciplineName.remove(dividedDisciplineName.size() - 1);
+                    String disciplineName = String.join(" ", dividedDisciplineName);
                     String disciplineTypeStr = "Зан";
-
-                    Pattern p = Pattern.compile("\\[*]");
-                    Matcher m = p.matcher(d.getName().trim());
-                    if (m.find()) {
-                        disciplineName = p.matcher(d.getName().trim()).replaceAll("");
-//                        disciplineTypeStr = p.matcher(d.getName().trim()).group(0);
-                    }
 
                     discipline.setTitle(disciplineName);
                     discipline.setCode(d.getCode().trim());
@@ -240,9 +236,10 @@ public class InitializationService {
         disciplineDao.saveAll(disciplines);
 
         initializeDisciplinesCache();
+        log.info("Disciplines were initialized.");
     }
 
-    public static <T> Predicate<T> distinctByKey(
+    private static <T> Predicate<T> distinctByKey(
             Function<? super T, ?> keyExtractor) {
 
         Map<Object, Boolean> seen = new ConcurrentHashMap<>();
@@ -273,6 +270,7 @@ public class InitializationService {
                     return teacher;
                 }).collect(Collectors.toList());
         teacherDao.saveAll(disciplines);
+        log.info("Teachers were initialized.");
     }
 
     private void initializeEmptyEvents(LocalDate startDate) {
@@ -281,10 +279,11 @@ public class InitializationService {
         List<Event> events = new ArrayList<>();
 
         LocalDate realDate = initializeFirstEmptyCycle(startDate);
-        realDate = initializeEmptyCycles(3, realDate);
-        initializeLastEmptyWeeks(2, realDate);
+        realDate = initializeEmptyCycles(realDate);
+        initializeLastEmptyWeeks(realDate);
 
         eventDao.saveAll(events);
+
     }
 
     private LocalDate initializeFirstEmptyCycle(LocalDate startDate) {
@@ -309,7 +308,7 @@ public class InitializationService {
                 }
                 realDate = realDate.plusDays(1);
             }
-            log.info("Week №{} was initialized", weekNum);
+            log.info("Week №{} was created", weekNum);
         }
         eventDao.saveAll(events);
         return realDate;
@@ -335,14 +334,14 @@ public class InitializationService {
             realDate = realDate.plusDays(1);
         }
         eventDao.saveAll(events);
-        log.info("Week №{} was initialized", 1);
+        log.info("Week №{} was created", 1);
         return realDate;
     }
 
-    private LocalDate initializeEmptyCycles(int cyclesAmount, LocalDate realDate) {
+    private LocalDate initializeEmptyCycles(LocalDate realDate) {
         List<Event> events = new ArrayList<>();
 
-        for (int cycleNum = 1; cycleNum <= cyclesAmount; cycleNum++) {
+        for (int cycleNum = 1; cycleNum <= 3; cycleNum++) {
             for (int weekNum = cycleNum * 4 + 1; weekNum <= cycleNum * 4 + 4; weekNum++) {
                 for (int dayNum = 1; dayNum <= 7; dayNum++) {
                     for (Map.Entry<Long, Pair> pair : pairsCache.entrySet()) {
@@ -360,17 +359,17 @@ public class InitializationService {
                     }
                     realDate = realDate.plusDays(1);
                 }
-                log.info("Week №{} was initialized", weekNum);
+                log.info("Week №{} was created", weekNum);
             }
         }
         eventDao.saveAll(events);
         return realDate;
     }
 
-    private void initializeLastEmptyWeeks(int weeksAmount, LocalDate realDate) {
+    private void initializeLastEmptyWeeks(LocalDate realDate) {
         List<Event> events = new ArrayList<>();
 
-        for (int weekNum = 17; weekNum < 17 + weeksAmount; weekNum++) {
+        for (int weekNum = 17; weekNum <= 18; weekNum++) {
             for (int dayNum = 1; dayNum <= 7; dayNum++) {
                 for (Map.Entry<Long, Pair> pair : pairsCache.entrySet()) {
                     for (Map.Entry<Long, Room> room : roomsCache.entrySet()) {
@@ -387,30 +386,29 @@ public class InitializationService {
                 }
                 realDate = realDate.plusDays(1);
             }
-            log.info("Week №{} was initialized", weekNum);
+            log.info("Week №{} was created", weekNum);
         }
         eventDao.saveAll(events);
     }
 
-    private void initializeEvents(LocalDate startDate) {
+    private void initializeEvents() {
         initializeEventsCache();
 
-        initializeFirstCycle(1);
+        initializeFirstCycle();
         for (int cycleNum = 2; cycleNum <= 5; cycleNum++) {
             initializeCycles(cycleNum);
+            log.info("Cycle №{} was initialized.", cycleNum);
         }
 
-//        for (Event event : events) {
-//            eventDao.update(event.getEngId(), event.getDate(), event.getRoom().getId(), event.getPair().getId());
-//        }
         eventDao.saveAll(events);
         engagementDao.saveAll(engagements);
+        log.info("Events were initialized.");
     }
 
-    private void initializeFirstCycle(int weekCycle) {
+    private void initializeFirstCycle() {
         for (TimetableData ttd : schedule) {
             for (Datum datum : ttd.getData()) {
-                Event event = getEvent(datum, weekCycle);
+                Event event = getEvent(datum, 1);
                 if (event != null) {
                     if (wasEngaged(datum)) continue;
 
@@ -428,6 +426,7 @@ public class InitializationService {
                 }
             }
         }
+        log.info("First cycle was initialized.");
     }
 
     private void initializeCycles(int weekCycle) {
@@ -480,7 +479,7 @@ public class InitializationService {
                 ).findFirst().orElse(null);
         if (checkingEvent != null && checkingEvent.getEngId() != null)
             return checkingEvent.getEngId();
-        return engId++;
+        return null;
     }
 
     private Event getEvent(Datum datum, long weekCycle) {
