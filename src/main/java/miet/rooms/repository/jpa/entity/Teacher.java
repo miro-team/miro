@@ -40,4 +40,16 @@ public class Teacher {
     public String getPatronymic() {
         return patronymic;
     }
+
+    @Transient
+    public String getFio() {
+        return surname +
+                ". " +
+                name.substring(0, 1) +
+                ". " +
+                (patronymic != null ? patronymic.substring(0, 1) + "." : "");
+    }
+
+    @Transient
+    private void setFio(){}
 }

@@ -1,10 +1,17 @@
 package miet.rooms.repository.jpa.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Table(schema = "time_desc", name = "week_types")
 @SequenceGenerator(schema = "time_desc", name = "week_types", sequenceName = "time_desc.week_types_week_type_id_seq", allocationSize = 1)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WeekType {
     private Long id;
     private String weekTypeName;

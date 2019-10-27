@@ -35,8 +35,17 @@ public interface EventDao extends JpaRepository<Event, Long> {
     @Transactional
     void clearEngId();
 
+    @Query("update Event event set event.engId = null where event.engId=:engId")
+    @Modifying
+    @Transactional
+    void clearEngId(@Param("engId") Long engId);
+
     @Query("update Event event set event.engId = :engId where event.date=:date and event.room.id=:roomId and event.pair.id=:pairId")
     @Modifying
     @Transactional
     void update(@Param("engId") Long engId, @Param("date") LocalDate date, @Param("roomId") Long roomId, @Param("pairId") Long pairId);
+
+    Event findFirstByEngId(Long engId);
+
+    List<Event> findAllByEngId(Long engId);
 }

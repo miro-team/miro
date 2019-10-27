@@ -1,7 +1,6 @@
 package miet.rooms.repository.jpa.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -9,6 +8,9 @@ import javax.persistence.*;
 @Table(schema = "schedule", name = "engage_types")
 @SequenceGenerator(schema = "schedule", name = "engage_types", sequenceName = "schedule.engage_types_id_seq", allocationSize = 1)
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EngageType {
 
     @EqualsAndHashCode.Exclude

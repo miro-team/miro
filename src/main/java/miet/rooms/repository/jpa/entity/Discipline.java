@@ -10,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@Builder
 public class Discipline {
 
     @EqualsAndHashCode.Exclude

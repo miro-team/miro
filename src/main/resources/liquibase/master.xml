@@ -2,16 +2,17 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-<!--    <include file="2019/0.0.1-initial-schema.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.2-permanent-data.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.3-security.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.4-update-user.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.5-periodicities.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.6-reservations.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.7-all-data-binding.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.8-refactoring-db.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.9-adding-week-days.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.10-fixing-schemes-names.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.11-add-code-to-disciplines.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="2019/0.0.12-update-engage-types.xml" relativeToChangelogFile="true"/>-->
+    <include file="2019/0.0.1-initial-schema.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.2-permanent-data.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.3-security.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.4-update-user.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.5-periodicities.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.6-reservations.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.7-all-data-binding.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.8-refactoring-db.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.9-adding-week-days.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.10-fixing-schemes-names.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.11-add-code-to-disciplines.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.12-update-engage-types.xml" relativeToChangelogFile="true"/>
+    <include file="2019/0.0.13-adding-reservations.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
