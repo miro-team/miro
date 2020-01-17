@@ -29,6 +29,8 @@ public class SchemeService {
                 .map(r -> SchemeConfigMapping.builder()
                         .id(r.getId())
                         .name(r.getName())
+                        .floor(String.valueOf(r.getFloor()))
+                        .building(r.getBuilding())
                         .fileName(r.getFileName())
                         .build())
                 .collect(Collectors.toList());

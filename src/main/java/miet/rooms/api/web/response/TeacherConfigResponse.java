@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SchemeConfigMapping {
+public class TeacherConfigResponse {
     private Long id;
     private String name;
-    private String floor;
-    private String building;
-    private String fileName;
+    private String surname;
+    private String patronymic;
+    private String fio;
 }

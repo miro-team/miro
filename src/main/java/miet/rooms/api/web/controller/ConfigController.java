@@ -22,9 +22,14 @@ public class ConfigController {
     private final RoomService roomService;
     private final PeriodicityService periodicityService;
     private final EngageTypeService engageTypeService;
+    private final TeacherService teacherService;
+    private final DisciplineService disciplineService;
 
     @Autowired
-    public ConfigController(RoomService roomService, WeekDayService weekDayService, PairService pairService, RoomTypeService roomTypeService, SchemeService schemeService, GroupService groupService, PeriodicityService periodicityService, EngageTypeService engageTypeService) {
+    public ConfigController(RoomService roomService, WeekDayService weekDayService, PairService pairService,
+                            RoomTypeService roomTypeService, SchemeService schemeService, GroupService groupService,
+                            PeriodicityService periodicityService, EngageTypeService engageTypeService,
+                            TeacherService teacherService, DisciplineService disciplineService) {
         this.roomService = roomService;
         this.weekDayService = weekDayService;
         this.pairService = pairService;
@@ -33,6 +38,8 @@ public class ConfigController {
         this.groupService = groupService;
         this.periodicityService = periodicityService;
         this.engageTypeService = engageTypeService;
+        this.teacherService = teacherService;
+        this.disciplineService = disciplineService;
     }
 
     @GetMapping
@@ -46,7 +53,8 @@ public class ConfigController {
         mappings.put("rooms", roomService.findAllMapping());
         mappings.put("periodicities", periodicityService.findAllMapping());
         mappings.put("eventTypes", engageTypeService.findAllMapping());
-        //TODO: add disciplines and teachers
+        mappings.put("disciplines", disciplineService.findAllMapping());
+        mappings.put("teachers", teacherService.findAllMapping());
         return mappings;
     }
 }

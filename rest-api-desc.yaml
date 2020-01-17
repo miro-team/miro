@@ -1347,6 +1347,10 @@ definitions:
         format: int64
       name:
         type: string
+      floor:
+        type: string
+      building:
+        type: string
       fileName:
         type: string
     title: scheme

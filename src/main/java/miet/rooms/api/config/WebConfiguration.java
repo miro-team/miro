@@ -1,6 +1,7 @@
 package miet.rooms.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,6 +19,7 @@ import java.util.Collections;
 @Configuration
 @ComponentScan({"miet.rooms.repository.*", "miet.rooms.initializer", "miet.rooms.security"})
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class WebConfiguration implements WebMvcConfigurer {
 
     @Bean

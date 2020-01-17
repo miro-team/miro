@@ -47,7 +47,7 @@ public class Teacher {
                 ". " +
                 name.substring(0, 1) +
                 ". " +
-                (patronymic != null ? patronymic.substring(0, 1) + "." : "");
+                (patronymic != null && patronymic.length() != 0 ? patronymic.substring(0, 1) + "." : "");
     }
 
     @Transient

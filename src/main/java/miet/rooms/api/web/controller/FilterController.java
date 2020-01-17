@@ -6,10 +6,9 @@ import miet.rooms.api.web.income.FilterCycleIncome;
 import miet.rooms.api.web.income.FilterSingleIncome;
 import miet.rooms.repository.jdbc.model.FilteredData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -71,5 +70,12 @@ public class FilterController {
                 .weekDay(weekDay)
                 .build();
         return filterService.getFilteredData(cycleIncome, pageNum, pageSize);
+    }
+
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    public ResponseEntity<String> handleMissingParams(MissingServletRequestParameterException e) {
+        log.error("Missed param ", e);
+        return ResponseEntity.badRequest()
+                .body(e.getMessage());
     }
 }

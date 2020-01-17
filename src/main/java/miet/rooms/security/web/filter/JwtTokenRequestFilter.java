@@ -49,6 +49,8 @@ public class JwtTokenRequestFilter extends OncePerRequestFilter {
                 log.error("JWT_TOKEN_UNABLE_TO_GET_USERNAME", e);
             } catch (ExpiredJwtException e) {
                 log.warn("JWT_TOKEN_EXPIRED", e);
+            } catch (Exception e) {
+                log.error("WRONG_TOKEN", e);
             }
         } else {
             log.warn("JWT_TOKEN_DOES_NOT_START_WITH_BEARER_STRING");

@@ -109,7 +109,8 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs",
                         "/webjars/**",
                         "/api/filter/**",
-                        "/api/config"
+                        "/api/config",
+                        "/favicon.ico"
                 );
     }
 }
