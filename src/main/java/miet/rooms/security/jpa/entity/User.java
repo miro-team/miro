@@ -3,6 +3,7 @@ package miet.rooms.security.jpa.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(schema = "security", name = "users")
@@ -19,6 +20,7 @@ public class User {
     private String name;
     private String surname;
     private String patronymic;
+    private UserRole role;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "security.users_id_seq")
@@ -50,5 +52,11 @@ public class User {
     @Column(name = "user_patronymic", nullable = false)
     public String getPatronymic() {
         return patronymic;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "role")
+    public UserRole getRole() {
+        return role;
     }
 }
