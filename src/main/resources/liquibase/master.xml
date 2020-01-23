@@ -15,4 +15,5 @@
     <include file="2019/0.0.11-add-code-to-disciplines.xml" relativeToChangelogFile="true"/>
     <include file="2019/0.0.12-update-engage-types.xml" relativeToChangelogFile="true"/>
     <include file="2019/0.0.13-adding-reservations.xml" relativeToChangelogFile="true"/>
+    <include file="2020/0.0.1-adding-security.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
