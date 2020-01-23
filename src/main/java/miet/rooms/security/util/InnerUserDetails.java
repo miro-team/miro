@@ -14,7 +14,6 @@ import java.util.List;
 
 public class InnerUserDetails implements UserDetails {
 
-    private static final long serialVersionUID = 1L;
     private Collection<? extends GrantedAuthority> authorities;
     private String password;
     private String username;
