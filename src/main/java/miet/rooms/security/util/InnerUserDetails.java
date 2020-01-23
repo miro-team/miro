@@ -1,28 +1,28 @@
 package miet.rooms.security.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import miet.rooms.security.jpa.entity.User;
 import miet.rooms.security.jpa.entity.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-public class CrmUserDetails implements UserDetails {
+
+public class InnerUserDetails implements UserDetails {
 
     private static final long serialVersionUID = 1L;
     private Collection<? extends GrantedAuthority> authorities;
     private String password;
     private String username;
 
-    public CrmUserDetails(User user) {
+    public InnerUserDetails(User user) {
         this.username = user.getUserLogin();
         this.password = user.getPassword();
-        this.authorities = translate(Arrays.asList(user.getRole()));
+        this.authorities = translate(Collections.singletonList(user.getRole()));
     }
 
     private Collection<? extends GrantedAuthority> translate(List<UserRole> roles) {
