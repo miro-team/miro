@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/filter")
+@RequestMapping("/filter")
 public class FilterController {
 
     private final FilterService filterService;

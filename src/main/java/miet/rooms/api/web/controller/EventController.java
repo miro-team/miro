@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/event")
+@RequestMapping("/event")
 public class EventController {
 
     private final EventService eventService;

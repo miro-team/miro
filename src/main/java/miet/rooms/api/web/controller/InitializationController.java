@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/initialize")
+@RequestMapping("/initialize")
 @Slf4j
 public class InitializationController {
 

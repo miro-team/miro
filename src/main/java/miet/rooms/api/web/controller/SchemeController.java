@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/scheme")
+@RequestMapping("/scheme")
 public class SchemeController {
 
     private final SchemeService schemeService;

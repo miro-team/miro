@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/week-day")
+@RequestMapping("/week-day")
 public class WeekDayController {
 
     private final WeekDayService weekDayService;
