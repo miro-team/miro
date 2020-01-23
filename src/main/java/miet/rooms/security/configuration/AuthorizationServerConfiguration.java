@@ -1,8 +1,6 @@
 package miet.rooms.security.configuration;
 
-import javax.sql.DataSource;
-
-import miet.rooms.security.service.CrmUserDetailsService;
+import miet.rooms.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -16,18 +14,19 @@ import org.springframework.security.oauth2.provider.approval.UserApprovalHandler
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
+import javax.sql.DataSource;
+
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
-//    private static String REALM = "CRM_REALM";
 
     private final DataSource dataSource;
     private final TokenStore tokenStore;
     private final JwtAccessTokenConverter jwtTokenEnhancer;
     private final UserApprovalHandler userApprovalHandler;
     private final AuthenticationManager authenticationManager;
-    private final CrmUserDetailsService crmUserDetailsService;
+    private final UserService userService;
 
     @Autowired
     public AuthorizationServerConfiguration(DataSource dataSource,
@@ -35,14 +34,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                                             JwtAccessTokenConverter jwtTokenEnhancer,
                                             UserApprovalHandler userApprovalHandler,
                                             @Qualifier("authenticationManagerBean")
-                                             AuthenticationManager authenticationManager,
-                                            CrmUserDetailsService crmUserDetailsService) {
+                                                    AuthenticationManager authenticationManager,
+                                            UserService userService) {
         this.dataSource = dataSource;
         this.tokenStore = tokenStore;
         this.jwtTokenEnhancer = jwtTokenEnhancer;
         this.userApprovalHandler = userApprovalHandler;
         this.authenticationManager = authenticationManager;
-        this.crmUserDetailsService = crmUserDetailsService;
+        this.userService = userService;
     }
 
     @Override
@@ -50,26 +49,16 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         clients.jdbc(dataSource);
     }
 
-	/*
-	@Override
-	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		endpoints.tokenStore(tokenStore).userApprovalHandler(userApprovalHandler)
-		.authenticationManager(authenticationManager)
-		.userDetailsService(crmUserDetailsService);
-	}
-	*/
-
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(tokenStore).tokenEnhancer(jwtTokenEnhancer).userApprovalHandler(userApprovalHandler)
                 .authenticationManager(authenticationManager)
-                .userDetailsService(crmUserDetailsService);
+                .userDetailsService(userService);
     }
 
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-//        oauthServer.realm(REALM);
         oauthServer.allowFormAuthenticationForClients();
     }
 }

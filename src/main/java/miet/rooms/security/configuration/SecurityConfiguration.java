@@ -1,6 +1,6 @@
 package miet.rooms.security.configuration;
 
-import miet.rooms.security.service.CrmUserDetailsService;
+import miet.rooms.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -36,12 +37,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ClientDetailsService clientDetailsService;
 
-    private final CrmUserDetailsService crmUserDetailsService;
+    private final UserService userService;
 
     @Autowired
-    public SecurityConfiguration(ClientDetailsService clientDetailsService, CrmUserDetailsService crmUserDetailsService) {
+    public SecurityConfiguration(ClientDetailsService clientDetailsService, UserService userService) {
         this.clientDetailsService = clientDetailsService;
-        this.crmUserDetailsService = crmUserDetailsService;
+        this.userService = userService;
     }
 
     @Override
@@ -53,22 +54,33 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/about").permitAll()
-                .antMatchers("/signup").permitAll()
                 .antMatchers("/oauth/token").permitAll()
-                //.antMatchers("/api/**").authenticated()
-//                .anyRequest().permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/**").permitAll()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic()
-//                .realmName("CRM_REALM")
         ;
     }
 
+    @Override
+    public void configure(WebSecurity webSecurity) {
+        webSecurity
+                .ignoring()
+                .antMatchers(
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/v2/api-docs",
+                        "/webjars/**",
+                        "/api/filter/**",
+                        "/favicon.ico",
+                        "/api/config"
+                );
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(crmUserDetailsService)
+        auth.userDetailsService(userService)
                 .passwordEncoder(passwordEncoder());
     }
 

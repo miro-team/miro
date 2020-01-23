@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class CrmUserDetailsService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
     private final UserDao userDao;
 
     @Autowired
-    public CrmUserDetailsService(UserDao userDao) {
+    public UserService(UserDao userDao) {
         this.userDao = userDao;
     }
 
@@ -27,6 +27,10 @@ public class CrmUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("UserName " + userName + " not found");
         }
         return new CrmUserDetails(user);
+    }
+
+    public User getUserByUserName(String userName) {
+        return userDao.findByUserLogin(userName);
     }
 
 }
