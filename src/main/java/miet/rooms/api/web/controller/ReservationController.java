@@ -5,9 +5,8 @@ import miet.rooms.api.web.income.ReservationIncome;
 import miet.rooms.repository.jdbc.model.UsersReservation;
 import miet.rooms.security.jpa.entity.User;
 import miet.rooms.security.service.UserService;
-import miet.rooms.security.util.UserUtil;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,12 +24,14 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity makeReservation(@RequestHeader("Authorization") String authorizationHeader,
-                                          @RequestParam Long[] id,
-                                          @RequestParam Long eventTypeId,
-                                          @RequestParam(required = false) Long[] groupId,
-                                          @RequestParam(required = false) Long teacherId) {
-        User user = UserUtil.getUserByAuthHeader(authorizationHeader);
+    public ResponseEntity<?> makeReservation(
+            @RequestParam Long[] id,
+            @RequestParam Long eventTypeId,
+            @RequestParam(required = false) Long[] groupId,
+            @RequestParam(required = false) Long teacherId
+    ) {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByUserName(userName);
         ReservationIncome reservationIncome = ReservationIncome.builder()
                 .eventsId(id)
                 .engageTypeId(eventTypeId)
@@ -43,13 +44,13 @@ public class ReservationController {
         } catch (RuntimeException ex) {
             return ResponseEntity.badRequest().body("One ore more rooms are already engaged!");
         }
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/list")
-    public List<UsersReservation> getUsersReservations(@RequestHeader("Authorization") String authorizationHeader) {
-        String token = authorizationHeader.replace("Bearer ", "").trim();
-        User user = userService.getUserByToken(token);
+    public List<UsersReservation> getUsersReservations() {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByUserName(userName);
         return reservationService.getUsersReservations(user);
     }
 
