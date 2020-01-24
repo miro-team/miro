@@ -13,6 +13,9 @@
         <java.version>1.8</java.version>
         <postgres.version>42.2.6</postgres.version>
         <liquibase.version>3.6.3</liquibase.version>
+        <liquibase.url>jdbc:postgresql://localhost:2201/miro</liquibase.url>
+        <liquibase.login>miro</liquibase.login>
+        <liquibase.password>miro</liquibase.password>
         <swagger.version>2.9.2</swagger.version>
     </properties>
 
@@ -191,9 +194,9 @@
                 <configuration>
                     <changeLogFile>liquibase/master.xml</changeLogFile>
                     <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://localhost:2201/miro</url>
-                    <username>miro</username>
-                    <password>miro</password>
+                    <url>${liquibase.url}</url>
+                    <username>${liquibase.login}</username>
+                    <password>${liquibase.password}</password>
                 </configuration>
                 <executions>
                     <execution>
