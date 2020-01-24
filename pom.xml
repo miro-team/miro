@@ -197,6 +197,7 @@
                     <url>${liquibase.url}</url>
                     <username>${liquibase.login}</username>
                     <password>${liquibase.password}</password>
+                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                 </configuration>
                 <executions>
                     <execution>
