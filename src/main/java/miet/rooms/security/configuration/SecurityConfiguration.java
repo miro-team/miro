@@ -58,33 +58,44 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/oauth/token").permitAll()
-                .antMatchers("/**").permitAll()
+                .antMatchers("/api/**").authenticated()
+                .antMatchers("/api/event/**").authenticated()
+                .antMatchers("/api/group/**").authenticated()
+                .antMatchers("/api/initialize**").authenticated()
+                .antMatchers("/api/pair/**").authenticated()
+                .antMatchers("/api/reservation/**").authenticated()
+                .antMatchers("/api/reservation").authenticated()
+                .antMatchers("/api/room/**").authenticated()
+                .antMatchers("/api/scheme/**").authenticated()
+                .antMatchers("/api/week-day/**").authenticated()
+                .antMatchers("/api/filter/**").permitAll()
+                .antMatchers("/api/config").permitAll()
                 .anyRequest().permitAll()
                 .and()
                 .httpBasic()
         ;
     }
 
-    @Override
-    public void configure(WebSecurity webSecurity) {
-        webSecurity
-                .ignoring()
-                .antMatchers(
-                        "/swagger-resources",
-                        "/swagger-resources/**",
-                        "/swagger-ui.html",
-                        "/v2/api-docs",
-                        "/webjars/**",
-                        "/api/filter/**",
-                        "/favicon.ico",
-                        "/api/config"
-                );
-    }
+//    @Override
+//    public void configure(WebSecurity webSecurity) {
+//        webSecurity
+//                .ignoring()
+//                .antMatchers(
+//                        "/swagger-resources",
+//                        "/swagger-resources/**",
+//                        "/swagger-ui.html",
+//                        "/v2/api-docs",
+//                        "/webjars/**",
+//                        "/api/filter/**",
+//                        "/favicon.ico",
+//                        "/api/config"
+//                );
+//    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
