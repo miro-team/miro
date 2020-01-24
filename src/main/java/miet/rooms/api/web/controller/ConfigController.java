@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/config")
+@RequestMapping("/api/config")
 public class ConfigController {
 
     private final WeekDayService weekDayService;
