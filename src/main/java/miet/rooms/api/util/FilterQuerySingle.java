@@ -75,8 +75,6 @@ public class FilterQuerySingle {
         private QueryBuilderSingle appendParameters(FilterSingleIncome singleIncome) {
             query.append(" where ")
                     .append("date = to_date('").append(singleIncome.getDate()).append("', 'dd.MM.yyyy') and ");
-            if (singleIncome.getWeekNum() != null)
-                query.append("ad.week_num = ").append(singleIncome.getWeekNum()).append(" and ");
             if (singleIncome.getBuilding() != null)
                 query.append("sh.building = \'").append(singleIncome.getBuilding()).append("\' and ");
             if (singleIncome.getFloor() != null)
@@ -89,8 +87,6 @@ public class FilterQuerySingle {
                 query.append("r.capacity = ").append(singleIncome.getCapacity()).append(" and ");
             if (singleIncome.getPairId() != null)
                 query.append("pairs.id = ").append(singleIncome.getPairId()).append(" and ");
-            if (singleIncome.getWeekDay() != null)
-                query.append("day.id = ").append(singleIncome.getWeekDay()).append(" and ");
             query.append(" and eng_id is null\n");
             return this;
         }

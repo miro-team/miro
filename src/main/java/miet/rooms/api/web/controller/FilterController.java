@@ -23,45 +23,41 @@ public class FilterController {
     }
 
     @GetMapping(value = "/single")
-    public FilteredData getFilteredSingleData(@RequestParam(required = false) Long roomId,
-                                              @RequestParam(required = false) Long pairId,
-                                              @RequestParam(required = false) Long weekNum,
-                                              @RequestParam String date,
-                                              @RequestParam(required = false) Long building,
-                                              @RequestParam(required = false) Long floor,
-                                              @RequestParam(required = false) Long roomTypeId,
+    public FilteredData getFilteredSingleData(@RequestParam(required = false) Long building,
                                               @RequestParam(required = false) Long capacity,
-                                              @RequestParam(required = false) Long weekDay,
+                                              @RequestParam String date,
+                                              @RequestParam(required = false) Long floor,
+                                              @RequestParam Long pageNum,
                                               @RequestParam Long pageSize,
-                                              @RequestParam Long pageNum) {
+                                              @RequestParam(required = false) Long pairId,
+                                              @RequestParam(required = false) Long roomId,
+                                              @RequestParam(required = false) Long roomTypeId) {
         FilterSingleIncome singleIncome = FilterSingleIncome.builder()
                 .roomId(roomId)
                 .pairId(pairId)
-                .weekNum(weekNum)
                 .date(date)
                 .building(building)
                 .floor(floor)
                 .roomTypeId(roomTypeId)
                 .capacity(capacity)
-                .weekDay(weekDay)
                 .build();
         return filterService.getFilteredData(singleIncome, pageNum, pageSize);
     }
 
     @GetMapping(value = "/cycle")
-    public FilteredData getFilteredCycleData(@RequestParam(required = false) Long roomId,
-                                             @RequestParam Long periodicity,
-                                             @RequestParam(required = false) Long pairId,
-                                             @RequestParam(required = false) Long building,
-                                             @RequestParam(required = false) Long floor,
-                                             @RequestParam(required = false) Long roomTypeId,
+    public FilteredData getFilteredCycleData(@RequestParam(required = false) Long building,
                                              @RequestParam(required = false) Long capacity,
-                                             @RequestParam(required = false) Long weekDay,
+                                             @RequestParam(required = false) Long floor,
+                                             @RequestParam Long pageNum,
                                              @RequestParam Long pageSize,
-                                             @RequestParam Long pageNum) {
+                                             @RequestParam(required = false) Long pairId,
+                                             @RequestParam(required = false) Long roomId,
+                                             @RequestParam(required = false) Long roomTypeId,
+                                             @RequestParam(required = false) Long weekDay,
+                                             @RequestParam Long periodicityId) {
         FilterCycleIncome cycleIncome = FilterCycleIncome.builder()
                 .roomId(roomId)
-                .periodicity(periodicity)
+                .periodicity(periodicityId)
                 .pairId(pairId)
                 .building(building)
                 .floor(floor)

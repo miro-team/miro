@@ -56,7 +56,6 @@ public class FilterDao {
                 )
                 .pair(rs.getString("pair_info"))
                 .weekDay(rs.getString("day_code"))
-//                .weekNum(rs.getLong("week_num"))
                 .room(rs.getString("room_name"))
                 .capacity(rs.getLong("capacity"))
                 .roomType(rs.getString("room_type_name"))

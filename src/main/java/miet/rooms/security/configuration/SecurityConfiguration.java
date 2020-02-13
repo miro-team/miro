@@ -81,21 +81,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         ;
     }
 
-//    @Override
-//    public void configure(WebSecurity webSecurity) {
-//        webSecurity
-//                .ignoring()
-//                .antMatchers(
-//                        "/swagger-resources",
-//                        "/swagger-resources/**",
-//                        "/swagger-ui.html",
-//                        "/v2/api-docs",
-//                        "/webjars/**",
-//                        "/api/filter/**",
-//                        "/favicon.ico",
-//                        "/api/config"
-//                );
-//    }
+    @Override
+    public void configure(WebSecurity webSecurity) {
+        webSecurity
+                .ignoring()
+                .antMatchers(
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/v2/api-docs",
+                        "/webjars/**",
+                        "/api/filter/**",
+                        "/favicon.ico",
+                        "/api/config"
+                );
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
