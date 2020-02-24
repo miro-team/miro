@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <configuration>
-  <property scope="context" name="CONTEXT_NAME" value="cm-bot-core"/>
+  <property scope="context" name="CONTEXT_NAME" value="miro"/>
   <contextName>${CONTEXT_NAME}</contextName>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -16,8 +16,8 @@
       <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{0}:%line - %msg%n</pattern>
     </encoder>
   </appender>
-  <logger name="miet.rooms" level="TRACE"/>
-  <root level="TRACE">
+  <logger name="miet.rooms" level="DEBUG"/>
+  <root level="INFO">
     <appender-ref ref="STDOUT"/>
     <appender-ref ref="FILE"/>
   </root>
