@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="ew256" context="prod">
+        <sql>
+            create table schedule.reservations
+            (
+            id serial not null,
+            eng_id int not null,
+            created_by int
+            constraint reservations_users_id_fk
+            references security.users,
+            created_at timestamp,
+            group_id int
+            constraint reservations_edu_groups_id_fk
+            references data.edu_groups,
+            discipline_id int
+            constraint reservations_discipline_id_fk
+            references schedule.discipline,
+            teacher_id int
+            constraint reservations_teachers_id_fk
+            references schedule.teachers,
+            engage_type_id int
+            constraint reservations_engage_types_id_fk
+            references schedule.engage_types
+            );
+
+            create unique index reservations_id_uindex
+            on schedule.reservations (id);
+
+            alter table schedule.reservations
+            add constraint reservations_pk
+            primary key (id);
+
+            drop index schedule.engagements_eng_id_uindex;
+
+            alter sequence schedule.engage_types_engage_type_id_seq rename to engage_types_id_seq;
+
+        </sql>
+        <rollback>
+            drop table schedule.reservations;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

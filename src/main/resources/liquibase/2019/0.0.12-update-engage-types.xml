@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="ew256" context="prod">
+        <sql>
+            insert into schedule.engage_types (name)
+            values ('Лабораторная работа');
+            insert into schedule.engage_types (name)
+            values ('Лекция');
+            insert into schedule.engage_types (name)
+            values ('Семинар');
+            alter table schedule.engagements rename column eng_id to engage_type_id;
+
+            alter table schedule.engagements
+            add eng_id int not null;
+
+            create unique index engagements_eng_id_uindex
+            on schedule.engagements (eng_id);
+        </sql>
+        <rollback>
+            delete from schedule.engage_types where name = 'Лабораторная работа';
+            delete from schedule.engage_types where name = 'Лекция';
+            delete from schedule.engage_types where name = 'Семинар';
+            insert into schedule.engage_types (name)
+            values ('Занятие');
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

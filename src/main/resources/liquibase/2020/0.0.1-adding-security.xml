@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="ew256" context="prod">
+        <sql>
+            create table oauth_client_details (
+            client_id VARCHAR(256) PRIMARY KEY,
+            resource_ids VARCHAR(256),
+            client_secret VARCHAR(256),
+            scope VARCHAR(256),
+            authorized_grant_types VARCHAR(256),
+            web_server_redirect_uri VARCHAR(256),
+            authorities VARCHAR(256),
+            access_token_validity INTEGER,
+            refresh_token_validity INTEGER,
+            additional_information VARCHAR(4096),
+            autoapprove VARCHAR(256)
+            );
+
+            alter table security.users
+            add role int;
+
+            create table security.user_roles
+            (
+            id serial not null,
+            name varchar(50) not null
+            );
+
+            create unique index user_roles_id_uindex
+            on security.user_roles (id);
+
+            create unique index user_roles_name_uindex
+            on security.user_roles (name);
+
+            alter table security.user_roles
+            add constraint user_roles_pk
+            primary key (id);
+
+
+            alter table security.users
+            add constraint users_user_roles_id_fk
+            foreign key (role) references security.user_roles;
+
+        </sql>
+        <rollback>
+            drop table oauth_client_details;
+            drop table security.user_roles;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,1405 @@
+swagger: '2.0'
+info:
+  description: MIRO api Documentation
+  version: '1.0'
+  title: MIRO api Documentation
+  termsOfService: 'urn:tos'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: '62.109.25.2:2200'
+basePath: /api/
+tags:
+  - name: all-data-controller
+    description: All Data Controller
+  - name: data-retriever-controller
+    description: Data Retriever Controller
+  - name: filter-controller
+    description: Filter Controller
+  - name: group-controller
+    description: Group Controller
+  - name: initialization-controller
+    description: Initialization Controller
+  - name: config-controller
+    description: Front-end configuration Controller
+  - name: pair-controller
+    description: Pair Controller
+  - name: room-controller
+    description: Room Controller
+  - name: scheme-controller
+    description: Scheme Controller
+  - name: week-day-controller
+    description: Week Day Controller
+  - name: week-type-controller
+    description: Week Type Controller
+paths:
+  /reservation:
+    post:
+      tags:
+        - reservation
+      summary: getAllByEngageType
+      operationId: reservate
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: query
+          type: array
+          items:
+            type: integer
+            format: int64
+          required: true
+        - name: eventTypeId
+          in: query
+          type: integer
+          format: int64
+          required: true
+        - name: groupId
+          in: query
+          type: array
+          items:
+            type: integer
+            format: int64
+        - name: teacherId
+          in: query
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /reservation/list:
+    get:
+      tags:
+        - reservation
+      summary: getAllByEngageType
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/reservations'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /reservation/cancel:
+    delete:
+      tags:
+        - reservation
+      summary: getAllByEngageType
+      produces:
+        - '*/*'
+      parameters:
+        - name: reservationId
+          in: query
+          type: integer
+          format: int64
+          required: true
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /change-password:
+    post:
+      tags:
+        - user
+      operationId: change-password
+      produces:
+        - '*/*'
+      parameters:
+        - name: oldPassword
+          in: query
+          type: string
+          required: true
+        - name: newPassword
+          in: query
+          type: string
+          required: true
+        - name: confirmPassword
+          in: query
+          type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+  /all-data/by-engage-type:
+    get:
+      tags:
+        - all-data-controller
+      summary: getAllByEngageType
+      operationId: getAllByEngageTypeUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: engageTypeId
+          in: query
+          description: type of engagement
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/allData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /filter/cycle:
+    get:
+      description: Get filtered list of free rooms
+      tags:
+        - filter-controller
+      summary: getFilteredCycleData
+      operationId: getFilteredCycleDataUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: building
+          in: query
+          description: number of building
+          required: false
+          type: integer
+          format: int64
+        - name: capacity
+          in: query
+          description: room capacity
+          required: false
+          type: integer
+          format: int64
+        - name: floor
+          in: query
+          description: floor
+          required: false
+          type: integer
+          format: int64
+        - name: pageNum
+          in: query
+          description: number of page
+          required: true
+          type: integer
+          format: int64
+        - name: pageSize
+          in: query
+          description: records amount on one page
+          required: true
+          type: integer
+          format: int64
+        - name: pairId
+          in: query
+          description: pairId
+          required: false
+          type: integer
+          format: int64
+        - name: roomId
+          in: query
+          description: roomId
+          required: false
+          type: integer
+          format: int64
+        - name: roomTypeId
+          in: query
+          description: roomTypeId
+          required: false
+          type: integer
+          format: int64
+        - name: weekDay
+          in: query
+          description: weekDay
+          required: false
+          type: integer
+          format: int64
+        - name: periodicityId
+          in: query
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/filteredCycleData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /filter/single:
+    get:
+      description: Get filtered list of free rooms
+      tags:
+        - filter-controller
+      summary: getFilteredData
+      operationId: getFilteredSingleDataUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: building
+          in: query
+          description: number of building
+          required: false
+          type: integer
+          format: int64
+        - name: capacity
+          in: query
+          description: room capacity
+          required: false
+          type: integer
+          format: int64
+        - name: date
+          in: query
+          description: date
+          required: true
+          type: string
+        - name: floor
+          in: query
+          description: floor
+          required: false
+          type: integer
+          format: int64
+        - name: pageNum
+          in: query
+          description: number of page
+          required: true
+          type: integer
+          format: int64
+        - name: pageSize
+          in: query
+          description: records amount on one page
+          required: true
+          type: integer
+          format: int64
+        - name: pairId
+          in: query
+          description: pairId
+          required: false
+          type: integer
+          format: int64
+        - name: roomId
+          in: query
+          description: roomId
+          required: false
+          type: integer
+          format: int64
+        - name: roomTypeId
+          in: query
+          description: roomTypeId
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/filteredSingleData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /group:
+    get:
+      tags:
+        - group-controller
+      summary: getGroupByName
+      operationId: getGroupByNameUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: groupName
+          in: query
+          description: groupName
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/group'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /initialize/all:
+    post:
+      tags:
+        - initialization-controller
+      summary: initializeAll
+      operationId: initializeAllUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: startDate
+          in: query
+          description: startDate
+          required: true
+          type: string
+          format: date
+        - name: weekAmount
+          in: query
+          description: weekAmount
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/timetableData'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /initialize/groups:
+    post:
+      tags:
+        - initialization-controller
+      summary: initializeGroups
+      operationId: initializeGroupsUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /initialize/inside:
+    post:
+      tags:
+        - initialization-controller
+      summary: retrieveRoomsAndSchemes
+      operationId: retrieveRoomsAndSchemesUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /initialize/rooms:
+    post:
+      tags:
+        - initialization-controller
+      summary: initializeRooms
+      operationId: initializeRoomsUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /initialize/schedule:
+    post:
+      tags:
+        - initialization-controller
+      summary: initializeSchedule
+      operationId: initializeScheduleUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: startDate
+          in: query
+          description: startDate
+          required: true
+          type: string
+          format: date
+        - name: weekAmount
+          in: query
+          description: weekAmount
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/timetableData'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /config:
+    get:
+      tags:
+        - config-controller
+      summary: getConfig
+      operationId: getConfigUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/config'
+
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /pair:
+    get:
+      tags:
+        - pair-controller
+      summary: getPairByName
+      operationId: getPairByNameUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: pairName
+          in: query
+          description: pairName
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/pair'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /retriever/get:
+    post:
+      description: Get timetable for a whole term
+      tags:
+        - data-retriever-controller
+      summary: returnAll
+      operationId: returnAllUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/retriever'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /retriever/initialize:
+    get:
+      tags:
+        - data-retriever-controller
+      summary: initialize
+      operationId: initializeUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /room/all:
+    get:
+      tags:
+        - room-controller
+      summary: getAllRooms
+      operationId: getAllRoomsUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /room/by-id:
+    get:
+      tags:
+        - room-controller
+      summary: getRoomByName
+      operationId: getRoomByNameUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: roomId
+          in: query
+          description: roomId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/roomModel'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /scheme:
+    get:
+      tags:
+        - scheme-controller
+      summary: getSchemeByName
+      operationId: getSchemeByNameUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: building
+          in: query
+          description: building
+          required: true
+          type: integer
+          format: int64
+        - name: floor
+          in: query
+          description: floor
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/scheme'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /week-day/all:
+    get:
+      tags:
+        - week-day-controller
+      summary: getAll
+      operationId: getAllUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /week-type/all:
+    get:
+      tags:
+        - week-type-controller
+      summary: getAll
+      operationId: getAllUsingGET_1
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /week-type/by-id:
+    get:
+      tags:
+        - week-type-controller
+      summary: getWeekTypeById
+      operationId: getWeekTypeByIdUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: weekTypeId
+          in: query
+          description: weekTypeId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/cycleEventModel'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+definitions:
+  allData:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date
+      engageType:
+        $ref: '#/definitions/engageType'
+      group:
+        $ref: '#/definitions/group'
+      id:
+        type: integer
+        format: int64
+      pair:
+        $ref: '#/definitions/pair'
+      room:
+        $ref: '#/definitions/room'
+      weekDay:
+        type: integer
+        format: int64
+      weekNum:
+        type: integer
+        format: int64
+      weekType:
+        type: integer
+        format: int64
+    title: allData
+  reservations:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      building:
+        type: string
+      capacity:
+        type: integer
+        format: int64
+      floor:
+        type: string
+      date:
+        type: array
+        items:
+          type: string
+          format: date
+      pair:
+        type: string
+      room:
+        type: string
+      roomType:
+        type: string
+      weekDay:
+        type: string
+      eventType:
+        type: string
+      groups:
+        type: string
+      teacher:
+        type: string
+    title: reservations
+  allDataFront:
+    type: object
+    properties:
+      date:
+        type: string
+      engageTypeId:
+        type: integer
+        format: int64
+      groupId:
+        type: integer
+        format: int64
+      id:
+        type: integer
+        format: int64
+      pairId:
+        type: integer
+        format: int64
+      roomId:
+        type: integer
+        format: int64
+      weekDay:
+        type: integer
+        format: int64
+      weekNum:
+        type: integer
+        format: int64
+      weekType:
+        type: integer
+        format: int64
+    title: allDataFront
+  cycle:
+    type: object
+    properties:
+      allData:
+        $ref: '#/definitions/allData'
+      cycleId:
+        type: string
+      id:
+        type: integer
+        format: int64
+      seqNum:
+        type: integer
+        format: int64
+    title: cycle
+  cycleEventModel:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      weekType:
+        type: string
+    title: cycleEventModel
+  datum:
+    type: object
+    properties:
+      class:
+        $ref: '#/definitions/discipline'
+      day:
+        type: integer
+        format: int64
+      dayNumber:
+        type: integer
+        format: int64
+      group:
+        $ref: '#/definitions/group'
+      room:
+        $ref: '#/definitions/room'
+      time:
+        $ref: '#/definitions/innerTime'
+    title: datum
+  discipline:
+    type: object
+    properties:
+      Code:
+        type: string
+      Name:
+        type: string
+      Teacher:
+        type: string
+      TeacherFull:
+        type: string
+    title: discipline
+  engage:
+    type: object
+    properties:
+      allData:
+        $ref: '#/definitions/allData'
+      engagedBy:
+        $ref: '#/definitions/group'
+      engagedType:
+        $ref: '#/definitions/engageType'
+      id:
+        type: integer
+        format: int64
+      insertDate:
+        type: string
+        format: date-time
+      teacherName:
+        type: string
+      transferredFrom:
+        $ref: '#/definitions/allData'
+    title: engage
+  engageType:
+    type: object
+    properties:
+      description:
+        type: string
+      engageTypeId:
+        type: integer
+        format: int64
+      id:
+        type: integer
+        format: int64
+    title: engageType
+  event:
+    type: object
+    properties:
+      date:
+        type: string
+      engageTypeId:
+        type: integer
+        format: int64
+      engagedBy:
+        type: string
+      fromAllDataId:
+        type: integer
+        format: int64
+      pairId:
+        type: integer
+        format: int64
+      roomId:
+        type: integer
+        format: int64
+      teacherName:
+        type: string
+      weekType:
+        type: integer
+        format: int64
+    title: event
+  filteredSingleData:
+    type: object
+    properties:
+      events:
+        type: array
+        items:
+          $ref: '#/definitions/filteredEvent'
+      pageNum:
+        type: integer
+        format: int64
+      pageSize:
+        type: integer
+        format: int64
+      pageCount:
+        type: integer
+        format: int64
+    title: filteredData
+  filteredSingleEvent:
+    type: object
+    properties:
+      building:
+        type: string
+      capacity:
+        type: integer
+        format: int64
+      date:
+        type: string
+        format: date
+      floor:
+        type: string
+      id:
+        type: array
+        items:
+          type: integer
+          format: int64
+      pair:
+        type: string
+      room:
+        type: string
+      roomType:
+        type: string
+      weekDay:
+        type: string
+      periodicity:
+        type: string
+      weekNum:
+        type: integer
+        format: int64
+    title: filteredEvent
+  filteredCycleData:
+    type: object
+    properties:
+      events:
+        type: array
+        items:
+          $ref: '#/definitions/filteredEvent'
+      pageNum:
+        type: integer
+        format: int64
+      pageSize:
+        type: integer
+        format: int64
+      pageCount:
+        type: integer
+        format: int64
+    title: filteredData
+  filteredEvent:
+    type: object
+    properties:
+      building:
+        type: string
+      capacity:
+        type: integer
+        format: int64
+      floor:
+        type: string
+      id:
+        type: array
+        items:
+          type: integer
+          format: int64
+      date:
+        type: array
+        items:
+          type: string
+      pair:
+        type: string
+      room:
+        type: string
+      roomType:
+        type: string
+      weekDay:
+        type: string
+    title: filteredEvent
+  group:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: group
+  innerTime:
+    type: object
+    properties:
+      Code:
+        type: integer
+        format: int64
+      Time:
+        type: string
+      TimeFrom:
+        type: string
+      TimeTo:
+        type: string
+    title: innerTime
+  config:
+    type: object
+    properties:
+      weekDays:
+        type: array
+        items:
+          $ref: '#/definitions/weekDay'
+      pairs:
+        type: array
+        items:
+          $ref: '#/definitions/pairMapped'
+      roomTypes:
+        type: array
+        items:
+          $ref: '#/definitions/roomType'
+      schemes:
+        type: array
+        items:
+          $ref: '#/definitions/scheme'
+      buildings:
+        type: array
+        items:
+          $ref: '#/definitions/building'
+      groups:
+        type: array
+        items:
+          $ref: '#/definitions/group'
+      rooms:
+        type: array
+        items:
+          $ref: '#/definitions/room'
+      periodicities:
+        type: array
+        items:
+          $ref: '#/definitions/periodicity'
+      eventTypes:
+        type: array
+        items:
+          $ref: '#/definitions/eventType'
+    title: config
+  weekType:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+  periodicity:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      weekTypes:
+        type: array
+        items:
+          type: integer
+          format: int64
+      name:
+        type: string
+  eventType:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+  weekDay:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+  pairMapped:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      timeFrom:
+        type: string
+      timeTo:
+        type: string
+  building:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+  modelAndView:
+    type: object
+    properties:
+      empty:
+        type: boolean
+      model:
+        type: object
+      modelMap:
+        type: object
+        additionalProperties:
+          type: object
+      reference:
+        type: boolean
+      status:
+        type: string
+        enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+      view:
+        $ref: '#/definitions/view'
+      viewName:
+        type: string
+    title: modelAndView
+  pair:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      timeFrom:
+        type: string
+      timeTo:
+        type: string
+    title: pair
+  retriever:
+    type: object
+    properties:
+      allDataList:
+        type: array
+        items:
+          $ref: '#/definitions/allDataFront'
+      cycles:
+        type: array
+        items:
+          $ref: '#/definitions/cycle'
+      engageTypes:
+        type: array
+        items:
+          $ref: '#/definitions/engageType'
+      engages:
+        type: array
+        items:
+          $ref: '#/definitions/engage'
+      groups:
+        type: array
+        items:
+          $ref: '#/definitions/group'
+      pairs:
+        type: array
+        items:
+          $ref: '#/definitions/pair'
+      roomTypes:
+        type: array
+        items:
+          $ref: '#/definitions/roomType'
+      rooms:
+        type: array
+        items:
+          $ref: '#/definitions/room'
+      schemes:
+        type: array
+        items:
+          $ref: '#/definitions/scheme'
+      transfers:
+        type: array
+        items:
+          $ref: '#/definitions/transfer'
+    title: retriever
+  room:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      capacity:
+        type: integer
+        format: int64
+      schemeId:
+        type: integer
+        format: int64
+      schemeMapping:
+        type:
+          string
+      roomTypeId:
+        type: integer
+        format: int64
+    title: room
+  roomModel:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: roomModel
+  roomType:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    title: roomType
+  scheme:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      floor:
+        type: string
+      building:
+        type: string
+      fileName:
+        type: string
+    title: scheme
+  time:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int64
+      time:
+        type: string
+      timeFrom:
+        type: string
+      timeTo:
+        type: string
+    title: time
+  timetableData:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/datum'
+      semestr:
+        type: string
+      times:
+        type: array
+        items:
+          $ref: '#/definitions/time'
+    title: timetableData
+  transfer:
+    type: object
+    properties:
+      cycleId:
+        type: string
+      fromAllData:
+        $ref: '#/definitions/allData'
+      id:
+        type: integer
+        format: int64
+      seqNum:
+        type: integer
+        format: int64
+      toAllData:
+        $ref: '#/definitions/allData'
+    title: transfer
+  view:
+    type: object
+    properties:
+      contentType:
+        type: string
+    title: view

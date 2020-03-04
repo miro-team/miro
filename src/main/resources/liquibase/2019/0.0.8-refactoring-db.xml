@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="ew256" context="prod">
+        <sql>
+            alter table schedule.all_data rename to events;
+            create table schedule.engagements
+            (
+            id serial not null,
+            group_id integer,
+            teacher_id integer,
+            eng_id integer
+            );
+
+            create unique index engagements_id_uindex
+            on schedule.engagements (id);
+
+            alter table schedule.engagements
+            add constraint engagements_pk
+            primary key (id);
+
+            create table schedule.discipline
+            (
+            id serial not null,
+            title varchar(300) not null,
+            dis_type_id integer not null
+            constraint discipline_event_types_id_fk
+            references schedule.event_types
+            );
+
+            create unique index discipline_id_uindex
+            on schedule.discipline (id);
+
+            alter table schedule.discipline
+            add constraint discipline_pk
+            primary key (id);
+
+            create table schedule.teachers
+            (
+            id serial not null,
+            teacher_name varchar(30) not null,
+            teacher_surname varchar(30) not null,
+            teacher_patronymic varchar(30) not null
+            );
+
+            create unique index teachers_id_uindex
+            on schedule.teachers (id);
+
+            alter table schedule.teachers
+            add constraint teachers_pk
+            primary key (id);
+
+            alter table schedule.engagements
+            add constraint engagements_edu_groups_id_fk
+            foreign key (group_id) references data.edu_groups;
+
+            alter table schedule.engagements
+            add constraint engagements_teachers_id_fk
+            foreign key (teacher_id) references schedule.teachers;
+
+            alter table schedule.engagements
+            add constraint engagements_event_types_id_fk
+            foreign key (eng_id) references schedule.event_types;
+
+            alter table schedule.event_types rename to engage_types;
+
+            alter table schedule.events alter column pair_id set not null;
+
+            alter table schedule.events alter column room_id set not null;
+
+            alter table schedule.events
+            add eng_id integer;
+
+            alter table schedule.events drop column is_engaged;
+
+            alter table schedule.events drop constraint all_data_engaged_id_fkey;
+
+            alter table schedule.events drop column engaged_by_id;
+
+            alter table schedule.events drop constraint all_data_engage_type_engage_type_id_fk;
+
+            alter table schedule.events drop column engage_type_id;
+
+            alter table schedule.events drop constraint all_data_reservations_id_fk;
+
+            alter table schedule.events drop column reservation_id;
+
+            alter table schedule.events drop constraint all_data_week_days_id_fk;
+
+            alter table schedule.events drop column week_day;
+
+            alter table schedule.events
+            add constraint events_week_types_week_type_code_num_fk
+            foreign key (week_type) references time_desc.week_types (id);
+
+            drop table schedule.cycle_events;
+
+            drop table schedule.engages;
+
+            drop table schedule.engage_type;
+
+            drop table schedule.cycles;
+
+            drop table schedule.transfers;
+
+            drop table schedule.reservations;
+
+            drop table time_desc.week_days;
+
+            create sequence schedule.events_id_seq;
+
+            alter table schedule.events alter column id set default nextval('schedule.events_id_seq'::regclass);
+
+            alter table schedule.engagements
+            add discipline_id integer;
+
+            alter table schedule.engagements
+            add constraint engagements_discipline_id_fk
+            foreign key (discipline_id) references schedule.discipline;
+        </sql>
+        <rollback>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
